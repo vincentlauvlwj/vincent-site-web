@@ -1,0 +1,123 @@
+{% macro render(is_post) %}
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      {% if page.toc_number === undefine %}
+        {% set toc = toc(page.content, { "class": "nav", list_number: theme.toc.number }) %}
+      {% else %}
+        {% set toc = toc(page.content, {"class": "nav", list_number: page.toc_number}) %}
+      {% endif %}
+
+      {% set display_toc = is_post and theme.toc.enable and toc.length > 1 %}
+
+      {% if display_toc %}
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            {{ __('sidebar.toc') }}
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            {{ __('sidebar.overview') }}
+          </li>
+        </ul>
+      {% endif %}
+
+      <section class="site-overview sidebar-panel {% if not display_toc %} sidebar-panel-active {% endif %}">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image" style="margin-top: 5px; max-width: 60px;" 
+               src="{{ theme.avatar or url_for(theme.images) + '/default_avatar.jpg' }}"
+               alt="{{ theme.author }}" />
+          <p class="site-author-name" itemprop="name">{{ theme.author }}</p>
+          <p class="site-description motion-element" itemprop="description">
+            {% if theme.social %}
+              {% for name, link in theme.social %}
+                <a href="{{ link }}" target="_blank" style="font-size: 20px; margin: 5px 8px 0px 0px; border-bottom: 0px;">
+                  {% if theme.social_icons.enable %}
+                    <i class="fa fa-{{ theme.social_icons[name] || 'globe' }}"></i>
+                  {% endif %}
+                </a>
+              {% endfor %}
+            {% endif %}
+          </p>
+        </div>
+        <!--
+        <nav class="site-state motion-element" style="display: none;">
+          <div class="site-state-item site-state-posts">
+            <a href="{{ url_for(theme.menu.archives) }}">
+              <span class="site-state-item-count">{{ site.posts.length }}</span>
+              <span class="site-state-item-name">{{ __('state.posts') }}</span>
+            </a>
+          </div>
+
+          {% if site.categories.length > 0 %}
+            <div class="site-state-item site-state-categories">
+              {% if theme.menu.categories %}<a href="{{ url_for(theme.menu.categories) }}">{% endif %}
+                <span class="site-state-item-count">{{ site.categories.length }}</span>
+                <span class="site-state-item-name">{{ __('state.categories') }}</span>
+              {% if theme.menu.categories %}</a>{% endif %}
+            </div>
+          {% endif %}
+
+          {% if site.tags.length > 0 %}
+            <div class="site-state-item site-state-tags">
+              {% if theme.menu.tags %}<a href="{{ url_for(theme.menu.tags) }}">{% endif %}
+                <span class="site-state-item-count">{{ site.tags.length }}</span>
+                <span class="site-state-item-name">{{ __('state.tags') }}</span>
+              {% if theme.menu.tags %}</a>{% endif %}
+            </div>
+          {% endif %}
+
+        </nav>
+        -->
+
+        {% if theme.rss %}
+          <div class="feed-link motion-element">
+            <a href="{{ url_for(theme.rss) }}" rel="alternate">
+              <i class="fa fa-rss"></i>
+              RSS
+            </a>
+          </div>
+        {% endif %}
+
+        {# Blogroll #}
+        <div class="links-of-blogroll motion-element">
+          {% if theme.links %}
+            <div class="links-of-blogroll-title">{{ theme.links_title }}</div>
+            <ul class="links-of-blogroll-list">
+              {% for name, link in theme.links %}
+                <li class="links-of-blogroll-item">
+                  <a href="{{ link }}" target="_blank">{{ name }}</a>
+                </li>
+              {% endfor %}
+            </ul>
+          {% endif %}
+        </div>
+
+        <!-- 多说最新评论 start -->
+        <div class="ds-recent-comments" data-num-items="5" data-show-avatars="1" data-show-time="0" data-show-title="0" data-show-admin="1" data-excerpt-length="25"></div>
+        <!-- 多说最新评论 end -->
+
+      </section>
+
+      {% if display_toc %}
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            {% if toc.length <= 1 %}
+              <p class="post-toc-empty">{{ __('post.toc_empty') }}</p>
+            {% else %}
+              <div class="post-toc-content">{{ toc }}</div>
+            {% endif %}
+          </div>
+        </section>
+      {% endif %}
+
+    </div>
+  </aside>
+{% endmacro %}

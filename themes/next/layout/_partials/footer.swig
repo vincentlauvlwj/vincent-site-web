@@ -1,0 +1,38 @@
+
+{% set cc = {'by': 1, 'by-nc': 1, 'by-nc-nd': 1, 'by-nc-sa': 1, 'by-nd': 1, 'by-sa': 1, 'zero': 1} %}
+{% if theme.creative_commons in cc %}
+  <div>
+    <a href="http://creativecommons.org/licenses/{{ theme.creative_commons }}/4.0" target="_blank">
+      <img src="{{ url_for(theme.images) }}/cc-{{ theme.creative_commons }}.svg" alt="Creative Commons" />
+    </a>
+  </div>
+{% endif %}
+
+<div>
+  友情链接：<a href="http://yue-litam.github.io/" target="_blank">yutao's blog</a>
+           | <a href="http://liberize.me/" target="_blank">liberize's blog</a>
+</div>
+
+
+<div class="copyright" >
+  {% set current = date(Date.now(), "YYYY") %}
+  &copy; {% if theme.since and theme.since != current %} {{ theme.since }} - {% endif %}
+  <span itemprop="copyrightYear">{{ current }}</span>
+  <span class="with-love" style="display: none;">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">{{ config.author }}</span>
+</div>
+
+<div class="powered-by" style="display: none;">
+  {{ __('footer.powered', '<a class="theme-link" href="http://hexo.io">Hexo</a>') }}
+</div>
+
+<div class="theme-info" style="display: none;">
+  {{ __('footer.theme') }} -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.{{ theme.scheme }}
+  </a>
+</div>
+
+{% block footer %}{% endblock %}
