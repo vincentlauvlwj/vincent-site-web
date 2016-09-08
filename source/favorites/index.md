@@ -1,7 +1,6 @@
 ---
 title: "隐藏页"
 comments: false
-disable_sidebar_scroll: true
 ---
 
 > 能发现这么隐蔽的页面也是不容易啊。。。给我留个言，奖励你五毛

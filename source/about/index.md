@@ -1,7 +1,6 @@
 ---
 title: 关于
 comments: false
-disable_sidebar_scroll: true
 ---
 
 ## 联系方式

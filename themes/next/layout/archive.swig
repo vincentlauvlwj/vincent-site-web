@@ -25,7 +25,7 @@
       {{ __('cheers.' + cheers) }}! {{ _p("counter.archive_posts", site.posts.length) }} {{ __('keep_on') }}
     </span>
 
-    {% for post in site.posts.reverse() %}
+    {% for post in page.posts %}
 
       {# Show year #}
       {% set year %}
@@ -34,7 +34,7 @@
       {% if post.year !== year %}
         {% set year = post.year %}
         <div class="collection-title">
-          <h2 class="archive-year motion-element" id="archive-year-{{ year }}">{{ year }}</h2>
+          <h2 class="archive-year motion-element" id="archive-year-{{ year }}"><a href="{{ theme.menu.archives }}/{{ year }}/" style="border: 0px;">{{ year }}</a></h2>
         </div>
       {% endif %}
       {# endshow #}
@@ -46,6 +46,7 @@
   </section>
 
   {% include '_partials/pagination.swig' %}
+
 
 {% endblock %}
 
