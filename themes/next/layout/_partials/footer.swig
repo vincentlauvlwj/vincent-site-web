@@ -9,7 +9,7 @@
 {% endif %}
 
 <div>
-  友情链接：<a href="http://yue-litam.github.io/" target="_blank">yutao's blog</a>
+  推荐链接：<a href="http://blogwall.us/" target="_blank">程序员博客墙</a>
            | <a href="http://liberize.me/" target="_blank">liberize's blog</a>
 </div>
 
