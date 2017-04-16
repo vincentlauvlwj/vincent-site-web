@@ -59,8 +59,8 @@ menu_icons:
 
 # Schemes
 # scheme: Muse
-# scheme: Mist
-scheme: Pisces
+scheme: Mist
+# scheme: Pisces
 
 
 
@@ -185,10 +185,10 @@ mathjax:
 baidu_analytics: 8911f3e92acbc8ceabb039c5e944c7f4
 
 # Duoshuo ShortName
-duoshuo_shortname: vincentlauvlwj
+# duoshuo_shortname: vincentlauvlwj
 
 # Duoshuo url
-duoshuo_url: http://vincentlauvlwj.github.io/
+# duoshuo_url: http://vincentlauvlwj.github.io/
 
 # Disqus
 #disqus_shortname:
@@ -200,11 +200,11 @@ duoshuo_url: http://vincentlauvlwj.github.io/
 ##  type: button
 
 # Share
-# jiathis:
+jiathis: 2128673
 # add_this_id:
 
 # Share
-duoshuo_share: true
+# duoshuo_share: true
 
 # Google Webmaster tools verification setting
 # See: https://www.google.com/webmasters/
@@ -221,10 +221,10 @@ duoshuo_share: true
 # Make duoshuo show UA
 # user_id must NOT be null when admin_enable is true!
 # you can visit http://dev.duoshuo.com get duoshuo user id.
-duoshuo_info:
-  ua_enable: false
-  admin_enable: true
-  user_id: 13357878
+# duoshuo_info:
+  # ua_enable: false
+  # admin_enable: true
+  # user_id: 13357878
   # admin_nickname: Author
 
 
