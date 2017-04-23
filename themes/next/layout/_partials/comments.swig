@@ -16,7 +16,7 @@
                         </div>
                         <div class="ds-comment-body">
                             <div class="ds-comment-header"><a class="ds-user-name ds-highlight" data-qqt-account="" href="http://t.qq.com/libaocheng9342" onclick="this.href='http://vincentlauvlwj.duoshuo.com/user-url/?user_id=6397599268084908802';" rel="nofollow" target="_blank" data-user-id="6397599268084908802">李保成</a></div>
-                            <p>很厉害的方法。</p>
+                            <p>很厉害的<i class="emoji emoji-smile"></i>方法方法方法方法方法方法方法方法方法方法方法方法方法方法方法方法方法方法方法方法方法方法方法方法方法方法方法方法方法方法方法方法方法方法方法方法方法方法方法方法方法方法方法方法方法方<i class="emoji emoji-smile"></i>法方法方法方法方法方法方法方法方法方法方法方法方法方法。</p>
                             <div class="ds-comment-footer ds-comment-actions"><span class="ds-time" datetime="2017-03-15T13:56:10+08:00" title="2017年3月15日 下午1:56:10">3月15日</span><a class="ds-post-reply" href="javascript:void(0);"><span class="ds-icon ds-icon-reply"></span>回复</a><a class="ds-post-likes" href="javascript:void(0);"><span class="ds-icon ds-icon-like"></span>顶</a><a class="ds-post-repost" href="javascript:void(0);"><span class="ds-icon ds-icon-share"></span>转发</a><a class="ds-post-report" href="javascript:void(0);"><span class="ds-icon ds-icon-report"></span>举报</a><a class="ds-post-delete" href="javascript:void(0);"><span class="ds-icon ds-icon-delete"></span>删除</a></div>
                         </div>
                     </div>
@@ -82,6 +82,7 @@
                     </div>
                 </li>
             </ul>
+            <div class="ds-alert">请输入邮箱</div>
             <div class="ds-toolbar">
                 <div class="ds-account-control"><span class="ds-icon ds-icon-settings"></span> <span>帐号管理</span>
                     <ul>
@@ -98,14 +99,19 @@
                     <input type="hidden" name="thread_id" value="6326057807783133953">
                     <input type="hidden" name="parent_id" value="">
                     <input type="hidden" name="nonce" value="58d75346326bf">
+                    <input type="text" name="email" value="" style="float: left;">
+                    <input type="text" name="username" value="">
+                    <input type="text" name="homepage" value="" style="float: right;">
                     <div class="ds-textarea-wrapper ds-rounded-top">
-                        <textarea name="message" title="Ctrl+Enter快捷提交" placeholder="说点什么吧…"></textarea><pre class="ds-hidden-text"></pre></div>
+                        <textarea name="message" title="Ctrl+Enter快捷提交" placeholder="说点什么吧…"></textarea>
+                        <pre class="ds-hidden-text"></pre>
+                    </div>
                     <div class="ds-post-toolbar">
                         <div class="ds-post-options ds-gradient-bg"></div>
                         <button class="ds-post-button" type="submit">发布</button>
                         <div class="ds-toolbar-buttons">
                             <a class="ds-toolbar-button ds-add-emote" title="插入表情"></a>
-                            <a class="ds-toolbar-button ds-add-image" title="插入图片"></a>
+                            <!-- <a class="ds-toolbar-button ds-add-image" title="插入图片"></a> -->
                         </div>
                     </div>
                 </form>
@@ -113,4 +119,6 @@
         </div>
     </div>
 </div>
+
+
 {% endif %}
