@@ -79,4 +79,12 @@ $(document).ready(function() {
 	}
 
 	$(".ds-add-emote").click(toggleSmileyPanel);
+
+    $(".ds-account-control").hover(function() {
+        $(this).addClass("ds-active");
+    }, function() {
+        $(this).removeClass("ds-active");
+    });
+
+    
 });

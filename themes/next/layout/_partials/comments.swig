@@ -82,30 +82,38 @@
                     </div>
                 </li>
             </ul>
-            <div class="ds-alert">请输入邮箱</div>
+            <div class="ds-alert" style="display: none;"></div>
             <div class="ds-toolbar">
                 <div class="ds-account-control"><span class="ds-icon ds-icon-settings"></span> <span>帐号管理</span>
                     <ul>
-                        <li><a class="ds-bind-more" href="javascript:void(0);" style="border-top: none">绑定更多</a></li>
-                        <li><a target="_blank" href="http://duoshuo.com/settings/">设置</a></li>
-                        <li><a rel="nofollow" href="http://vincentlauvlwj.duoshuo.com/logout/" style="border-bottom: none">登出</a></li>
+                        <li><a href="javascript:void(0);" style="border-top: none">修改头像</a></li>
+                        <li><a href="javascript:void(0);" style="border-bottom: none">忘记我</a></li>
                     </ul>
                 </div>
                 <div class="ds-visitor"><a class="ds-visitor-name" href="http://www.liuwenjun.info/" target="_blank">炒米粉。</a><a class="ds-unread-comments-count" href="javascript:void(0);" title="你没有新回复" style="display: none;">0</a></div>
             </div>
             <div class="ds-replybox">
-                <a class="ds-avatar" href="http://duoshuo.com/settings/avatar/" target="_blank" title="设置头像"><img src="http://q.qlogo.cn/qqapp/100229475/903697B988A65F0EFC0B400EEB09FCC0/100" alt="炒米粉。"></a>
+                <a class="ds-avatar" href="http://duoshuo.com/settings/avatar/" target="_blank"><img src="http://q.qlogo.cn/qqapp/100229475/903697B988A65F0EFC0B400EEB09FCC0/100" alt="炒米粉。"></a>
+
                 <form method="post">
-                    <input type="hidden" name="thread_id" value="6326057807783133953">
-                    <input type="hidden" name="parent_id" value="">
-                    <input type="hidden" name="nonce" value="58d75346326bf">
-                    <input type="text" name="email" value="" style="float: left;">
-                    <input type="text" name="username" value="">
-                    <input type="text" name="homepage" value="" style="float: right;">
+
+                	<div class="ds-user-info-wrapper" style="display: none;">
+		                <span class="ds-input-wrapper ds-input-wrapper-username">
+		                	<input type="text" name="username" placeholder="请输入您的名字">
+		                </span>
+		                <span class="ds-input-wrapper ds-input-wrapper-email">
+		                	<input type="text" name="email" placeholder="您的邮箱，用于接收回复">
+		                </span>
+		                <span class="ds-input-wrapper ds-input-wrapper-homepage">
+		                	<input type="text" name="homepage" placeholder="您的主页">
+		                </span>
+	                </div>
+                    
                     <div class="ds-textarea-wrapper ds-rounded-top">
-                        <textarea name="message" title="Ctrl+Enter快捷提交" placeholder="说点什么吧…"></textarea>
+                        <textarea name="message" placeholder="说点什么吧…"></textarea>
                         <pre class="ds-hidden-text"></pre>
                     </div>
+
                     <div class="ds-post-toolbar">
                         <div class="ds-post-options ds-gradient-bg"></div>
                         <button class="ds-post-button" type="submit">发布</button>
