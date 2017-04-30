@@ -3,27 +3,40 @@
     <div class="ds-thread" data-thread-key="/2016/09/03/java-reflection-black-tech" data-title="逆天改命，Java反射的黑科技" data-url="http://vincentlauvlwj.github.io/2016/09/03/java-reflection-black-tech/" id="ds-thread">
         <div id="ds-reset">
             <div class="ds-comments-info">
-                <ul class="ds-comments-tabs">
-                    <li class="ds-tab"><a class="ds-comments-tab-duoshuo ds-current" href="javascript:void(0);"><span class="ds-highlight">5</span>条评论</a></li>
-                </ul>
+            	<span class="ds-highlight ds-comment-count">5</span>&nbsp;条评论
             </div>
-            <ul class="ds-comments">
-            	<li class="ds-post ds-post-placeholder">还没有评论</li>
-                <li class="ds-post" data-post-id="6397600190949229313">
-                    <div class="ds-post-self" data-post-id="6397600190949229313" data-thread-id="6326057807783133953" data-root-id="0" data-source="duoshuo">
-                        <div class="ds-avatar" data-user-id="6397599268084908802">
-                            <a rel="nofollow author" target="_blank" href="http://t.qq.com/libaocheng9342" onclick="this.href='http://vincentlauvlwj.duoshuo.com/user-url/?user_id=6397599268084908802';" title="李保成"><img src="http://app.qlogo.cn/mbloghead/50a8af646221d5c7a222/50" alt="李保成"></a>
+
+            <script id="comment-template" type="text/x-jquery-tmpl">
+            	<li id="comment-${id}" class="ds-post">
+                    <div class="ds-post-self">
+                        <div class="ds-avatar">
+                            <a rel="nofollow author" target="_blank" href="${fromUser.homepage}"><img src="${fromUser.avatar}"></a>
                         </div>
                         <div class="ds-comment-body">
-                            <div class="ds-comment-header"><a class="ds-user-name" data-qqt-account="" href="http://t.qq.com/libaocheng9342" onclick="this.href='http://vincentlauvlwj.duoshuo.com/user-url/?user_id=6397599268084908802';" rel="nofollow" target="_blank" data-user-id="6397599268084908802">李保成</a></div>
-                            <p><a class="ds-comment-context">回复 Hawaii: </a>很厉害的方法。</p>
-                            <div class="ds-comment-footer ds-comment-actions"><span class="ds-time" datetime="2017-03-15T13:56:10+08:00" title="2017年3月15日 下午1:56:10">3月15日</span><a class="ds-post-reply" href="javascript:void(0);"><span class="ds-icon ds-icon-reply"></span>回复</a><a class="ds-post-likes" href="javascript:void(0);"><span class="ds-icon ds-icon-like"></span>顶</a><a class="ds-post-repost" href="javascript:void(0);"><span class="ds-icon ds-icon-share"></span>转发</a><a class="ds-post-report" href="javascript:void(0);"><span class="ds-icon ds-icon-report"></span>举报</a><a class="ds-post-delete" href="javascript:void(0);"><span class="ds-icon ds-icon-delete"></span>删除</a></div>
+                            <div class="ds-comment-header">
+                            	<a class="ds-user-name" href="${fromUser.homepage}" rel="nofollow" target="_blank">${fromUser.name}</a>
+                            </div>
+                            <p>
+                            	<a class="ds-comment-context">回复 Hawaii: </a>${content}
+                            </p>
+                            <div class="ds-comment-footer ds-comment-actions">
+                            	<span class="ds-time">${createDateStr}</span>
+                            	<a class="ds-post-reply" data-user-id="${fromUser.id}" href="javascript:void(0);">
+                            		<span class="ds-icon ds-icon-reply"></span>回复
+                            	</a>
+                            </div>
                         </div>
                     </div>
                 </li>
+            </script>
+
+            <ul class="ds-comments">
+            	<li class="ds-post ds-post-placeholder">还没有评论</li>
             </ul>
+
+
             <div class="ds-alert" style="display: none;"></div>
-            <div class="ds-toolbar">
+            <div class="ds-toolbar" style="display: none;">
                 <div class="ds-account-control"><span class="ds-icon ds-icon-settings"></span> <span>帐号管理</span>
                     <ul>
                         <li><a href="javascript:void(0);" style="border-top: none">修改头像</a></li>
@@ -37,9 +50,9 @@
 
                 <form method="post">
 
-                	<div class="ds-user-info-wrapper" style="display: none;">
-		                <span class="ds-input-wrapper ds-input-wrapper-username">
-		                	<input type="text" name="username" placeholder="请输入您的名字">
+                	<div class="ds-login-input">
+		                <span class="ds-input-wrapper ds-input-wrapper-name">
+		                	<input type="text" name="name" placeholder="请输入您的名字">
 		                </span>
 		                <span class="ds-input-wrapper ds-input-wrapper-email">
 		                	<input type="text" name="email" placeholder="您的邮箱，用于接收回复">
@@ -50,8 +63,7 @@
 	                </div>
                     
                     <div class="ds-textarea-wrapper ds-rounded-top">
-                        <textarea name="message" placeholder="说点什么吧…"></textarea>
-                        <pre class="ds-hidden-text"></pre>
+                        <textarea name="content" placeholder="说点什么吧…"></textarea>
                     </div>
 
                     <div class="ds-post-toolbar">

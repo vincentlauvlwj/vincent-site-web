@@ -147,16 +147,6 @@
   line-height: 25px;
   position: relative;
 }
-#ds-thread #ds-reset .ds-sort {
-  position: absolute;
-  right: 0;
-  top: 8px;
-}
-#ds-thread #ds-reset .ds-sort a {
-  color: #999;
-  padding: 0 4px;
-  margin: 0 2px;
-}
 #ds-thread #ds-reset a {
   cursor: pointer;
   text-decoration: none;
@@ -166,9 +156,6 @@
   -moz-transition: color .15s linear;
   transition: color .15s linear;
 }
-#ds-thread #ds-reset .ds-sort a.ds-current, #ds-thread #ds-reset .ds-sort a:active {
-  color: #d32;
-}
 #ds-thread #ds-reset ul, #ds-thread #ds-reset ul li {
   background: none;
   margin: 0;
@@ -177,19 +164,6 @@
 #ds-reset ul, #ds-related-reads ul, #ds-reset ol, #ds-related-reads ol, #ds-reset ul li, #ds-related-reads ul li, #ds-reset ol li, #ds-related-reads ol li {
   list-style: none;
   display: block;
-}
-#ds-thread #ds-reset li.ds-tab {
-  display: inline;
-  font-size: 13px;
-  margin: 0 5px 0 0;
-  padding: 0;
-}
-#ds-thread #ds-reset li.ds-tab a {
-  text-shadow: 0 1px 0 #fff;
-  padding: 3px 5px;
-  display: inline;
-  -webkit-border-radius: 5px;
-  border-radius: 5px;
 }
 #ds-thread #ds-reset .ds-comments {
   width: 100%;
@@ -415,7 +389,7 @@
   border-top-right-radius: 3px;
   border-top-left-radius: 3px;
 }
-#ds-thread #ds-reset .ds-textarea-wrapper textarea, #ds-thread #ds-reset .ds-textarea-wrapper .ds-hidden-text {
+#ds-thread #ds-reset .ds-textarea-wrapper textarea {
   display: block;
   font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
   font-size: 13px;
@@ -433,20 +407,12 @@
   color: #999;
   width: 100%;
 }
-#ds-thread #ds-reset .ds-textarea-wrapper textarea, #ds-thread #ds-reset .ds-textarea-wrapper .ds-hidden-text {
+#ds-thread #ds-reset .ds-textarea-wrapper textarea {
   display: block;
   font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
   font-size: 13px;
   line-height: 20px;
   border: none;
-}
-#ds-thread #ds-reset .ds-textarea-wrapper .ds-hidden-text {
-  word-wrap: break-word;
-  visibility: hidden;
-  position: absolute;
-  top: 0;
-  left: 10px;
-  right: 10px;
 }
 #ds-reset textarea:focus, #ds-related-reads textarea:focus, #ds-reset input:focus, #ds-related-reads input:focus {
   outline: none;
@@ -635,7 +601,7 @@
   line-height: 1.5em;
   text-align: center;
 }
-.ds-user-info-wrapper {
+.ds-login-input {
   overflow: hidden !important;
 }
 .ds-input-wrapper {
@@ -649,7 +615,7 @@
     width: 100% !important;
   }
 }
-.ds-input-wrapper-username {
+.ds-input-wrapper-name {
   float: left !important;
   padding-right: 10px !important;
   @media screen and (max-width: 767px) {
@@ -680,7 +646,7 @@
   line-height: 38px;
   -webkit-font-smoothing: antialiased;
 }
-.ds-input-wrapper-username:before {
+.ds-input-wrapper-name:before {
   content: "\f007";
 }
 .ds-input-wrapper-email:before {
@@ -702,7 +668,7 @@
 
 
 
-#ds-reset li.ds-tab a, #ds-reset .ds-rounded, #ds-reset #ds-bubble {
+#ds-reset .ds-rounded, #ds-reset #ds-bubble {
   position: relative;
   behavior: url(/css/PIE.htc);
 }
