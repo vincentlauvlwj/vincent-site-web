@@ -379,7 +379,6 @@
 #ds-thread #ds-reset .ds-textarea-wrapper {
   position: relative;
   border: 1px solid #ccc;
-  border-bottom: none;
   padding-right: 20px;
   overflow: hidden;
 }
@@ -424,6 +423,7 @@
   position: relative;
   width: 100%;
   box-shadow: 0 1px 0 rgba(255,255,255,0.6);
+  border-top: none !important;
 }
 .theme-next #ds-thread #ds-reset .ds-post-options {
   height: 40px;
@@ -440,8 +440,22 @@
   border-bottom-left-radius: 3px;
   -webkit-border-bottom-left-radius: 3px;
 }
-#ds-reset .ds-gradient-bg {
-  background: url(/images/bg_sprites.png) 0 -60px repeat-x;
+#ds-thread #ds-reset .ds-reply-user {
+  font-size: 12px;
+  color: #999;
+  line-height: 30px;
+  position: absolute;
+  right: 5px;
+}
+#ds-reply-user-name {
+  margin-left: 2px !important;
+  margin-right: 2px !important;
+}
+#ds-comment-count {
+  margin-right: 2px !important;
+}
+#ds-thread #ds-reset .ds-reply-user a {
+  border-bottom: 1px solid #777;
 }
 #ds-thread #ds-reset .ds-post-toolbar span, #ds-thread #ds-reset .ds-post-toolbar input, #ds-thread #ds-reset .ds-post-toolbar label, #ds-thread #ds-reset .ds-post-toolbar a {
   vertical-align: middle;
@@ -662,7 +676,7 @@
   padding: 2px 10px 2px 35px;
   height: 36px !important;
   width: 100%;
-  border: 1px solid #c7d4e1 !important;
+  border: 1px solid #c7d4e1;
   box-sizing: border-box !important;
 }
 
