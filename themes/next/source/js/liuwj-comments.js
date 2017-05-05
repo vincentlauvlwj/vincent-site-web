@@ -1,3 +1,4 @@
+var apiHost = "http://192.168.1.102"
 var smileyPanelHtml;
 
 function initSmileyPanelHtml() {
@@ -26,7 +27,8 @@ function toggleSmileyPanel() {
         var offset = $toolbar.offset();
         $panel.css({
             top: offset.top + $toolbar.outerHeight() + 4 + "px",
-            left: offset.left + "px"
+            left: offset.left + "px",
+            width: Math.min(400, $toolbar.width()) + "px"
         });
         $panel.find("li").click(function() {
             $(".ds-replybox textarea").insertContent($(this).attr("placeholder"));
@@ -71,7 +73,7 @@ function logout() {
 
 function loadComments() {
     $.ajax({
-        url: "http://localhost/comments/?pageId=" + encodeURI(window.location.pathname),
+        url: apiHost + "/comments/?pageId=" + encodeURI(window.location.pathname),
         type: "get",
         dataType: "json",
         success: function(comments) {
@@ -119,7 +121,7 @@ function createComment() {
     }
 
     $.ajax({
-        url: "http://localhost/comments/",
+        url: apiHost + "/comments/",
         type: "post",
         contentType: "application/json",
         data: JSON.stringify(request),

@@ -20,7 +20,7 @@
                             	<a class="ds-comment-context">回复 Hawaii: </a>${content}
                             </p>
                             <div class="ds-comment-footer ds-comment-actions">
-                            	<span class="ds-time">${createDateStr}</span>
+                            	<span class="ds-time">2017-05-05 12:34</span>
                             	<a class="ds-post-reply" data-user-id="${fromUser.id}" href="javascript:void(0);">
                             		<span class="ds-icon ds-icon-reply"></span>回复
                             	</a>
@@ -73,17 +73,17 @@
                     </div>
 
                     <div class="ds-post-toolbar">
+                        <div class="ds-post-options">
+                            <span class="ds-reply-user">
+                                <span>正在回复</span>
+                                <span id="ds-reply-user-name">炒米粉</span>
+                                <a id="ds-cancel-reply" href="javascript:void(0);">取消</a>
+                            </span>
+                        </div>
                         <button class="ds-post-button" type="submit">发布</button>
                         <div class="ds-toolbar-buttons">
                             <a class="ds-toolbar-button ds-add-emote" title="插入表情"></a>
                             <!-- <a class="ds-toolbar-button ds-add-image" title="插入图片"></a> -->
-                        </div>
-                        <div class="ds-post-options">
-                        	<span class="ds-reply-user">
-                        		<span>正在回复</span>
-                        		<span id="ds-reply-user-name">炒米粉</span>
-                        		<a id="ds-cancel-reply" href="javascript:void(0);">取消回复</a>
-                        	</span>
                         </div>
                     </div>
                 </form>

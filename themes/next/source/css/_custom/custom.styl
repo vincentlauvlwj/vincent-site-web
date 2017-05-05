@@ -182,6 +182,9 @@
   position: relative;
   padding: 10px;
   border-top: 1px solid rgba(255,255,255,0.7);
+  @media screen and (max-width: 767px) {
+    padding: 8px;
+  }
 }
 #ds-reset .ds-avatar {
   box-shadow: 0 1px 1px rgba(255,255,255,0.75);
@@ -199,9 +202,16 @@
   box-shadow: 0 1px 3px rgba(0,0,0,0.22);
   -webkit-border-radius: 3px;
   border-radius: 3px;
+  @media screen and (max-width: 767px) {
+    width: 30px;
+    height: 30px;
+  }
 }
 #ds-thread #ds-reset .ds-comment-body {
   padding-left: 60px;
+  @media screen and (max-width: 767px) {
+    padding-left: 38px;
+  }
 }
 #ds-thread #ds-reset .ds-comment-header {
   padding-top: 1px;
@@ -369,12 +379,18 @@
   padding: 0 0 0 70px;
   position: relative;
   _zoom: 1;
+  @media screen and (max-width: 767px) {
+    padding: 0 0 0 0;
+  }
 }
 #ds-thread #ds-reset .ds-replybox .ds-avatar {
   position: absolute;
   top: 0;
   left: 0;
   padding-left: 10px;
+  @media screen and (max-width: 767px) {
+    display: none;
+  }
 }
 #ds-thread #ds-reset .ds-textarea-wrapper {
   position: relative;
@@ -446,6 +462,9 @@
   line-height: 30px;
   position: absolute;
   right: 5px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 #ds-reply-user-name {
   margin-left: 2px !important;
