@@ -114,8 +114,7 @@ function createComment() {
             homepage: $.trim($(".ds-input-wrapper-homepage input").val())
         }, 
         toUser: {
-            id: parseInt($("#ds-reply-user-id").val()),
-            name: $("#ds-reply-user-name").html()
+            id: parseInt($("#ds-reply-user-id").val())
         }
     }
 
