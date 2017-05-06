@@ -47,7 +47,7 @@
             {% endif %}
           </p>
         </div>
-        <!--
+        
         <nav class="site-state motion-element" style="display: none;">
           <div class="site-state-item site-state-posts">
             <a href="{{ url_for(theme.menu.archives) }}">
@@ -75,7 +75,6 @@
           {% endif %}
 
         </nav>
-        -->
 
         {% if theme.rss %}
           <div class="feed-link motion-element">
