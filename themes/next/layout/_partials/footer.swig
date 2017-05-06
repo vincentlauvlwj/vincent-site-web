@@ -9,7 +9,7 @@
 {% endif %}
 
 <div>
-  推荐链接：<a href="http://blogwall.us/" target="_blank">程序员博客墙</a>
+  推荐链接：<a href="http://blog.zhaojie.me/" target="_blank">老赵点滴 - 追求编程之美</a>
            | <a href="http://liberize.github.io/" target="_blank">liberize's blog</a>
 </div>
 
@@ -19,7 +19,7 @@
   &copy; {% if theme.since and theme.since != current %} {{ theme.since }} - {% endif %}
   <span itemprop="copyrightYear">{{ current }}</span>
   <span class="author" itemprop="copyrightHolder">{{ config.author }}</span>
-  <span><a href="http://www.miitbeian.gov.cn/" target="_blank">粤ICP备17040353号-1</a></span>
+  <span><a href="http://www.miitbeian.gov.cn/" target="_blank">粤ICP备17040353号</a></span>
 </div>
 
 {% block footer %}{% endblock %}
