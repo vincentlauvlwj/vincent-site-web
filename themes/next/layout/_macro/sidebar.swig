@@ -30,25 +30,16 @@
       {% endif %}
 
       <section class="site-overview sidebar-panel {% if not display_toc %} sidebar-panel-active {% endif %}">
+
         <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
-          <img class="site-author-image" itemprop="image" style="margin-top: 5px; max-width: 60px;" 
+          <img class="site-author-image" itemprop="image"
                src="{{ theme.avatar or url_for(theme.images) + '/default_avatar.jpg' }}"
                alt="{{ theme.author }}" />
           <p class="site-author-name" itemprop="name">{{ theme.author }}</p>
-          <p class="site-description motion-element" itemprop="description">
-            {% if theme.social %}
-              {% for name, link in theme.social %}
-                <a href="{{ link }}" target="_blank" style="font-size: 20px; margin: 5px 8px 0px 0px; border-bottom: 0px;">
-                  {% if theme.social_icons.enable %}
-                    <i class="fa fa-{{ theme.social_icons[name] || 'globe' }}"></i>
-                  {% endif %}
-                </a>
-              {% endfor %}
-            {% endif %}
-          </p>
+            <p class="site-description motion-element" itemprop="description">{{ theme.signature }}</p>
         </div>
-        
-        <nav class="site-state motion-element" style="display: none;">
+
+        <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="{{ url_for(theme.menu.archives) }}">
               <span class="site-state-item-count">{{ site.posts.length }}</span>
@@ -78,9 +69,33 @@
 
         {% if theme.rss %}
           <div class="feed-link motion-element">
-            <a href="{{ url_for(theme.rss) }}" rel="alternate">
+            <a href="{{ url_for(theme.rss) }}" rel="alternate" target="_blank">
               <i class="fa fa-rss"></i>
               RSS
+            </a>
+          </div>
+        {% endif %}
+
+        <div class="links-of-author motion-element">
+          {% if theme.social %}
+            {% for name, link in theme.social %}
+              <span class="links-of-author-item">
+                <a href="{{ link }}" target="_blank" title="{{ name }}">
+                  {% if theme.social_icons.enable %}
+                    <i class="fa fa-fw fa-{{ theme.social_icons[name] | default('globe') | lower }}"></i>
+                  {% endif %}
+                  {{ name }}
+                </a>
+              </span>
+            {% endfor %}
+          {% endif %}
+        </div>
+
+        {% set cc = {'by': 1, 'by-nc': 1, 'by-nc-nd': 1, 'by-nc-sa': 1, 'by-nd': 1, 'by-sa': 1, 'zero': 1} %}
+        {% if theme.creative_commons in cc %}
+          <div class="cc-license motion-element" itemprop="license">
+            <a href="https://creativecommons.org/{% if theme.creative_commons === 'zero' %}publicdomain/zero/1.0{% else %}licenses/{{ theme.creative_commons }}/4.0{% endif %}/" class="cc-opacity" target="_blank">
+              <img src="{{ url_for(theme.images) }}/cc-{{ theme.creative_commons }}.svg" alt="Creative Commons" />
             </a>
           </div>
         {% endif %}

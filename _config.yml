@@ -6,13 +6,14 @@
 title: "Vincent's Site"
 subtitle: "Talk is cheap, show me the code!"
 description: "Talk is cheap, show me the code!"
-author: Vincent Lau
+author: 刘文俊
+signature: 渣瓦程序员 | 一个脱离了高级趣味的人
 language: zh-Hans
 timezone:
 
 # URL
 ## If your site is put in a subdirectory, set url as 'http://yoursite.com/child' and root as '/child/'
-url: http://liuwenjun.info
+url: http://www.liuwj.me
 root: /
 permalink: :year/:month/:day/:title/
 permalink_defaults:
@@ -89,3 +90,11 @@ neat_js:
   compress: 
   exclude: 
     - '*.min.js'
+
+# npm install hexo-generator-feed --save
+feed:
+  type: atom
+  path: atom.xml
+  limit: 20
+  hub:
+  content:

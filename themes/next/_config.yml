@@ -11,7 +11,7 @@ keywords: "Vincent, 南方医科大学, 南医, 广东北江中学, 北中, 包�
 # Set rss to false to disable feed link.
 # Leave rss as empty to use site's feed link.
 # Set rss to specific value if you have burned your feed already.
-rss: false
+rss: /atom.xml
 
 # Specify the date when the site was setup
 since: 2015
@@ -59,8 +59,8 @@ menu_icons:
 
 # Schemes
 # scheme: Muse
-scheme: Mist
-# scheme: Pisces
+# scheme: Mist
+scheme: Pisces
 
 
 
