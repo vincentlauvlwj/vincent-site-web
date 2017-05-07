@@ -21,7 +21,7 @@
                 {{if toUser != null && toUser.id > 0}}
                 <a class="ds-comment-context" href="${toUser.homepage}" rel="nofollow" target="_blank">回复 ${toUser.name}: </a> 
                 {{/if}} 
-                ${content}
+                {{html content}}
               </p>
               <div class="ds-comment-footer ds-comment-actions">
                 <span class="ds-time">${createDateStr}</span>
