@@ -1,4 +1,4 @@
-var apiHost = "http://192.168.1.102"
+var apiHost = "http://api.liuwj.me"
 var smileyPanelHtml;
 
 function initSmileyPanelHtml() {

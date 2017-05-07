@@ -50,6 +50,7 @@
 
     <div class="back-to-top">
       <i class="fa fa-arrow-up"></i>
+      <span id="scrollpercent"><span>0</span>%</span>
     </div>
   </div>
 
