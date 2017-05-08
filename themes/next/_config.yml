@@ -16,7 +16,7 @@ rss: /atom.xml
 # Specify the date when the site was setup
 since: 2015
 
-
+use_https: true
 
 
 # ---------------------------------------------------------------
