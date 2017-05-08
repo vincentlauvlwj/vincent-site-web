@@ -193,6 +193,7 @@ baidu_analytics: 8911f3e92acbc8ceabb039c5e944c7f4
 # Disqus
 #disqus_shortname:
 
+enable_share: false
 # Baidu Share
 # Available value:
 #    button | slide
@@ -200,7 +201,7 @@ baidu_analytics: 8911f3e92acbc8ceabb039c5e944c7f4
 ##  type: button
 
 # Share
-jiathis: 2128673
+# jiathis: 2128673
 # add_this_id:
 
 # Share

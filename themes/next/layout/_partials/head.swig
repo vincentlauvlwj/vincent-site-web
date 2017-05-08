@@ -1,6 +1,6 @@
 {% if theme.use_https %}
   <!-- 站内所有 HTTP 资源，一律替换为 HTTPS -->
-  <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+  <!-- <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests"> -->
   <!-- 协议降级，跳转到非 HTTPS 的站点时，仍然携带 referrer 请求头 -->
   <meta name="referrer" content="always" />
 {% endif %}
