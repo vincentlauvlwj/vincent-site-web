@@ -1,4 +1,4 @@
-var apiHost = "http://api.liuwj.me"
+var apiHost = "https://api.liuwj.me"
 var smileyPanelHtml;
 
 function initSmileyPanelHtml() {
