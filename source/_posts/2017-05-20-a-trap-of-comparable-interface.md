@@ -72,7 +72,7 @@ tags:
 那么，现在我们需要表示一个「牌型」的概念，所谓「牌型」，在德州扑克里面，即是在玩家的手牌与桌面的公共牌中选取五张牌所组成的一个集合，在比牌时，「牌型」最大的玩家即可赢得奖池。在这个定义中，我们可以知道，「牌型」是一个集合，而且需要支持比较操作，因此我们可以让它实现 `Set` 和 `Comparable` 接口。在实际操作中，我们一般不会直接实现 `Set` 接口，而是选择继承 `AbstractSet` 类以减少代码量，因此，代码可能是这样的：
 
 	public class PokerCombination 
-			extends AbstractSet<PokerCard> implements Comparable<PokerCard> {
+			extends AbstractSet<PokerCard> implements Comparable<PokerCombination> {
 	    private final SortedSet<PokerCard> cards;
 	
 	    public PokerCombination(Collection<PokerCard> cards) {
@@ -93,7 +93,7 @@ tags:
 	    }
 	
 	    @Override
-	    public int compareTo(PokerCard o) {
+	    public int compareTo(PokerCombination o) {
 	        // compare the poker combinations
 	        return 0;
 	    }
