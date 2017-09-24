@@ -171,5 +171,13 @@ $(document).ready(function() {
         $(this).removeClass("ds-active");
     });
 
+    $(".ds-account-control").click(function() {
+    	if ($(this).hasClass("ds-active")) {
+    		$(this).removeClass("ds-active");
+    	} else {
+    		$(this).addClass("ds-active");
+    	}
+    });
+
     loadComments(false);
 });
