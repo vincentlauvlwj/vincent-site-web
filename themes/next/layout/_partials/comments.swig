@@ -78,17 +78,17 @@
 
           <div class="ds-post-toolbar">
             <div class="ds-post-options">
-              <span class="ds-guest-comment">
-                <input type="checkbox" name="guest">
-                <span class="label-pc">游客评论</span>
-                <span class="label-mobile">游客</span>
-              </span>
               <span class="ds-reply-user" style="display: none;">
                 <span class="label-pc">正在回复</span>
                 <span class="label-mobile">回复</span>
                 <input id="ds-reply-user-id" type="hidden" name="toUser.id">
                 <span id="ds-reply-user-name"></span>
                 <a class="ds-cancel-reply" href="javascript:void(0);">取消</a>
+              </span>
+              <span class="ds-guest-comment">
+                <input type="checkbox" name="guest">
+                <span class="label-pc">游客评论</span>
+                <span class="label-mobile">游客</span>
               </span>
             </div>
             <button class="ds-post-button" type="submit">发布</button>

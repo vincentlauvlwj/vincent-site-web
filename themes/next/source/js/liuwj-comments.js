@@ -1,4 +1,5 @@
-var apiHost = "https://api.liuwj.me"
+// var apiHost = "http://192.168.1.102";
+var apiHost = "https://api.liuwj.me";
 var smileyPanelHtml;
 
 function initSmileyPanelHtml() {
@@ -39,7 +40,7 @@ function toggleQuestComment() {
 	if ($(".ds-guest-comment input").is(":checked")) {
 		$(".ds-login-input input").prop("disabled", true);
 		$(".ds-login-input input").val("");
-    	$(".ds-replybox textarea").focus();
+		$(".ds-replybox textarea").focus();
 	} else {
 		$(".ds-login-input input").prop("disabled", false);
 	}
@@ -52,7 +53,7 @@ function refreshLoginStatus() {
         $(".ds-login-input").show();
         $(".ds-replybox .ds-avatar a").attr("href", "javascript:void(0);");
         $(".ds-replybox .ds-avatar img").attr("src", "https://cdn.v2ex.com/gravatar/?f=y&d=mm");
-        $(".ds-replybox textarea").attr("placeholder", "邮箱仅用于接收回复通知，绝不外泄，若有顾虑，请使用游客评论");
+        $(".ds-replybox textarea").attr("placeholder", "邮箱仅用于接收回复通知，绝不外泄，若仍有顾虑，请使用游客评论");
         $(".ds-input-wrapper-name input").val("");
         $(".ds-input-wrapper-email input").val("");
         $(".ds-input-wrapper-homepage input").val("");
@@ -73,8 +74,10 @@ function refreshLoginStatus() {
 }
 
 function login(user) {
-    Cookies.set("user", user, { expires: 1024, path: "/" });
-    refreshLoginStatus();
+	if (!user.guest) {
+	    Cookies.set("user", user, { expires: 1024, path: "/" });
+	    refreshLoginStatus();
+	}
 }
 
 function logout() {
@@ -123,6 +126,7 @@ function createComment() {
         pageId: window.location.pathname,
         content: $.trim($(".ds-replybox textarea").val()),
         fromUser: {
+        	guest: $(".ds-guest-comment input").is(":checked"),
             name: $.trim($(".ds-input-wrapper-name input").val()),
             email: $.trim($(".ds-input-wrapper-email input").val()),
             homepage: $.trim($(".ds-input-wrapper-homepage input").val())
@@ -138,18 +142,20 @@ function createComment() {
         return;
     }
 
-    if (request.fromUser.name === "") {
-        $(".ds-input-wrapper-name input").css("border-color", "red");
-        $(".ds-input-wrapper-name input").focus();
-        return;
-    }
+    if (!request.fromUser.guest) {
+	    if (request.fromUser.name === "") {
+	        $(".ds-input-wrapper-name input").css("border-color", "red");
+	        $(".ds-input-wrapper-name input").focus();
+	        return;
+	    }
 
-    var emailRegex = new RegExp("^[\\w-]+(\\.[\\w-]+)*@[\\w-]+(\\.[\\w-]+)+$");
-    if (request.fromUser.email === "" || !emailRegex.test(request.fromUser.email)) {
-        $(".ds-input-wrapper-email input").css("border-color", "red");
-        $(".ds-input-wrapper-email input").focus();
-        return;
-    }
+	    var emailRegex = new RegExp("^[\\w-]+(\\.[\\w-]+)*@[\\w-]+(\\.[\\w-]+)+$");
+	    if (request.fromUser.email === "" || !emailRegex.test(request.fromUser.email)) {
+	        $(".ds-input-wrapper-email input").css("border-color", "red");
+	        $(".ds-input-wrapper-email input").focus();
+	        return;
+	    }
+	}
 
     $.ajax({
         url: apiHost + "/comments/",
