@@ -86,7 +86,7 @@
                 <a class="ds-cancel-reply" href="javascript:void(0);">取消</a>
               </span>
               <span class="ds-guest-comment">
-                <input type="checkbox" name="guest">
+                <input type="checkbox" name="fromUser.guest">
                 <span class="label-pc">游客评论</span>
                 <span class="label-mobile">游客</span>
               </span>
