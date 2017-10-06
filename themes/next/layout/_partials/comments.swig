@@ -65,7 +65,7 @@
               <input type="text" name="fromUser.name" placeholder="请输入您的名字">
             </span>
             <span class="ds-input-wrapper ds-input-wrapper-email">
-              <input type="text" name="fromUser.email" placeholder="邮箱，仅用于接收回复">
+              <input type="text" name="fromUser.email" placeholder="邮箱，用于接收回复">
             </span>
             <span class="ds-input-wrapper ds-input-wrapper-homepage">
               <input type="text" name="fromUser.homepage" placeholder="您的主页">
@@ -73,13 +73,19 @@
           </div>
 
           <div class="ds-textarea-wrapper ds-rounded-top">
-            <textarea name="content" placeholder="说点什么吧…"></textarea>
+            <textarea name="content" placeholder="说点什么吧..."></textarea>
           </div>
 
           <div class="ds-post-toolbar">
             <div class="ds-post-options">
+              <span class="ds-guest-comment">
+                <input type="checkbox" name="guest">
+                <span class="label-pc">游客评论</span>
+                <span class="label-mobile">游客</span>
+              </span>
               <span class="ds-reply-user" style="display: none;">
-                <span>正在回复</span>
+                <span class="label-pc">正在回复</span>
+                <span class="label-mobile">回复</span>
                 <input id="ds-reply-user-id" type="hidden" name="toUser.id">
                 <span id="ds-reply-user-name"></span>
                 <a class="ds-cancel-reply" href="javascript:void(0);">取消</a>

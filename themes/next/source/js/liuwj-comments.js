@@ -35,6 +35,16 @@ function toggleSmileyPanel() {
     }
 }
 
+function toggleQuestComment() {
+	if ($(".ds-guest-comment input").is(":checked")) {
+		$(".ds-login-input input").prop("disabled", true);
+		$(".ds-login-input input").val("");
+    	$(".ds-replybox textarea").focus();
+	} else {
+		$(".ds-login-input input").prop("disabled", false);
+	}
+}
+
 function refreshLoginStatus() {
     var user = Cookies.getJSON("user");
     if (user == null) {
@@ -42,9 +52,11 @@ function refreshLoginStatus() {
         $(".ds-login-input").show();
         $(".ds-replybox .ds-avatar a").attr("href", "javascript:void(0);");
         $(".ds-replybox .ds-avatar img").attr("src", "https://cdn.v2ex.com/gravatar/?f=y&d=mm");
+        $(".ds-replybox textarea").attr("placeholder", "邮箱仅用于接收回复通知，绝不外泄，若有顾虑，请使用游客评论");
         $(".ds-input-wrapper-name input").val("");
         $(".ds-input-wrapper-email input").val("");
         $(".ds-input-wrapper-homepage input").val("");
+        $(".ds-guest-comment").show();
     } else {
         $(".ds-toolbar").show();
         $(".ds-toolbar .ds-visitor-name").attr("href", user.homepage);
@@ -52,9 +64,11 @@ function refreshLoginStatus() {
         $(".ds-login-input").hide();
         $(".ds-replybox .ds-avatar a").attr("href", user.homepage);
         $(".ds-replybox .ds-avatar img").attr("src", user.avatar);
+        $(".ds-replybox textarea").attr("placeholder", "说点什么吧...");
         $(".ds-input-wrapper-name input").val(user.name);
         $(".ds-input-wrapper-email input").val(user.email);
         $(".ds-input-wrapper-homepage input").val(user.homepage);
+        $(".ds-guest-comment").hide();
     }
 }
 
@@ -177,6 +191,18 @@ $(document).ready(function() {
     	} else {
     		$(this).addClass("ds-active");
     	}
+    });
+
+    $(".ds-guest-comment input").click(toggleQuestComment);
+
+    $(".ds-guest-comment span").click(function() {
+    	var $checkbox = $(".ds-guest-comment input");
+    	if ($checkbox.is(":checked")) {
+    		$checkbox.prop("checked", false);
+    	} else {
+    		$checkbox.prop("checked", true);
+    	}
+    	toggleQuestComment();
     });
 
     loadComments(false);
