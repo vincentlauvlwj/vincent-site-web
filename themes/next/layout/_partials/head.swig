@@ -72,10 +72,10 @@
 {% endif %}
 
 {% if theme.highlight %}
-  <link rel="stylesheet" href="/css/highlight/{{ theme.highlight }}.css">
+  <link rel="stylesheet" href="{{ url_for(theme.vendors) }}/highlight/css/{{ theme.highlight }}.css">
 {% endif %}
 
-<link rel="stylesheet" href="/css/emoji.css">
+<link rel="stylesheet" href="{{ url_for(theme.vendors) }}/emoji/emoji.css">
 
 {{
   open_graph({
