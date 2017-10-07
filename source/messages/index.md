@@ -1,7 +1,6 @@
 ---
 title: 留言板
 type: "messages"
-sidebar_scroll: true
 ---
 
 <h3> Hi:</h3>
