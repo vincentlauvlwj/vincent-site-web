@@ -95,7 +95,8 @@
         {% if theme.creative_commons in cc %}
           <div class="cc-license motion-element" itemprop="license">
             <a href="https://creativecommons.org/{% if theme.creative_commons === 'zero' %}publicdomain/zero/1.0{% else %}licenses/{{ theme.creative_commons }}/4.0{% endif %}/" class="cc-opacity" target="_blank">
-              <img src="{{ url_for(theme.images) }}/cc-{{ theme.creative_commons }}.svg" alt="Creative Commons" />
+              <!--<img src="{{ url_for(theme.images) }}/cc-{{ theme.creative_commons }}.svg" alt="Creative Commons" />-->
+              <img src="https://licensebuttons.net/l/{{ theme.creative_commons }}/4.0/88x31.png" alt="Creative Commons" />
             </a>
           </div>
         {% endif %}
