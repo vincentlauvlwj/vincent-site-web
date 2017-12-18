@@ -94,7 +94,7 @@
         {% set cc = {'by': 1, 'by-nc': 1, 'by-nc-nd': 1, 'by-nc-sa': 1, 'by-nd': 1, 'by-sa': 1, 'zero': 1} %}
         {% if theme.creative_commons in cc %}
           <div class="cc-license motion-element" itemprop="license">
-            <a href="https://creativecommons.org/{% if theme.creative_commons === 'zero' %}publicdomain/zero/1.0{% else %}licenses/{{ theme.creative_commons }}/4.0{% endif %}/" class="cc-opacity" target="_blank">
+            <a href="https://creativecommons.org/{% if theme.creative_commons === 'zero' %}publicdomain/zero/1.0{% else %}licenses/{{ theme.creative_commons }}/4.0{% endif %}/" class="cc-opacity" target="_blank" title="本站所有文章除特别声明外，均采用 cc {{ theme.creative_commons }} 4.0 许可协议">
               <!--<img src="{{ url_for(theme.images) }}/cc-{{ theme.creative_commons }}.svg" alt="Creative Commons" />-->
               <img src="https://licensebuttons.net/l/{{ theme.creative_commons }}/4.0/88x31.png" alt="Creative Commons" />
             </a>
