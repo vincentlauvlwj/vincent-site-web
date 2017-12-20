@@ -12,9 +12,9 @@ GitHub: [https://github.com/vincentlauvlwj](https://github.com/vincentlauvlwj)
 
 ## 关于本站
 
-本站使用 [Hexo](https://hexo.io/) 构建，所用模版是 [NextT 主题](http://theme-next.iissnan.com/)，托管在 [Coding Pages](https://pages.coding.me/) 上，特此鸣谢以上机构和开发者。不定时更新，频率大概为半年一篇，不写初级教程，不写琐碎笔记，只写自己的一点感悟和思考。
+本站使用 [Hexo](https://hexo.io/) 构建，托管在 [Coding Pages](https://pages.coding.me/) 上，所用模版是 [NexT 主题](http://theme-next.iissnan.com/)，然后自己做了一点点改造，特此鸣谢以上机构和开发者。博主较懒，不定时更新，频率大概为半年一篇。不写初级教程，不写琐碎笔记，也不胡乱转载，只写自己的一点感悟和思考。
 
 ## 关于版权
 
 <img alt="知识共享许可协议" class="no-fancy-box" style="border-width:0; display: inline;" src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" />
-本站作品采用「<a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/">知识共享署名-非商业性使用-相同方式共享 4.0 国际许可协议 (CC BY-NC-SA 4.0)</a>」进行许可。
+如无特别说明，本站所有作品均采用「<a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/">知识共享署名-非商业性使用-相同方式共享 4.0 国际许可协议 (CC BY-NC-SA 4.0)</a>」进行许可。
