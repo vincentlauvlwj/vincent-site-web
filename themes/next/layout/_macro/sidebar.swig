@@ -35,7 +35,7 @@
           <img class="site-author-image" itemprop="image"
                src="{{ theme.avatar or url_for(theme.images) + '/default_avatar.jpg' }}"
                alt="{{ theme.author }}" />
-          <p class="site-author-name" itemprop="name">{{ theme.author }}</p>
+          <p class="site-author-name" itemprop="name">{{ theme.nick_name }}</p>
             <p class="site-description motion-element" itemprop="description">{{ theme.signature }}</p>
         </div>
 

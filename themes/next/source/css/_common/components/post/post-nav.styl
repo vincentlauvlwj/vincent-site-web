@@ -1,19 +1,19 @@
 .post-nav {
-  overflow: hidden;
-  margin-top: 60px;
-  padding: 10px;
-  white-space: nowrap;
+  display: table;
+  margin-top: 15px;
+  width: 100%;
   border-top: 1px solid $gainsboro;
 }
 
 .post-nav-item {
-  display: inline-block;
-  width: 50%;
-  white-space: normal;
+  display: table-cell;
+  padding: 10px 0 0 0;
+  width: 45%;
+  vertical-align: top;
 
   a {
     position: relative;
-    display: inline-block;
+    display: block;
     line-height: 25px;
     font-size: 14px;
     color: $link-color;
@@ -29,8 +29,35 @@
     i { font-size: 12px; }
   }
 
+  .fa {
+    position: absolute;
+    top: 8px;
+    left: 0;
+    font-size: 12px;
+  }
 }
 
-.post-nav-next {}
+.post-nav-next {
 
-.post-nav-prev { text-align: right; }
+  a {
+    padding-left: 15px;
+  }
+}
+
+.post-nav-prev { 
+  text-align: right; 
+
+  a {
+    padding-right: 15px;
+  }
+
+  .fa {
+    right: 0;
+    left: auto;
+  }
+}
+
+.post-nav-divider {
+  display: table-cell;
+  width: 10%;
+}

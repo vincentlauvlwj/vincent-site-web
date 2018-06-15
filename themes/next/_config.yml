@@ -167,7 +167,9 @@ auto_excerpt:
 
 
 # Use Lato font
-use_font_lato: true
+use_font_lato: false
+
+use_font_monda: true
 
 
 
