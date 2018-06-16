@@ -3,6 +3,7 @@ layout:     post
 title:      "绕过 Java 编译器检查，在任何地方抛出受检异常"
 author:     "刘文俊"
 date:       2017-12-16
+top: true
 tags:
     - Java
 ---
