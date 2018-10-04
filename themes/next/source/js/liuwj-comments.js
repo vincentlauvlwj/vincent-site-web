@@ -36,7 +36,7 @@ function toggleSmileyPanel() {
     }
 }
 
-function toggleQuestComment() {
+function toggleGuestComment() {
 	if ($(".ds-guest-comment input").is(":checked")) {
 		$(".ds-login-input input").prop("disabled", true);
 		$(".ds-login-input input").val("");
@@ -199,7 +199,7 @@ $(document).ready(function() {
     	}
     });
 
-    $(".ds-guest-comment input").click(toggleQuestComment);
+    $(".ds-guest-comment input").click(toggleGuestComment);
 
     $(".ds-guest-comment span").click(function() {
     	var $checkbox = $(".ds-guest-comment input");
@@ -208,7 +208,7 @@ $(document).ready(function() {
     	} else {
     		$checkbox.prop("checked", true);
     	}
-    	toggleQuestComment();
+    	toggleGuestComment();
     });
 
     loadComments(false);
