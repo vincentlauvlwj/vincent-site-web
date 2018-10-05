@@ -13,7 +13,7 @@ tags:
 
 
 我的第一个个人站点就这么开通了。
-作为一个程序狗，终于实现了一直以来想要一个个人网站的愿望，心里有点小激动呢<img style="display: inline;" src="/img/in-post/hello-world-laugh.gif"/>
+作为一个程序狗，终于实现了一直以来想要一个个人网站的愿望，心里有点小激动呢<img style="display: inline;" src="https://www.liuwj.me/files/in-post/hello-world-laugh.gif"/>
 先写一个HelloWorld试试
 
 

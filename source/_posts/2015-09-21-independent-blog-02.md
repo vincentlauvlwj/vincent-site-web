@@ -4,7 +4,6 @@ title:      "使用GitHub Pages搭建独立博客（二）"
 subtitle:   "使用Jekyll生成静态网站"
 author:     "刘文俊"
 date:       2015-09-21
-header-img: "img/20150921.jpg"
 tags:
     - GitHub Pages
     - 独立博客
@@ -26,7 +25,7 @@ Jekyll是一个简单而又强大的静态博客生成器，它可以使用你�
 5. **Jekyll** - 首先在仓库的根目录下创建一个名为`Gemfile`的文件，内容为
 
 		source 'https://rubygems.org'
-		gem 'github-pages'
+	​	gem 'github-pages'
 
    然而，由于一些不能描写的原因，[https://rubygems.org](https://rubygems.org) 这个网址在我国大陆是不能访问的，因此我们使用它的镜像站[http://ruby.taobao.org/](http://ruby.taobao.org/) 代替，所以`Gemfile`文件的内容实际是
 
@@ -57,7 +56,7 @@ head.html
 	<head>
 	    <title>{% if page.title %}{{ page.title }} - {{ site.title }}{% else %}{{ site.title }}{% endif %}</title>
 	</head>
- 
+
 在`head.html`中，我们可以看出，在Jekyll中，程序指令使用`{% raw %}{% %}{% endraw %}`语法包含起来，读取变量使用的是`{% raw %}{{ }}{% endraw %}`语法
 
 nav.html

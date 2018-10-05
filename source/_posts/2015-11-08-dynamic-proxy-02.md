@@ -18,10 +18,10 @@ tags:
 
 新扩展的类名为 ProxyEx，将直接继承于 java.lang.reflect.Proxy，也声明了与原 Proxy 类中同名的 public 静态方法，目的是保持与原代理机制在使用方法上的完全一致。
 **图 1. ProxyEx 类继承图**
-![](/img/in-post/dynamic-proxy-03.png)
+![](https://www.liuwj.me/files/in-post/dynamic-proxy-03.png)
 与原代理机制最大的区别在于，动态生成的代理类将不再从 Proxy 类继承，改而继承需被代理的类。由于 Java 的单继承原则，扩展代理机制所支持的类数目不得多于一个，但它可以声明实现若干接口。包管理的机制与原来相似，不支持一个以上的类和接口同时为非 public；如果仅有一个非 public 的类或接口，假设其包为 PackageA，则动态生成的代理类将位于包 PackageA；否则将位于被代理的类所在的包。生成的代理类也被赋予 final 和 public 访问属性，且其命名规则类似地为“父类名 +ProxyN”（N 也是递增的阿拉伯数字）。最后，在异常处理方面则与原来保持完全一致。
 **图 2. 动态生成的代理类的继承图**
-![](/img/in-post/dynamic-proxy-04.png)
+![](https://www.liuwj.me/files/in-post/dynamic-proxy-04.png)
 
 ## 模板
 

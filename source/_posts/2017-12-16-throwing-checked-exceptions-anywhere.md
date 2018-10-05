@@ -16,7 +16,7 @@ tags:
 
 从是否被编译器强制检查一点，异常又可分为受检异常(Checked Exception)和未受检异常(Unchecked Exception)。未受检异常派生自 Error 或者 RuntimeException，表示不可恢复的程序错误，典型例子有 AssertionError、NullPointerException 等，编译器不会强制我们捕获这类异常。受检异常则是除了 Error/RuntimeException 之外，派生自 Throwable 或者 Exception 的其他异常，比如 IOException、SQLException 等。如果一个方法声明自己可能抛出受检异常，那么编译器会强制它的调用者必须使用 try-catch 捕获此异常，或者在自己的方法中加上 throws 声明将异常继续传播给外界。
 
-![](/img/in-post/java-exception-hierarchy.jpg)
+![](https://www.liuwj.me/files/in-post/java-exception-hierarchy.jpg)
 
 多年以来，Java 中受检异常的设计一直颇受争议，反对者认为，受检异常容易破坏方法声明的兼容性，会使代码的可读性降低，还增加开发的工作量等等。当然也有一些支持者，他们认为受检异常可以强迫程序员去思考，有助于他们写出更健壮的代码，可以参考王垠的文章「[Kotlin 和 Checked Exception](http://www.yinwang.org/blog-cn/2017/05/23/kotlin)」。
 

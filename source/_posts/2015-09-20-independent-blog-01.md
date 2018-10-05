@@ -4,7 +4,6 @@ title:      "使用GitHub Pages搭建独立博客（一）"
 subtitle:   "开始使用GitHub Pages"
 author:     "刘文俊"
 date:       2015-09-20
-header-img: "img/20150914.jpg"
 tags:
     - GitHub Pages
     - 独立博客
@@ -44,11 +43,11 @@ GitHub Pages具有两种基本的类型：用户/组织页面(User/Organization 
 此处以项目页面为例，步骤如下：
 
 1. 登录你的GitHub，打开要生成GitHub Pages的仓库的首页。
-2. 点击右侧工具栏的**Setting**。![](/img/in-post/independent-blog-repo-actions-settings.png)
-3. 点击**Automatic Page Generator**按钮。![](/img/in-post/independent-blog-pages-automatic-page-generator.png)
+2. 点击右侧工具栏的**Setting**。![](https://www.liuwj.me/files/in-post/independent-blog-repo-actions-settings.png)
+3. 点击**Automatic Page Generator**按钮。![](https://www.liuwj.me/files/in-post/independent-blog-pages-automatic-page-generator.png)
 4. 在编辑框中输入你的内容，当然也可以使用README中的内容。
 5. 编辑完毕后点击**Continue To Layouts**按钮。
-6. 选择你喜欢的主题后，点击右上角的**Publish page**。![](/img/in-post/independent-blog-page-generator-picker.png)
+6. 选择你喜欢的主题后，点击右上角的**Publish page**。![](https://www.liuwj.me/files/in-post/independent-blog-page-generator-picker.png)
 
 用户/组织页面的生成步骤也是类似的，在此不做赘述。
 自动生成完成后，你可以获得所生成的HTML代码。如果你生成的是一个项目页面，执行如下命令

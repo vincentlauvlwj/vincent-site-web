@@ -4,7 +4,6 @@ title:      "使用GitHub Pages搭建独立博客（三）"
 subtitle:   "添加一些扩展功能"
 author:     "刘文俊"
 date:       2015-09-27
-header-img: "img/20150921.jpg"
 tags:
     - GitHub Pages
     - 独立博客
@@ -64,7 +63,7 @@ tags:
 	  max-width: 100%;
 	}
 
-现在，配置已经完成了，那么要如何在文章中输入emoji表情呢？我们只需要在希望插入emoji表情的地方输入那个表情对应的代码就可以了。一般来说，emoji表情的代码是由两个冒号包围的，如蠢汪<i class="emoji emoji-dog"></i>这个表情的代码就是<code><i>:</i>dog<i>:</i></code>。每个emoji表情对应的代码可以在[Emoji cheat sheet for GitHub, Basecamp and other services](http://www.emoji-cheat-sheet.com/)获得，虽然这个网站的访问速度贼慢<i class="emoji emoji-broken-heart"></i>，下面放一张常用表情代码的截图以供参考![](/img/in-post/independent-blog-page-emoji-cheat-sheet.png)
+现在，配置已经完成了，那么要如何在文章中输入emoji表情呢？我们只需要在希望插入emoji表情的地方输入那个表情对应的代码就可以了。一般来说，emoji表情的代码是由两个冒号包围的，如蠢汪<i class="emoji emoji-dog"></i>这个表情的代码就是<code><i>:</i>dog<i>:</i></code>。每个emoji表情对应的代码可以在[Emoji cheat sheet for GitHub, Basecamp and other services](http://www.emoji-cheat-sheet.com/)获得，虽然这个网站的访问速度贼慢<i class="emoji emoji-broken-heart"></i>，下面放一张常用表情代码的截图以供参考![](https://www.liuwj.me/files/in-post/independent-blog-page-emoji-cheat-sheet.png)
 需要注意的是，在本地使用Jekyll预览你的文章时，须使用`bundle exec jekyll serve`命令，切不可使用`jekyll serve --watch`。只有使用`bundle`命令，才可以使本地预览到的效果和最终提交到GitHub上显示的效果完全一致。而且你还可以使用`bundle update`命令使你本地的Jekyll版本保持最新。正是因为这个原因，所以在上篇文章中我只介绍了`bundle`命令，而没有介绍直接使用`jekyll`命令的方法。
 
 ## 自定义404页面

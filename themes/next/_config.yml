@@ -3,7 +3,7 @@
 # ---------------------------------------------------------------
 
 # Put your favicon.ico into `hexo-site/source/` directory.
-favicon: /img/favicon.ico
+favicon: /files/favicon.ico
 
 # Set default keywords (Use a comma to separate)
 keywords: "Vincent, 南方医科大学, 南医, 广东北江中学, 北中, 包封云"
@@ -98,7 +98,7 @@ social_icons:
 # Sidebar Avatar
 # in theme directory(source/images): /images/avatar.jpg
 # in site  directory(source/uploads): /uploads/avatar.jpg
-avatar: /img/new_avatar.png
+avatar: /files/new_avatar.png
 
 
 # Table Of Ccontents in the Sidebar
