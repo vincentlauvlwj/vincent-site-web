@@ -95,13 +95,17 @@
 <script type="text/javascript" id="hexo.configuration">
   var NexT = window.NexT || {};
   var CONFIG = {
+    root: '{{ theme.root }}',
     scheme: '{{ theme.scheme }}',
     sidebar: {{ theme.sidebar | json_encode }},
     fancybox: {{ theme.fancybox }},
     motion: {{ theme.use_motion }},
-    duoshuo: {
-      userId: {{ theme.duoshuo_info.user_id | default() }},
-      author: '{{ theme.duoshuo_info.admin_nickname | default(__('author'))}}'
+    algolia: {
+      applicationID: '{{ theme.algolia.applicationID }}',
+      apiKey: '{{ theme.algolia.apiKey }}',
+      indexName: '{{ theme.algolia.indexName }}',
+      hits: {{ theme.algolia_search.hits | json_encode }},
+      labels: {{ theme.algolia_search.labels | json_encode }}
     }
   };
 </script>

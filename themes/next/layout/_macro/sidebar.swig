@@ -49,19 +49,19 @@
 
           {% if site.categories.length > 0 %}
             <div class="site-state-item site-state-categories">
-              {% if theme.menu.categories %}<a href="{{ url_for(theme.menu.categories) }}">{% endif %}
+              <a href="{{ url_for('/archives') }}">
                 <span class="site-state-item-count">{{ site.categories.length }}</span>
                 <span class="site-state-item-name">{{ __('state.categories') }}</span>
-              {% if theme.menu.categories %}</a>{% endif %}
+              </a>
             </div>
           {% endif %}
 
           {% if site.tags.length > 0 %}
             <div class="site-state-item site-state-tags">
-              {% if theme.menu.tags %}<a href="{{ url_for(theme.menu.tags) }}">{% endif %}
+              <a href="{{ url_for('/tags') }}">
                 <span class="site-state-item-count">{{ site.tags.length }}</span>
                 <span class="site-state-item-name">{{ __('state.tags') }}</span>
-              {% if theme.menu.tags %}</a>{% endif %}
+              </a>
             </div>
           {% endif %}
 

@@ -65,8 +65,9 @@
   {% include '_scripts/boostrap.swig' %}
 
   {% include '_scripts/third-party/comments.swig' %}
-  {% include '_scripts/third-party/tinysou.swig' %}
-  {% include '_scripts/third-party/localsearch.swig' %}
+  {% include '_scripts/third-party/search/tinysou.swig' %}
+  {% include '_scripts/third-party/search/localsearch.swig' %}
+  {% include '_scripts/third-party/search/algolia.swig' %}
   {% include '_scripts/third-party/mathjax.swig' %}
   {% include '_scripts/third-party/lean-analytics.swig' %}
   {% include '_scripts/baidu-push.swig' %}
