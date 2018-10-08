@@ -75,12 +75,12 @@
           <script type="text/javascript">
             function loadMessageCount() {
               $.ajax({
-                url: "https://api.liuwj.me/comments/count?pageId=" + encodeURI("/messages/"),
+                url: "https://api.liuwj.me/comments/stats",
                 type: "get",
                 dataType: "json",
                 async: true,
                 success: function(rsp) {
-                  $(".site-state-messages .site-state-item-count").html(rsp.commentCount)
+                  $(".site-state-messages .site-state-item-count").html(rsp.stats.sum)
                 }
               });
             }
