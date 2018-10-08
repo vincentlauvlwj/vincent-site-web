@@ -38,11 +38,11 @@ function toggleSmileyPanel() {
 
 function toggleGuestComment() {
 	if ($(".ds-guest-comment input").is(":checked")) {
-		$(".ds-login-input input").prop("disabled", true);
+		$(".ds-login-input").hide();
 		$(".ds-login-input input").val("");
 		$(".ds-replybox textarea").focus();
 	} else {
-		$(".ds-login-input input").prop("disabled", false);
+		$(".ds-login-input").show();
 	}
 }
 
