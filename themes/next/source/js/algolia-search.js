@@ -3,9 +3,7 @@
 
 $(document).ready(function () {
   var algoliaSettings = CONFIG.algolia;
-  var isAlgoliaSettingsValid = algoliaSettings.appId &&
-                               algoliaSettings.apiKey &&
-                               algoliaSettings.indexName;
+  var isAlgoliaSettingsValid = algoliaSettings.appId && algoliaSettings.apiKey && algoliaSettings.indexName;
 
   if (!isAlgoliaSettingsValid) {
     window.console.error('Algolia Settings are invalid.');
@@ -107,19 +105,29 @@ $(document).ready(function () {
 
   search.start();
 
+  function togglePopup() {
+    var $popup = $('.popup');
+    if ($popup.is(':hidden')) {
+      $popup.show();
+
+      var overlay = $('<div class="search-popup-overlay algolia-pop-overlay"></div>');
+      overlay.click(togglePopup);
+
+      $('body').append(overlay).css('overflow', 'hidden');
+      $('#algolia-search-input').find('input').focus();
+
+    } else {
+      $popup.hide();
+
+      $('.algolia-pop-overlay').remove();
+      $('body').css('overflow', '');
+    }
+  }
+
   $('.popup-trigger').on('click', function(e) {
     e.stopPropagation();
-    $('body')
-      .append('<div class="search-popup-overlay algolia-pop-overlay"></div>')
-      .css('overflow', 'hidden');
-    $('.popup').toggle();
-    $('#algolia-search-input').find('input').focus();
+    togglePopup();
   });
 
-  $('.popup-btn-close').click(function(){
-    $('.popup').hide();
-    $('.algolia-pop-overlay').remove();
-    $('body').css('overflow', '');
-  });
-
+  $('.popup-btn-close').click(togglePopup);
 });
