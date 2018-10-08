@@ -36,7 +36,7 @@
                src="{{ theme.avatar or url_for(theme.images) + '/default_avatar.jpg' }}"
                alt="{{ theme.author }}" />
           <p class="site-author-name" itemprop="name">{{ theme.nick_name }}</p>
-            <p class="site-description motion-element" itemprop="description">{{ theme.signature }}</p>
+          <p class="site-description motion-element" itemprop="description">{{ theme.signature }}</p>
         </div>
 
         <nav class="site-state motion-element">
@@ -64,6 +64,33 @@
               </a>
             </div>
           {% endif %}
+
+          <div class="site-state-item site-state-messages">
+            <a href="{{ url_for('/messages') }}">
+              <span class="site-state-item-count">0</span>
+              <span class="site-state-item-name">{{ __('state.messages') }}</span>
+            </a>
+          </div>
+          
+          <script type="text/javascript">
+            function loadMessageCount() {
+              $.ajax({
+                url: "https://api.liuwj.me/comments/count?pageId=" + encodeURI("/messages/"),
+                type: "get",
+                dataType: "json",
+                async: true,
+                success: function(rsp) {
+                  $(".site-state-messages .site-state-item-count").html(rsp.commentCount)
+                }
+              });
+            }
+
+            if (window.attachEvent) {
+              window.attachEvent("onload", loadMessageCount);
+            } else if (window.addEventListener) {
+              window.addEventListener("load", loadMessageCount, false);
+            }
+          </script>
 
         </nav>
 

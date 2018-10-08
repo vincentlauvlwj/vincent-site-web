@@ -59,6 +59,7 @@ state:
   pages: 页面
   tags: 标签
   categories: 分类
+  messages: 留言
 
 cheers:
   um: 嗯..
