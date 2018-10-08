@@ -101,7 +101,7 @@
     fancybox: {{ theme.fancybox }},
     motion: {{ theme.use_motion }},
     algolia: {
-      applicationID: '{{ theme.algolia.applicationID }}',
+      appId: '{{ theme.algolia.appId }}',
       apiKey: '{{ theme.algolia.apiKey }}',
       indexName: '{{ theme.algolia.indexName }}',
       hits: {{ theme.algolia_search.hits | json_encode }},

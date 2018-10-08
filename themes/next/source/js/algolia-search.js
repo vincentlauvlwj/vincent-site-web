@@ -3,7 +3,7 @@
 
 $(document).ready(function () {
   var algoliaSettings = CONFIG.algolia;
-  var isAlgoliaSettingsValid = algoliaSettings.applicationID &&
+  var isAlgoliaSettingsValid = algoliaSettings.appId &&
                                algoliaSettings.apiKey &&
                                algoliaSettings.indexName;
 
@@ -13,7 +13,7 @@ $(document).ready(function () {
   }
 
   var search = instantsearch({
-    appId: algoliaSettings.applicationID,
+    appId: algoliaSettings.appId,
     apiKey: algoliaSettings.apiKey,
     indexName: algoliaSettings.indexName,
     searchFunction: function (helper) {
@@ -37,12 +37,22 @@ $(document).ready(function () {
       hitsPerPage: algoliaSettings.hits.per_page || 10,
       templates: {
         item: function (data) {
-          var link = data.permalink ? data.permalink : (CONFIG.root + data.path);
-          return (
-            '<a href="' + link + '" class="algolia-hit-item-link">' +
-              data._highlightResult.title.value +
-            '</a>'
-          );
+          var link = CONFIG.root + data.path;
+          var title = data._highlightResult.title
+          var subtitle = data._highlightResult.subtitle
+          if (subtitle) {
+            return (
+              '<a href="' + link + '" class="algolia-hit-item-link">' +
+                title.value + ' - ' + subtitle.value +
+              '</a>'
+            );
+          } else {
+            return (
+              '<a href="' + link + '" class="algolia-hit-item-link">' +
+                title.value +
+              '</a>'
+            );
+          }
         },
         empty: function (data) {
           return (
