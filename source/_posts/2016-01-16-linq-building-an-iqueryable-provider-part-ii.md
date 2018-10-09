@@ -24,6 +24,7 @@ tags:
 
 `QueryTranslator`简单地访问查询表达式树中的每个节点，然后用`StringBuilder`将支持的操作转换成文本。为了代码的清晰，我们假设有一个叫`ExpressionVisitor`的类，它定义了访问表达式节点的基本模式（我会在文章的结尾附上这个类的代码的，现在暂且将就一下）。
 
+````cs
 	internal class QueryTranslator : ExpressionVisitor {
 	    StringBuilder sb;
 	 
@@ -141,6 +142,7 @@ tags:
 	        throw new NotSupportedException(string.Format("The member '{0}' is not supported", m.Member.Name));
 	    }
 	}
+````
 
 你看，这里虽然没有多少东西，但是也相当复杂。我所支持的表达式树充其量就是具有两个参数的方法调用节点，这两个参数一个是调用源（argument 0），一个是谓词（argument 1）。看上面的`VisitMethodCall`方法，我显式处理了`Queryable.Where`方法，生成`SELECT * FROM (`，递归访问调用源然后拼接上`) AS T WHERE `，最后再访问谓词，这样就可以在调用源中以嵌套子查询的方式支持其他查询操作。我没有处理其他的查询操作，但是通过这种方式，也能优雅地处理多个连续的`Where`方法调用。表的别名可以随便起（我用了“T”），因为我没有生成任何对别名的引用。一个完备的提供程序当然会提供这个。
 
@@ -152,17 +154,22 @@ tags:
 
 对于查询：
 
+````cs
 	Query<Customers> customers = ...;
 	IQueryable<Customers> q = customers.Where(c => c.City == "London");
+````
 
 生成如下SQL:
 
+````sql
 	SELECT * FROM (SELECT * FROM Customers) AS T WHERE (City = ‘London’)
+````
 
 ## The Object Reader
 
 对象读取器的作用是将SQL查询返回的结果转换为对象。我写了一个简单的类，它的构造方法以`DbDataReader`为参数，具有类型参数`T`，还实现了`IEnumerable<T>`接口。这里面也没有什么花哨的东西，只是使用反射来为类的字段赋值罢了。字段的名字必须与`DbDataReader`中的列名匹配，并且字段的类型也要与之兼容。
 
+````cs
 	internal class ObjectReader<T> : IEnumerable<T>, IEnumerable where T : class, new() {
 	    Enumerator enumerator;
 	 
@@ -251,6 +258,7 @@ tags:
 	        }
 	    }
 	}
+````
 
 `ObjectReader`类为从`DbDataReader`中读取出来的每一行数据创建一个`T`类型的对象，使用反射API`FieldInfo.SetValue`来给对象中的每一个字段赋值。`ObjectReader`对象被创建的时候会实例化一个内部类`Enumerator`的对象，`GetEnumerator`方法被调用的时候会返回这个枚举器。因为`DbDataReader`不能重置和再次运行，所以这个枚举器也只能被使用一次，第二次调用`GetEnumerator`会抛出一个异常。
 
@@ -260,6 +268,7 @@ tags:
 
 有了上面的两个类和上篇文章中定义的类，现在已经可以很容易就把它们结合起来，写出一个真正的`IQueryable`LINQ提供程序。
 
+````cs
 	public class DbQueryProvider : QueryProvider {
 	    DbConnection connection;
 	 
@@ -287,6 +296,7 @@ tags:
 	        return new QueryTranslator().Translate(expression);
 	    }
 	}
+````
 
 `GetQueryText`方法使用`QueryTranslator`来产生SQL命令，`Execute`方法使用`QueryTranslator`和`ObjectReader`来创建`DbCommand`对象、执行命令、返回`IEnumerable`类型的结果。
 
@@ -294,6 +304,7 @@ tags:
 
 现在，我们已经有了一个提供程序，让我们来写个demo试试看。仿照LINQ to SQL的模式，我定义了一个对应于Customers表的类，一个保存了查询对象（根查询）的“Context”，和一个使用了它们的小程序。
 
+````cs
 	public class Customers {
 	    public string CustomerID;
 	    public string ContactName;
@@ -340,9 +351,11 @@ tags:
 	        }
 	    }
 	}
+````
 
 运行这个程序，会得到下面的输出（注意必须将上面的数据库连接串替换成你自己的）：
 
+````plain
 	Query:
 	SELECT * FROM (SELECT * FROM Customers) AS T WHERE (City = 'London')
 	
@@ -352,6 +365,7 @@ tags:
 	Name: Ann Devon
 	Name: Simon Crowther
 	Name: Hari Kumar
+````
 
 Excellent，正是我们想要的，计划实现了，心里有点小激动呢。<i class="emoji emoji-smile"></i>
 
@@ -369,6 +383,7 @@ Excellent，正是我们想要的，计划实现了，心里有点小激动呢�
 
 下面是源码，Enjoy。<i class="emoji emoji-smile"></i>
 
+````cs
 	public abstract class ExpressionVisitor {
 	    protected ExpressionVisitor() {
 	    }
@@ -669,3 +684,4 @@ Excellent，正是我们想要的，计划实现了，心里有点小激动呢�
 	        return iv;
 	    }
 	}
+	````

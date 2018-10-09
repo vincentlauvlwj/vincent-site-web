@@ -52,6 +52,7 @@ GitHub Pages具有两种基本的类型：用户/组织页面(User/Organization 
 用户/组织页面的生成步骤也是类似的，在此不做赘述。
 自动生成完成后，你可以获得所生成的HTML代码。如果你生成的是一个项目页面，执行如下命令
 
+````plain
 	$ cd repository
 	$ git fetch origin
 	remote: Counting objects: 92, done.
@@ -64,9 +65,11 @@ GitHub Pages具有两种基本的类型：用户/组织页面(User/Organization 
 	$ git checkout gh-pages
 	Branch gh-pages set up to track remote branch gh-pages from origin.
 	Switched to a new branch 'gh-pages'
+````
 
 如果你生成的是一个用户/组织页面，HTML代码是在`master`分支而不是`gh-pages`分支中，故执行如下命令
 
+````plain
 	$ cd repository
 	$ git checkout master
 	Switched to branch 'master'
@@ -85,6 +88,7 @@ GitHub Pages具有两种基本的类型：用户/组织页面(User/Organization 
 	98 files changed, 18123 insertions(+), 1 deletion(-)
 	create mode 100644 index.html
 	...
+````
 
 ## 手工创建GitHub Pages
 如果你对Git命令行比较熟悉的话，可以手工创建一个GitHub Pages，此处以项目页面为例（用户/组织页面的操作类似，不同之处就在于它们是在`master`分支而不是`gh-pages`分支下进行操作），步骤如下：
@@ -92,6 +96,7 @@ GitHub Pages具有两种基本的类型：用户/组织页面(User/Organization 
 ### 克隆一个全新的仓库
 要为项目创建一个GitHub Pages站点，你需要先在仓库中创建一个`orphan`分支（与其他分支没有关联，不共享任何信息的分支），保险起见，你可以先克隆一个全新的仓库，然后在其中进行操作。
 
+````plain
 	$ git clone github.com/user/repository.git
 	# Clone our repository
 	Cloning into 'repository'...
@@ -100,10 +105,12 @@ GitHub Pages具有两种基本的类型：用户/组织页面(User/Organization 
 	remote: Total 2791 (delta 1722), reused 2513 (delta 1493)
 	Receiving objects: 100% (2791/2791), 3.77 MiB | 969 KiB/s, done.
 	Resolving deltas: 100% (1722/1722), done.
+````
 
 ### 创建`gh-pages`分支
 克隆了一个全新的仓库以后，就要创建一个名为`gh-pages`的分支，并清空工作目录。
 
+````plain
 	$ cd repository
 	
 	$ git checkout --orphan gh-pages
@@ -113,14 +120,17 @@ GitHub Pages具有两种基本的类型：用户/组织页面(User/Organization 
 	$ git rm -rf .
 	# Remove all files from the old working tree
 	rm '.gitignore'
+````
 
 ### 添加内容后推送到GitHub
 现在你可以在目录中放入自定义的HTML页面，然后推送到GitHub，比如：
 
+````plain
 	$ echo "My Page" > index.html
 	$ git add index.html
 	$ git commit -a -m "First pages commit"
 	$ git push origin gh-pages
+````
 
 现在GitHub Pages应该已经创建成功了，可以通过`http(s)://<username>.github.io/<projectname>`访问。如果出现错误的话，会收到来自GitHub的邮件通知。
 现在，你已经了解了GitHub Pages的基本工作原理，你可以暂时把它理解为一个静态HTML服务器，你可以把你的HTML和CSS代码放在上面，构建好它们之间的链接关系，这样，一个静态网站就做好了。

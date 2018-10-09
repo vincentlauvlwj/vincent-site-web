@@ -25,13 +25,15 @@ tags:
 
 问题是Projection节点也有可能出现在选择器表达式里面，例如，看下面的查询。
 
+````cs
 	var query = from c in db.Customers
-                select new {
-                    Name = c.ContactName,
-                    Orders = from o in db.Orders
-                             where o.CustomerID == c.CustomerID
-                             select o
-                };
+	            select new {
+	                Name = c.ContactName,
+	                Orders = from o in db.Orders
+	                         where o.CustomerID == c.CustomerID
+	                         select o
+	            };
+````
 
 我在选择器表达式里面写了一个嵌套查询，这与我们之前写的表格式的查询非常不一样。现在我希望我们的提供程序创建嵌套的对象，每个对象都有一个名字和一个订单的集合。这样的查询要怎么实现？SQL甚至都做不到这一点。即使我彻底不支持这种写法，万一有人真的这么写又会发生什么呢？
 
@@ -57,48 +59,50 @@ tags:
 
 下面是`ProjectionRow`和`ProjectionBuilder`的代码。
 
+````cs
 	public abstract class ProjectionRow {
-        public abstract object GetValue(int index);
-        public abstract IEnumerable<E> ExecuteSubQuery<E>(LambdaExpression query);
-    }
-
-    internal class ProjectionBuilder : DbExpressionVisitor {
-        ParameterExpression row;
-        string rowAlias;
-        static MethodInfo miGetValue;
-        static MethodInfo miExecuteSubQuery;
-        
-        internal ProjectionBuilder() {
-            if (miGetValue == null) {
-                miGetValue = typeof(ProjectionRow).GetMethod("GetValue");
-                miExecuteSubQuery = typeof(ProjectionRow).GetMethod("ExecuteSubQuery");
-            }
-        }
-
-        internal LambdaExpression Build(Expression expression, string alias) {
-            this.row = Expression.Parameter(typeof(ProjectionRow), "row");
-            this.rowAlias = alias;
-            Expression body = this.Visit(expression);
-            return Expression.Lambda(body, this.row);
-        }
-
-        protected override Expression VisitColumn(ColumnExpression column) {
-            if (column.Alias == this.rowAlias) {
-                return Expression.Convert(Expression.Call(this.row, miGetValue, Expression.Constant(column.Ordinal)), column.Type);
-            }
-            return column;
-        }
-
-        protected override Expression VisitProjection(ProjectionExpression proj) {
-            LambdaExpression subQuery = Expression.Lambda(base.VisitProjection(proj), this.row);
-            Type elementType = TypeSystem.GetElementType(subQuery.Body.Type);
-            MethodInfo mi = miExecuteSubQuery.MakeGenericMethod(elementType);
-            return Expression.Convert(
-                Expression.Call(this.row, mi, Expression.Constant(subQuery)),
-                proj.Type
-                );
-        }
-    }
+	    public abstract object GetValue(int index);
+	    public abstract IEnumerable<E> ExecuteSubQuery<E>(LambdaExpression query);
+	}
+	
+	internal class ProjectionBuilder : DbExpressionVisitor {
+	    ParameterExpression row;
+	    string rowAlias;
+	    static MethodInfo miGetValue;
+	    static MethodInfo miExecuteSubQuery;
+	    
+	    internal ProjectionBuilder() {
+	        if (miGetValue == null) {
+	            miGetValue = typeof(ProjectionRow).GetMethod("GetValue");
+	            miExecuteSubQuery = typeof(ProjectionRow).GetMethod("ExecuteSubQuery");
+	        }
+	    }
+	
+	    internal LambdaExpression Build(Expression expression, string alias) {
+	        this.row = Expression.Parameter(typeof(ProjectionRow), "row");
+	        this.rowAlias = alias;
+	        Expression body = this.Visit(expression);
+	        return Expression.Lambda(body, this.row);
+	    }
+	
+	    protected override Expression VisitColumn(ColumnExpression column) {
+	        if (column.Alias == this.rowAlias) {
+	            return Expression.Convert(Expression.Call(this.row, miGetValue, Expression.Constant(column.Ordinal)), column.Type);
+	        }
+	        return column;
+	    }
+	
+	    protected override Expression VisitProjection(ProjectionExpression proj) {
+	        LambdaExpression subQuery = Expression.Lambda(base.VisitProjection(proj), this.row);
+	        Type elementType = TypeSystem.GetElementType(subQuery.Body.Type);
+	        MethodInfo mi = miExecuteSubQuery.MakeGenericMethod(elementType);
+	        return Expression.Convert(
+	            Expression.Call(this.row, mi, Expression.Constant(subQuery)),
+	            proj.Type
+	        );
+	    }
+	}
+````
 
 就像在遇到`ColumnExpression`时插入`GetValue`方法调用一样，在遇到`ProjectionExpression`时也要插入`ExecuteSubQuery`方法调用。
 
@@ -108,93 +112,95 @@ tags:
 
 下一个要看的是修改过的`ProjectionReader`类，当然，`Enumerator`现在也实现了`ExecuteSubQuery`方法。
 
+````cs
 	internal class ProjectionReader<T> : IEnumerable<T>, IEnumerable {
-        Enumerator enumerator;
-
-        internal ProjectionReader(DbDataReader reader, Func<ProjectionRow, T> projector, IQueryProvider provider) {
-            this.enumerator = new Enumerator(reader, projector, provider);
-        }
-
-        public IEnumerator<T> GetEnumerator() {
-            Enumerator e = this.enumerator;
-            if (e == null) {
-                throw new InvalidOperationException("Cannot enumerate more than once");
-            }
-            this.enumerator = null;
-            return e;
-        }
-
-        IEnumerator IEnumerable.GetEnumerator() {
-            return this.GetEnumerator();
-        }
-
-        class Enumerator : ProjectionRow, IEnumerator<T>, IEnumerator, IDisposable {
-            DbDataReader reader;
-            T current;
-            Func<ProjectionRow, T> projector;
-            IQueryProvider provider;
-
-            internal Enumerator(DbDataReader reader, Func<ProjectionRow, T> projector, IQueryProvider provider) {
-                this.reader = reader;
-                this.projector = projector;
-                this.provider = provider;
-            }
-
-            public override object GetValue(int index) {
-                if (index >= 0) {
-                    if (this.reader.IsDBNull(index)) {
-                        return null;
-                    }
-                    else {
-                        return this.reader.GetValue(index);
-                    }
-                }
-                throw new IndexOutOfRangeException();
-            }
-
-            public override IEnumerable<E> ExecuteSubQuery<E>(LambdaExpression query) {
-                ProjectionExpression projection = (ProjectionExpression) new Replacer().Replace(query.Body, query.Parameters[0], Expression.Constant(this));
-                projection = (ProjectionExpression) Evaluator.PartialEval(projection, CanEvaluateLocally);
-                IEnumerable<E> result = (IEnumerable<E>)this.provider.Execute(projection);
-                List<E> list = new List<E>(result);
-                if (typeof(IQueryable<E>).IsAssignableFrom(query.Body.Type)) {
-                    return list.AsQueryable();
-                }
-                return list;
-            }
-
-            private static bool CanEvaluateLocally(Expression expression) {
-                if (expression.NodeType == ExpressionType.Parameter ||
-                    expression.NodeType.IsDbExpression()) {
-                    return false;
-                }
-                return true;
-            }
-
-            public T Current {
-                get { return this.current; }
-            }
-
-            object IEnumerator.Current {
-                get { return this.current; }
-            }
-
-            public bool MoveNext() {
-                if (this.reader.Read()) {
-                    this.current = this.projector(this);
-                    return true;
-                }
-                return false;
-            }
-
-            public void Reset() {
-            }
-
-            public void Dispose() {
-                this.reader.Dispose();
-            }
-        }
-    }
+	    Enumerator enumerator;
+	
+	    internal ProjectionReader(DbDataReader reader, Func<ProjectionRow, T> projector, IQueryProvider provider) {
+	        this.enumerator = new Enumerator(reader, projector, provider);
+	    }
+	
+	    public IEnumerator<T> GetEnumerator() {
+	        Enumerator e = this.enumerator;
+	        if (e == null) {
+	            throw new InvalidOperationException("Cannot enumerate more than once");
+	        }
+	        this.enumerator = null;
+	        return e;
+	    }
+	
+	    IEnumerator IEnumerable.GetEnumerator() {
+	        return this.GetEnumerator();
+	    }
+	
+	    class Enumerator : ProjectionRow, IEnumerator<T>, IEnumerator, IDisposable {
+	        DbDataReader reader;
+	        T current;
+	        Func<ProjectionRow, T> projector;
+	        IQueryProvider provider;
+	
+	        internal Enumerator(DbDataReader reader, Func<ProjectionRow, T> projector, IQueryProvider provider) {
+	            this.reader = reader;
+	            this.projector = projector;
+	            this.provider = provider;
+	        }
+	
+	        public override object GetValue(int index) {
+	            if (index >= 0) {
+	                if (this.reader.IsDBNull(index)) {
+	                    return null;
+	                }
+	                else {
+	                    return this.reader.GetValue(index);
+	                }
+	            }
+	            throw new IndexOutOfRangeException();
+	        }
+	
+	        public override IEnumerable<E> ExecuteSubQuery<E>(LambdaExpression query) {
+	            ProjectionExpression projection = (ProjectionExpression) new Replacer().Replace(query.Body, query.Parameters[0], Expression.Constant(this));
+	            projection = (ProjectionExpression) Evaluator.PartialEval(projection, CanEvaluateLocally);
+	            IEnumerable<E> result = (IEnumerable<E>)this.provider.Execute(projection);
+	            List<E> list = new List<E>(result);
+	            if (typeof(IQueryable<E>).IsAssignableFrom(query.Body.Type)) {
+	                return list.AsQueryable();
+	            }
+	            return list;
+	        }
+	
+	        private static bool CanEvaluateLocally(Expression expression  {
+	            if (expression.NodeType == ExpressionType.Parameter ||
+	                expression.NodeType.IsDbExpression()) {
+	                return false;
+	            }
+	            return true;
+	        }
+	
+	        public T Current {
+	            get { return this.current; }
+	        }
+	
+	        object IEnumerator.Current {
+	            get { return this.current; }
+	        }
+	
+	        public bool MoveNext() {
+	            if (this.reader.Read()) {
+	                this.current = this.projector(this);
+	                return true;
+	            }
+	            return false;
+	        }
+	
+	        public void Reset() {
+	        }
+	
+	        public void Dispose() {
+	            this.reader.Dispose();
+	        }
+	    }
+	}
+````
 
 我在创建`ProjectionReader`时将provider的实例传了进去，它在下面的`ExecuteSubQuery`中执行子查询时会用到。
 
@@ -214,21 +220,23 @@ tags:
 
 下面是`Replacer`类，它简单地遍历一棵树，寻找一个节点的引用，将其替换为另一个不同节点的引用。
 
+````cs
 	internal class Replacer : DbExpressionVisitor {
-        Expression searchFor;
-        Expression replaceWith;
-        internal Expression Replace(Expression expression, Expression searchFor, Expression replaceWith) {
-            this.searchFor = searchFor;
-            this.replaceWith = replaceWith;
-            return this.Visit(expression);
-        }
-        protected override Expression Visit(Expression exp) {
-            if (exp == this.searchFor) {
-                return this.replaceWith;
-            }
-            return base.Visit(exp);
-        }
-    }
+	    Expression searchFor;
+	    Expression replaceWith;
+	    internal Expression Replace(Expression expression, Expression searchFor, Expression replaceWith) {
+	        this.searchFor = searchFor;
+	        this.replaceWith = replaceWith;
+	        return this.Visit(expression);
+	    }
+	    protected override Expression Visit(Expression exp) {
+	        if (exp == this.searchFor) {
+	            return this.replaceWith;
+	        }
+	        return base.Visit(exp);
+	    }
+	}
+````
 
 漂亮，我都被自己的机智吓到了。
 
@@ -244,99 +252,104 @@ tags:
 
 所以让我们来看看`DbQueryProvider`有什么变化吧。
 
+````cs
 	public class DbQueryProvider : QueryProvider {
-        DbConnection connection;
-        TextWriter log;
-
-        public DbQueryProvider(DbConnection connection) {
-            this.connection = connection;
-        }
-
-        public TextWriter Log {
-            get { return this.log; }
-            set { this.log = value; }
-        }
-
-        public override string GetQueryText(Expression expression) {
-            return this.Translate(expression).CommandText;
-        }
-
-        public override object Execute(Expression expression) {
-            return this.Execute(this.Translate(expression));
-        }
-
-        private object Execute(TranslateResult query) {
-            Delegate projector = query.Projector.Compile();
-
-            if (this.log != null) {
-                this.log.WriteLine(query.CommandText);
-                this.log.WriteLine();
-            }
-
-            DbCommand cmd = this.connection.CreateCommand();
-            cmd.CommandText = query.CommandText;
-            DbDataReader reader = cmd.ExecuteReader();
-
-            Type elementType = TypeSystem.GetElementType(query.Projector.Body.Type);
-            return Activator.CreateInstance(
-                typeof(ProjectionReader<>).MakeGenericType(elementType),
-                BindingFlags.Instance | BindingFlags.NonPublic, null,
-                new object[] { reader, projector, this },
-                null
-                );
-        }
-
-        internal class TranslateResult {
-            internal string CommandText;
-            internal LambdaExpression Projector;
-        }
-
-        private TranslateResult Translate(Expression expression) {
-            ProjectionExpression projection = expression as ProjectionExpression;
-            if (projection == null) {
-                expression = Evaluator.PartialEval(expression);
-                projection = (ProjectionExpression)new QueryBinder().Bind(expression);
-            }
-            string commandText = new QueryFormatter().Format(projection.Source);
-            LambdaExpression projector = new ProjectionBuilder().Build(projection.Projector, projection.Source.Alias);
-            return new TranslateResult { CommandText = commandText, Projector = projector };
-        }
-    }
+	    DbConnection connection;
+	    TextWriter log;
+	
+	    public DbQueryProvider(DbConnection connection) {
+	        this.connection = connection;
+	    }
+	
+	    public TextWriter Log {
+	        get { return this.log; }
+	        set { this.log = value; }
+	    }
+	
+	    public override string GetQueryText(Expression expression) {
+	        return this.Translate(expression).CommandText;
+	    }
+	
+	    public override object Execute(Expression expression) {
+	        return this.Execute(this.Translate(expression));
+	    }
+	
+	    private object Execute(TranslateResult query) {
+	        Delegate projector = query.Projector.Compile();
+	
+	        if (this.log != null) {
+	            this.log.WriteLine(query.CommandText);
+	            this.log.WriteLine();
+	        }
+	
+	        DbCommand cmd = this.connection.CreateCommand();
+	        cmd.CommandText = query.CommandText;
+	        DbDataReader reader = cmd.ExecuteReader();
+	
+	        Type elementType = TypeSystem.GetElementType(query.Projector.Body.Type);
+	        return Activator.CreateInstance(
+	            typeof(ProjectionReader<>).MakeGenericType(elementType),
+	            BindingFlags.Instance | BindingFlags.NonPublic, null,
+	            new object[] { reader, projector, this },
+	            null
+	            );
+	    }
+	
+	    internal class TranslateResult {
+	        internal string CommandText;
+	        internal LambdaExpression Projector;
+	    }
+	
+	    private TranslateResult Translate(Expression expression) {
+	        ProjectionExpression projection = expression as ProjectionExpression;
+	        if (projection == null) {
+	            expression = Evaluator.PartialEval(expression);
+	            projection = (ProjectionExpression)new QueryBinder().Bind(expression);
+	        }
+	        string commandText = new QueryFormatter().Format(projection.Source);
+	        LambdaExpression projector = new ProjectionBuilder().Build(projection.Projector, projection.Source.Alias);
+	        return new TranslateResult { CommandText = commandText, Projector = projector };
+	    }
+	}
+````
 
 唯一有变化的是`Translate`方法。当传进来的参数是`ProjectionExpression`时，就不再进行将表达式转换成`ProjectionExpression`的操作，而是直接跳到构建SQL命令和投影器的步骤。
 
 差点忘记，我还添加了类似LINQ to SQL的日志的特性，它能帮助我们看清背后的执行过程。我的上下文类里面也加了`Log`属性。
 
+````cs
 	public class Northwind {
-        public Query<Customers> Customers;
-        public Query<Orders> Orders;
-
-        private DbQueryProvider provider;
-        public Northwind(DbConnection connection) {
-            this.provider = new DbQueryProvider(connection);
-            this.Customers = new Query<Customers>(this.provider);
-            this.Orders = new Query<Orders>(this.provider);
-        }
-
-        public TextWriter Log {
-            get { return this.provider.Log; }
-            set { this.provider.Log = value; }
-        }
-    }
+	    public Query<Customers> Customers;
+	    public Query<Orders> Orders;
+	
+	    private DbQueryProvider provider;
+	    public Northwind(DbConnection connection) {
+	        this.provider = new DbQueryProvider(connection);
+	        this.Customers = new Query<Customers>(this.provider);
+	        this.Orders = new Query<Orders>(this.provider);
+	    }
+	
+	    public TextWriter Log {
+	        get { return this.provider.Log; }
+	        set { this.provider.Log = value; }
+	    }
+	}
+````
 
 ## Taking it for a Spin
 
 现在，让我们试试这个新的魔法般的特性把。
 
+````cs
 	string city = "London";
-    var query = from c in db.Customers
-                where c.City == city
-                select new {
-                    Name = c.ContactName,
-                    Orders = from o in db.Orders
-                             where o.CustomerID == c.CustomerID
-                             select o
-                };
+	var query = from c in db.Customers
+	            where c.City == city
+	            select new {
+	                Name = c.ContactName,
+	                Orders = from o in db.Orders
+	                         where o.CustomerID == c.CustomerID
+	                         select o
+	            };
 
 
     foreach (var item in query) {
@@ -345,9 +358,11 @@ tags:
             Console.WriteLine("\tOrder: {0}", ord.OrderID);
         }
     }
+````
 
 执行上面的代码，产生如下输出：
 
+````plain
 	Thomas Hardy
 	        Order: 10355
 	        Order: 10383
@@ -400,9 +415,11 @@ tags:
 	        Order: 10800
 	        Order: 10804
 	        Order: 10869
+````
 
 下面是查询的执行过程（我用了新的`Log`属性捕捉到的）：
 
+````sql
 	SELECT t2.ContactName, t2.CustomerID
 	FROM (
 	  SELECT t1.CustomerID, t1.ContactName, t1.Phone, t1.City, t1.Country
@@ -454,9 +471,10 @@ tags:
 	  FROM Orders AS t3
 	) AS t4
 	WHERE (t4.CustomerID = 'SEVES')
+````
 
 虽然让内层查询执行许多次不是很理想，但是总比直接抛出一个异常要好。
 
 现在，Select操作已经最终完成了，它现在已经可以支持任意的投影了。也许吧:-)
 
-<img src="http://blogs.msdn.com/utility/filethumbnails/zip.gif" style="display: inline !important;"/>[Query6.zip](http://blogs.msdn.com/cfs-file.ashx/__key/communityserver-components-postattachments/00-04-31-53-48/Query6.zip)
+[Query6.zip](https://msdnshared.blob.core.windows.net/media/MSDNBlogsFS/prod.evol.blogs.msdn.com/CommunityServer.Components.PostAttachments/00/04/31/53/48/Query6.zip)

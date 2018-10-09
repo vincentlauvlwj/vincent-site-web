@@ -27,14 +27,17 @@ tags:
 
 幸运的是，问题仍然很简单。只需要将原有的选择器函数转换成我们需要的样子就可以了。我们需要什么样子的呢？我们需要它直接从`DbDataReader`中读取数据。好了，我们可以将这个问题中的`DataReader`抽象出来，提供一个`GetValue`方法让选择器函数获得数据。对，我知道`DataReader`里面已经有了一个这样的方法，但是它有个缺点，就是可能会返回`DbNull`。
 
+````cs
 	public abstract class ProjectionRow {
 	    public abstract object GetValue(int index);
 	}
+````
 
 所以，我们有了一个简单的抽象基类，它代表了一行数据。如果我们的选择器表达式是从这里通过调用`GetValue`方法来获得数据，然后接上一个`Expression.Convert`强转操作的话，我真的是做梦都会笑醒。
 
 让我们看看预处理选择器表达式的代码吧。
 
+````cs
 	internal class ColumnProjection {
 	    internal string Columns;
 	    internal Expression Selector;
@@ -72,6 +75,7 @@ tags:
 	        }
 	    }
 	}
+````
 
 上面的当然不是所有的代码。`ColumnProjector`是一个表达式访问器，它遍历表达式树，将列引用转换为调用`GetValue`方法获得单个数据的表达式。那`GetValue`方法又是通过什么来调用的呢？通过一个名为“row”的参数表达式，它的类型就是我刚刚定义的抽象类`ProjectionRow`。我不仅重建了一个选择器表达式，我还要把它放在一个以`ProjectionRow`为参数的lambda表达式的body中。这样我就能调用`LambdaExpression.Compile`方法将这个lambda表达式转换为委托。
 
@@ -79,6 +83,7 @@ tags:
 
 让我们来看看怎么使用这个类吧，下面是修改后的`QueryTranslator`（仅给出相关内容）。
 
+````cs
 	internal class TranslateResult {
 	    internal string CommandText;
 	    internal LambdaExpression Prsojector;
@@ -129,6 +134,7 @@ tags:
 	
 	    . . .
 	}
+````
 
 如你所见，`QueryTranslator`现在处理了Select方法，它就像Where方法一样构建一条SQL SELECT语句。但是它还保存了最后一个`ColumnProjection`对象（调用`ProjectColumns`方法的结果），在`TranslateResult`对象中以lambda表达式的形式返回新构建的选择器表达式。
 
@@ -136,6 +142,7 @@ tags:
 
 看下面的代码。
 
+````cs
 	internal class ProjectionReader<T> : IEnumerable<T>, IEnumerable {
 	    Enumerator enumerator;
 	 
@@ -202,6 +209,7 @@ tags:
 	        }
 	    }
 	}
+````
 
 `ProjectionReader`类与Part II中的`ObjectReader`类十分相似，只是去除了使用各个字段来创建对象的逻辑，替换成了一个名为`projector`的委托的调用。这就是我们重建的选择器表达式编译出来的委托。
 
@@ -211,6 +219,7 @@ tags:
 
 下面是新的provider的代码：
 
+````cs
 	public class DbQueryProvider : QueryProvider {
 	    DbConnection connection;
 	 
@@ -254,11 +263,13 @@ tags:
 	        return new QueryTranslator().Translate(expression);
 	    }
 	}
+````
 
 对`Translate`方法的调用返回了我需要的所有东西，我只需要再调用`Compile`方法将lambda表达式转换为委托就可以。注意我仍然需要保留`ObjectReader`类，它会在查询中没有Select操作的时候用到。
 
 现在来试试最后的结果如何吧。
 
+````cs
 	string city = "London";
 	var query = db.Customers.Where(c => c.City == city)
 	              .Select(c => new {Name = c.ContactName, Phone = c.Phone});
@@ -268,9 +279,11 @@ tags:
 	foreach (var item in list) {
 	    Console.WriteLine("{0}", item);
 	}
+````
 
 执行上面的代码，输出结果如下：
 
+````plain
 	Query:
 	SELECT ContactName, Phone FROM (SELECT * FROM (SELECT * FROM Customers) AS T WHERE (City = 'London')) AS T
 	{ Name = Thomas Hardy, Phone = (171) 555-7788 }
@@ -279,6 +292,7 @@ tags:
 	{ Name = Ann Devon, Phone = (171) 555-0297 }
 	{ Name = Simon Crowther, Phone = (171) 555-7733 }
 	{ Name = Hari Kumar, Phone = (171) 555-1717 }
+````
 
 看，我没有再返回所有数据了，这正是我想要的。翻译后的选择器表达式转换成了一个委托，这个委托包含了“new xxx”的匿名类型初始化器，调用了`GetValue`方法从`DataReader`中读取数据保存到返回的对象中，不需要再使用反射对每个字段赋值了。我们的查询提供程序越来越好了，你一定觉得我们应该已经完成了，这个提供程序好屌！还有什么是没做的吗？
 

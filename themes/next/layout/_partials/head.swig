@@ -75,10 +75,6 @@
   <meta property="fb:app_id" content="{{ theme.facebook_sdk.app_id }}" />
 {% endif %}
 
-{% if theme.highlight %}
-  <link rel="stylesheet" href="{{ url_for(theme.vendors) }}/highlight/css/{{ theme.highlight }}.css">
-{% endif %}
-
 <link rel="stylesheet" href="{{ url_for(theme.vendors) }}/emoji/emoji.css">
 
 {{

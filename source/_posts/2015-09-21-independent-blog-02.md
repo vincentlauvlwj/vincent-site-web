@@ -24,13 +24,17 @@ Jekyll是一个简单而又强大的静态博客生成器，它可以使用你�
 4. **RailsInstaller** - 安装Ruby，DevKit和Bundler的过程还是有点烦的，而且还可能会出错，作为一个懒人的我，也实在不能忍。所以包含了各种工具的[RailsInstaller](http://railsinstaller.org/en)简直就成了懒人的福音<i class="emoji emoji-relieved"></i>。下载安装后，前面三步都可以跳过（什么？你问我既然这样为什么还要讲前三步？我就是凑字数，你吹呀<i class="emoji emoji-laughing"></i>）。
 5. **Jekyll** - 首先在仓库的根目录下创建一个名为`Gemfile`的文件，内容为
 
+	````Gemfile
 		source 'https://rubygems.org'
-	​	gem 'github-pages'
+		gem 'github-pages'
+	````
 
    然而，由于一些不能描写的原因，[https://rubygems.org](https://rubygems.org) 这个网址在我国大陆是不能访问的，因此我们使用它的镜像站[http://ruby.taobao.org/](http://ruby.taobao.org/) 代替，所以`Gemfile`文件的内容实际是
 
+	````Gemfile
 		source 'http://ruby.taobao.org/'
 		gem 'github-pages'
+	````
 
    创建好文件后，在此目录下打开命令行，输入命令`bundle install`即可完成Jekyll的安装
 
@@ -46,33 +50,42 @@ Jekyll是一个很活跃的开源项目，因此版本更新的速度比较快�
 ### 建立一个`_config.yml`文件
 这是Jekyll网站的配置文件，我们可以在这里设置一些Jekyll的参数，也可以自己添加一些参数。这个文件里设置的参数都可以在Jekyll页面中以`{% raw %}{{site.param}}{% endraw %}`的形式进行访问
 
+````yml
 	# Site settings
 	title: Vincent's Site
+````
 
 ### 创建一个`_includes`文件夹
 这个文件夹中存放的是每个页面的公共部分（如导航条，版权声明等），这样，在其他页面中就不用重复写这些代码，只需要用Jekyll的`include`命令就可以把这些文件包含进去，如`{% raw %}{% include head.html %}{% endraw %}`。在这个文件夹里，我们添加三个文件，它们分别是：
 head.html
 
+````html
 	<head>
 	    <title>{% if page.title %}{{ page.title }} - {{ site.title }}{% else %}{{ site.title }}{% endif %}</title>
 	</head>
+````
 
 在`head.html`中，我们可以看出，在Jekyll中，程序指令使用`{% raw %}{% %}{% endraw %}`语法包含起来，读取变量使用的是`{% raw %}{{ }}{% endraw %}`语法
 
 nav.html
 
+````html
 	<h1>{{site.title}}</h1>
 	<hr/>
+````
 
 footer.html
 
+````html
 	<hr/>
 	<p>Copyright &copy; 2015 Vincent Lau. All rights reserved.</p>
+````
 
 ### 创建一个`_layouts`文件夹
 一个网站都会有许许多多的页面，但是一般来说，这些页面有很多都是基于相同的布局。比如，一个博客里面有100篇博文，就会有100个HTML页面，但是这些页面的布局方式都是一样的，这样，我们就可以把布局的HTML代码单独抽出来，放在`_layouts`文件夹下。我们现在创建两个布局文件，他们分别是：
 default.html
 
+````html
 	<!DOCTYPE html>
 	<html>
 	{% include head.html %}
@@ -82,11 +95,13 @@ default.html
 	    {% include footer.html %}
 	</body>
 	</html>
+````
 
 这个默认的布局文件使用`include`指令包含了三个html文件，并且用`{% raw %}{{ content }}{% endraw %}`把内容至于其中。使用了这个布局的页面，就会用它的内容来替换掉布局文件中的`{% raw %}{{ content }}{% endraw %}`。
 
 post.html
 
+````html
 	---
 	layout: default
 	---
@@ -94,6 +109,7 @@ post.html
 	<h2>{{page.title}}</h2>
 	<font color="gray" ><i>Author: {{page.author}}</i></font><br/>
 	{{content}}
+````
 
 这个布局文件是博文所使用的布局，在这个布局中，把文章的标题和作者显示了出来，然后在其下显示文章的内容。特别地，我们注意到，在这个文件最上方用两条三横杠括起来的区域，这是Jekyll的YAML前置数据。这些前置数据必须存在于文件首部，并且格式要符合规范。你可以在这里设置一些预定义的变量或者你自己定义的变量。这些变量可以在Jekyll页面中通过形如`{% raw %}{{ page.param }}{% endraw %}`的格式获得。我们这里使用的`layout`变量指示了这个文件所使用的布局文件为`default`（也就是我们上面添加的`default.html`）。
  注意(`尤其是Windows用户`)，当你使用`UTF-8`来编码你的文件的时候，请确保没有`BOM`的头部字符在你的文件中，否则会导致Jekyll奔溃
@@ -101,6 +117,7 @@ post.html
 ### 添加`index.html`文件
 这是我们博客的主页，它使用`default`布局文件，并且用一个循环把我们的博文列表显示了出来：
 
+````html
 	---
 	layout: default
 	---
@@ -112,11 +129,13 @@ post.html
 		</li>
 	{ % endfor % }
 	</ul>
+````
 
 ### 添加自己的博文
 先创建一个`_posts`文件夹，然后在里面添加。博文的文件名一定要符合`yyyy-MM-dd-<filename>.<extension>`的格式。我们先来添加两篇
 2015-09-22-post-01.md
 
+````md
 	---
 	layout: post
 	title: "Hello, Jekyll"
@@ -124,9 +143,11 @@ post.html
 	---
 	
 	This is my FIRST Jekyll article.
+````
 
 2015-09-22-post-02.md
 
+````md
 	---
 	layout: post
 	title: "Hello, Jekyll - 02"
@@ -134,16 +155,20 @@ post.html
 	---
 	
 	This is my SECOND Jekyll article.
+````
 
 ### 然后添加`Gemfile`
 这是`bundle exec jekyll serve`文件需要用到的。
 
+````Gemfile
 	source 'http://ruby.taobao.org/'
 	gem 'github-pages'
+````
 
 ### 完成
 到现在为止，所有文件都创建完毕，我们已经完成了一个最简单的Jekyll模板。现在的文件目录结构为：
 
+````plain
 	|--_includes
 	|  |--footer.html
 	|  |--head.html
@@ -160,6 +185,7 @@ post.html
 	|--_config.yml
 	|--Gemfile
 	|--index.html
+````
 
 执行`bundle exec jekyll serve`命令，生成网站，然后启动本地HTML服务器预览效果。Jekyll所生成的所有文件都会存放在`_site`文件夹下。若要在线查看`HelloJekyll`的效果，可前往[http://www.liuwenjun.info/HelloJekyll/](http://www.liuwenjun.info/HelloJekyll/)，要查看`HelloJekyll`的代码，可前往[我的GitHub](https://github.com/vincentlauvlwj/HelloJekyll)。
 

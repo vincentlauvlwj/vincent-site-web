@@ -23,8 +23,3 @@
 {% for vendor in js_vendors %}
   <script type="text/javascript" src="{{ url_for(theme.vendors) }}/{{ vendor }}"></script>
 {% endfor %}
-
-{% if theme.highlight %}
-  <script src="{{ url_for(theme.vendors) }}/highlight/highlight.pack.js"></script>
-  <script>hljs.initHighlightingOnLoad();</script>
-{% endif %}

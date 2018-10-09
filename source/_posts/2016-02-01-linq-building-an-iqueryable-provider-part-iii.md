@@ -19,8 +19,10 @@ tags:
 
 你知道当查询里面引用了局部变量的时候会发生什么吗？不知道？
 
+````cs
 	string city = "London";
 	var query = db.Customers.Where(c => c.City == city);
+````
 
 去试试翻译上面这句查询的时候会出现什么情况吧，我等着你的结果。
 
@@ -28,11 +30,15 @@ tags:
 
 让我们再看看对表达式树调用`ToString()`方法的结果。
 
+````cs
 	Console.WriteLine(query.Expression.ToString());
+````
 
 输出：
 
+````cs
 	SELECT * FROM Customers.Where(c => return (c.City = value(Sample.Program+<>c__DisplayClass0).city))
+````
 
 啊哈，C♯编译器生成了一个类来保存被lambda表达式引用到的局部变量，这和匿名函数中引用到外部的局部变量的时候的处理是一致的。但是这个你早就知道了对吧？不知道？
 
@@ -44,6 +50,7 @@ tags:
 
 先看看下面的代码，我待会会解释它的工作原理。
 
+````cs
 	public static class Evaluator {
 	    /// <summary>
 	    /// Performs evaluation & replacement of independent sub-trees
@@ -140,6 +147,7 @@ tags:
 	        }
 	    }
 	}
+````
 
 `Evaluator`类暴露了一个静态方法`PartialEval`，你可以调用这个方法来计算你的表达式树中的子树，并将其替换为计算结果的constant节点。上面的代码做的事情大部分是将可以独立计算的最大子树找出来，而真正的计算过程并没有什么特别，因为子树可以通过`LambdaExpression.Compile`方法“编译”成委托然后执行。这些事情都是在`SubtreeVisitor.Evaluate`方法中发生的。
 
@@ -149,6 +157,7 @@ tags:
 
 现在我就可以在任何翻译表达式的操作之前使用上面的类对表达式进行预处理了。幸运的是，我已经把翻译操作分解到了`DbQueryProvider`类的`Translate`方法里面。
 
+````cs
 	public class DbQueryProvider : QueryProvider {
 	    …
 	    private string Translate(Expression expression) {
@@ -156,18 +165,23 @@ tags:
 	        return new QueryTranslator().Translate(expression);
 	    }
 	}
+````
 
 现在我们再试试执行下面的代码就能得到正确的结果了：
 
+````cs
 	string city = "London";
 	var query = db.Customers.Where(c => c.City == city);
 	 
 	Console.WriteLine("Query:\n{0}\n", query);
+````
 
 输出：
 
+````plain
 	Query:
 	SELECT * FROM (SELECT * FROM Customers) AS T WHERE (City = 'London')
+````
 
 结果正是我们想要的，我们的查询提供程序又向前走了一步！
 

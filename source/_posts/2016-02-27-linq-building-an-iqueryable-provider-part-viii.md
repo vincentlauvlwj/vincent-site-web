@@ -19,13 +19,17 @@ tags:
 
 使用查询的语法来写一条排序的查询是很简单的，只需一个子句就好。
 
+````cs
     var query = from c in db.Customers
                 orderby c.Country, c.City
                 select c;
+````
 
 但是，将上面的查询转换为方法调用的形式的话，所涉及到的就不止是一个LINQ操作符了。
 
+````cs
 	var query = db.Customers.OrderBy(c => c.Country).ThenBy(c => c.City);
+````
 
 事实上，对于每个特定的排序表达式，都有它对应的排序操作符。因此LINQ提供程序在翻译SQL的时候，就需要将这些独立的操作符转换到一个单独的子句中。翻译这个的代码会比翻译之前的那些操作符的代码复杂一点，主要是因为需要先将这些独立的操作符全部找出来，才能对它们进行操作。之前的那些操作符可以简单地在前一个查询的外面套一个新的select，它们要考虑的只是当前操作符的那些参数。而排序不是，它还要考虑到其他的操作符。
 
@@ -33,170 +37,180 @@ tags:
 
 所以，我添加了下面的新的定义：
 
+````cs
 	internal enum OrderType {
-        Ascending,
-        Descending
-    }
-
-    internal class OrderExpression {
-        OrderType orderType;
-        Expression expression;
-        internal OrderExpression(OrderType orderType, Expression expression) {
-            this.orderType = orderType;
-            this.expression = expression;
-        }
-        internal OrderType OrderType {
-            get { return this.orderType; }
-        }
-        internal Expression Expression {
-            get { return this.expression; }
-        }
-    }
+	    Ascending,
+	    Descending
+	}
+	
+	internal class OrderExpression {
+	    OrderType orderType;
+	    Expression expression;
+	    internal OrderExpression(OrderType orderType, Expression expression) {
+	        this.orderType = orderType;
+	        this.expression = expression;
+	    }
+	    internal OrderType OrderType {
+	        get { return this.orderType; }
+	    }
+	    internal Expression Expression {
+	        get { return this.expression; }
+	    }
+	}
+````
 
 这个新的类型`OrderExpression`并不是一个真的`Expression`节点，因为我并不打算把它用在表达式树的任何位置，它只作为`SelectExpression`定义的一部分出现。因此`SelectExpression`也有一点小变化。
 
+````cs
 	internal class SelectExpression : Expression {
-        ...
-        ReadOnlyCollection<OrderExpression> orderBy;
-
-        internal SelectExpression(
-            Type type, string alias, IEnumerable<ColumnDeclaration> columns, 
-            Expression from, Expression where, IEnumerable<OrderExpression> orderBy)
-            : base((ExpressionType)DbExpressionType.Select, type) {
-            ...
-            this.orderBy = orderBy as ReadOnlyCollection<OrderExpression>;
-            if (this.orderBy == null && orderBy != null) {
-                this.orderBy = new List<OrderExpression>(orderBy).AsReadOnly();
-            }
-        }
-        ...
-        internal ReadOnlyCollection<OrderExpression> OrderBy {
-            get { return this.orderBy; }
-        }
-    }
+	    ...
+	    ReadOnlyCollection<OrderExpression> orderBy;
+	
+	    internal SelectExpression(
+	        Type type, string alias, IEnumerable<ColumnDeclaration> columns, 
+	        Expression from, Expression where, IEnumerable<OrderExpression> orderBy)
+	        : base((ExpressionType)DbExpressionType.Select, type) {
+	        ...
+	        this.orderBy = orderBy as ReadOnlyCollection<OrderExpression>;
+	        if (this.orderBy == null && orderBy != null) {
+	            this.orderBy = new List<OrderExpression>(orderBy).AsReadOnly();
+	        }
+	    }
+	    ...
+	    internal ReadOnlyCollection<OrderExpression> OrderBy {
+	        get { return this.orderBy; }
+	    }
+	}
+````
 
 当然，`DbExpressionVisitor`也需要一点小变化，以支持排序的功能。
 
+````cs
 	internal class DbExpressionVisitor : ExpressionVisitor {
-        ...
-        protected virtual Expression VisitSelect(SelectExpression select) {
-            Expression from = this.VisitSource(select.From);
-            Expression where = this.Visit(select.Where);
-            ReadOnlyCollection<ColumnDeclaration> columns = this.VisitColumnDeclarations(select.Columns);
-            ReadOnlyCollection<OrderExpression> orderBy = this.VisitOrderBy(select.OrderBy);
-            if (from != select.From || where != select.Where || columns != select.Columns || orderBy != select.OrderBy) {
-                return new SelectExpression(select.Type, select.Alias, columns, from, where, orderBy);
-            }
-            return select;
-        }
-        ...
-        protected ReadOnlyCollection<OrderExpression> VisitOrderBy(ReadOnlyCollection<OrderExpression> expressions) {
-            if (expressions != null) {
-                List<OrderExpression> alternate = null;
-                for (int i = 0, n = expressions.Count; i < n; i++) {
-                    OrderExpression expr = expressions[i];
-                    Expression e = this.Visit(expr.Expression);
-                    if (alternate == null && e != expr.Expression) {
-                        alternate = expressions.Take(i).ToList();
-                    }
-                    if (alternate != null) {
-                        alternate.Add(new OrderExpression(expr.OrderType, e));
-                    }
-                }
-                if (alternate != null) {
-                    return alternate.AsReadOnly();
-                }
-            }
-            return expressions;
-        }
-    }
+	    ...
+	    protected virtual Expression VisitSelect(SelectExpression select) {
+	        Expression from = this.VisitSource(select.From);
+	        Expression where = this.Visit(select.Where);
+	        ReadOnlyCollection<ColumnDeclaration> columns = this.VisitColumnDeclarations(select.Columns);
+	        ReadOnlyCollection<OrderExpression> orderBy = this.VisitOrderBy(select.OrderBy);
+	        if (from != select.From || where != select.Where || columns != select.Columns || orderBy != select.OrderBy) {
+	            return new SelectExpression(select.Type, select.Alias, columns, from, where, orderBy);
+	        }
+	        return select;
+	    }
+	    ...
+	    protected ReadOnlyCollection<OrderExpression> VisitOrderBy(ReadOnlyCollection<OrderExpression> expressions) {
+	        if (expressions != null) {
+	            List<OrderExpression> alternate = null;
+	            for (int i = 0, n = expressions.Count; i < n; i++) {
+	                OrderExpression expr = expressions[i];
+	                Expression e = this.Visit(expr.Expression);
+	                if (alternate == null && e != expr.Expression) {
+	                    alternate = expressions.Take(i).ToList();
+	                }
+	                if (alternate != null) {
+	                    alternate.Add(new OrderExpression(expr.OrderType, e));
+	                }
+	            }
+	            if (alternate != null) {
+	                return alternate.AsReadOnly();
+	            }
+	        }
+	        return expressions;
+	    }
+	}
+````
 
 另外，我们还必须修改一下所有创建`SelectExpression`的地方，但这相对比较容易。
 
 将order-by子句转换为文本也不是那么难。
 
+````cs
 	internal class QueryFormatter : DbExpressionVisitor {
-        ...
-        protected override Expression VisitSelect(SelectExpression select) {
-            ...
-            if (select.OrderBy != null && select.OrderBy.Count > 0) {
-                this.AppendNewLine(Indentation.Same);
-                sb.Append("ORDER BY ");
-                for (int i = 0, n = select.OrderBy.Count; i < n; i++) {
-                    OrderExpression exp = select.OrderBy[i];
-                    if (i > 0) {
-                        sb.Append(", ");
-                    }
-                    this.Visit(exp.Expression);
-                    if (exp.OrderType != OrderType.Ascending) {
-                        sb.Append(" DESC");
-                    }
-                }
-            }
-            ...
-        }
-        ...
-    }
+	    ...
+	    protected override Expression VisitSelect(SelectExpression select) {
+	        ...
+	        if (select.OrderBy != null && select.OrderBy.Count > 0) {
+	            this.AppendNewLine(Indentation.Same);
+	            sb.Append("ORDER BY ");
+	            for (int i = 0, n = select.OrderBy.Count; i < n; i++) {
+	                OrderExpression exp = select.OrderBy[i];
+	                if (i > 0) {
+	                    sb.Append(", ");
+	                }
+	                this.Visit(exp.Expression);
+	                if (exp.OrderType != OrderType.Ascending) {
+	                    sb.Append(" DESC");
+	                }
+	            }
+	        }
+	        ...
+	    }
+	    ...
+	}
+````
 
 麻烦的地方是`QueryBinder`，我们需要从这些方法调用表达式中读取需要的信息创建一个排序子句。我决定构造一个排序表达式的列表，然后把它们全部放到同一个`SelectExpression`中。因为`ThenBy`和`ThenByDescending`操作符必须跟在其他排序操作符后面，因此可以很容易自上而下遍历表达式树，将每个排序表达式添加到一个集合里面，直到访问到最后一个order-by子句（一个`OrderBy`或`OrderByDescending`操作符）为止。
 
+````cs
 	internal class QueryBinder : ExpressionVisitor {
-        ...
-        protected override Expression VisitMethodCall(MethodCallExpression m) {
-            if (m.Method.DeclaringType == typeof(Queryable) ||
-                m.Method.DeclaringType == typeof(Enumerable)) {
-                ...
-                switch (m.Method.Name) {
-                    case "OrderBy":
-                        return this.BindOrderBy(m.Type, m.Arguments[0], (LambdaExpression)StripQuotes(m.Arguments[1]), OrderType.Ascending);
-                    case "OrderByDescending":
-                        return this.BindOrderBy(m.Type, m.Arguments[0], (LambdaExpression)StripQuotes(m.Arguments[1]), OrderType.Descending);
-                    case "ThenBy":
-                        return this.BindThenBy(m.Arguments[0], (LambdaExpression)StripQuotes(m.Arguments[1]), OrderType.Ascending);
-                    case "ThenByDescending":
-                        return this.BindThenBy(m.Arguments[0], (LambdaExpression)StripQuotes(m.Arguments[1]), OrderType.Descending);
-                }
-            }
-            ...
-        }
-
-        List<OrderExpression> thenBys;
-
-        protected virtual Expression BindOrderBy(Type resultType, Expression source, LambdaExpression orderSelector, OrderType orderType) {
-            List<OrderExpression> myThenBys = this.thenBys;
-            this.thenBys = null;
-            ProjectionExpression projection = (ProjectionExpression)this.Visit(source);
-
-            this.map[orderSelector.Parameters[0]] = projection.Projector;
-            List<OrderExpression> orderings = new List<OrderExpression>();
-            orderings.Add(new OrderExpression(orderType, this.Visit(orderSelector.Body)));
-
-            if (myThenBys != null) {
-                for (int i = myThenBys.Count - 1; i >= 0; i--) {
-                    OrderExpression tb = myThenBys[i];
-                    LambdaExpression lambda = (LambdaExpression)tb.Expression;
-                    this.map[lambda.Parameters[0]] = projection.Projector;
-                    orderings.Add(new OrderExpression(tb.OrderType, this.Visit(lambda.Body)));
-                }
-            }
-
-            string alias = this.GetNextAlias();
-            ProjectedColumns pc = this.ProjectColumns(projection.Projector, alias, projection.Source.Alias);
-            return new ProjectionExpression(
-                new SelectExpression(resultType, alias, pc.Columns, projection.Source, null, orderings.AsReadOnly()),
-                pc.Projector
-                );
-        }
-
-        protected virtual Expression BindThenBy(Expression source, LambdaExpression orderSelector, OrderType orderType) {
-            if (this.thenBys == null) {
-                this.thenBys = new List<OrderExpression>();
-            }
-            this.thenBys.Add(new OrderExpression(orderType, orderSelector));
-            return this.Visit(source);
-        }
-        ...
-    }
+	    ...
+	    protected override Expression VisitMethodCall(MethodCallExpression m) {
+	        if (m.Method.DeclaringType == typeof(Queryable) ||
+	            m.Method.DeclaringType == typeof(Enumerable)) {
+	            ...
+	            switch (m.Method.Name) {
+	                case "OrderBy":
+	                    return this.BindOrderBy(m.Type, m.Arguments[0], (LambdaExpression)StripQuotes(m.Arguments[1]), OrderType.Ascending);
+	                case "OrderByDescending":
+	                    return this.BindOrderBy(m.Type, m.Arguments[0], (LambdaExpression)StripQuotes(m.Arguments[1]), OrderType.Descending);
+	                case "ThenBy":
+	                    return this.BindThenBy(m.Arguments[0], (LambdaExpression)StripQuotes(m.Arguments[1]), OrderType.Ascending);
+	                case "ThenByDescending":
+	                    return this.BindThenBy(m.Arguments[0], (LambdaExpression)StripQuotes(m.Arguments[1]), OrderType.Descending);
+	            }
+	        }
+	        ...
+	    }
+	
+	    List<OrderExpression> thenBys;
+	
+	    protected virtual Expression BindOrderBy(Type resultType, Expression source, LambdaExpression orderSelector, OrderType orderType) {
+	        List<OrderExpression> myThenBys = this.thenBys;
+	        this.thenBys = null;
+	        ProjectionExpression projection = (ProjectionExpression)this.Visit(source);
+	
+	        this.map[orderSelector.Parameters[0]] = projection.Projector;
+	        List<OrderExpression> orderings = new List<OrderExpression>();
+	        orderings.Add(new OrderExpression(orderType, this.Visit(orderSelector.Body)));
+	
+	        if (myThenBys != null) {
+	            for (int i = myThenBys.Count - 1; i >= 0; i--) {
+	                OrderExpression tb = myThenBys[i];
+	                LambdaExpression lambda = (LambdaExpression)tb.Expression;
+	                this.map[lambda.Parameters[0]] = projection.Projector;
+	                orderings.Add(new OrderExpression(tb.OrderType, this.Visit(lambda.Body)));
+	            }
+	        }
+	
+	        string alias = this.GetNextAlias();
+	        ProjectedColumns pc = this.ProjectColumns(projection.Projector, alias, projection.Source.Alias);
+	        return new ProjectionExpression(
+	            new SelectExpression(resultType, alias, pc.Columns, projection.Source, null, orderings.AsReadOnly()),
+	            pc.Projector
+	            );
+	    }
+	
+	    protected virtual Expression BindThenBy(Expression source, LambdaExpression orderSelector, OrderType orderType) {
+	        if (this.thenBys == null) {
+	            this.thenBys = new List<OrderExpression>();
+	        }
+	        this.thenBys.Add(new OrderExpression(orderType, orderSelector));
+	        return this.Visit(source);
+	    }
+	    ...
+	}
+````
 
 当`BindThenBy`方法（处理`ThenBy`和`ThenByDescending`）被调用时，我仅仅将此调用的参数追加的一个保存了then-by信息的列表中。我复用了`OrderExpression`类，用它来保存then-by信息，因为它们的结构是一样的。然后，当`BindOrderBy`方法被调用时，我们就得到了所有的排序表达式，构建一个单独的`SelectExpression`。注意，在我绑定then-by的时候，我逆序遍历了这个集合，因为then-by信息是从后往前添加进集合里的。
 
@@ -204,18 +218,22 @@ tags:
 
 用下面这个查询测试一下吧：
 
+````cs
     var query = from c in db.Customers
                 orderby c.Country, c.City
                 select c;
+````
 
 它会被翻译为如下的SQL：
 
+````sql
     SELECT t1.CustomerID, t1.ContactName, t1.Phone, t1.City, t1.Country
     FROM (
       SELECT t0.CustomerID, t0.ContactName, t0.Phone, t0.City, t0.Country
       FROM Customers AS t0
     ) AS t1
     ORDER BY t1.Country, t1.City
+````
 
 哈哈，正如我所料。
 
@@ -227,13 +245,16 @@ LINQ允许你在任何你喜欢的地方放置排序表达式，而SQL的限制�
 
 就好比下面这个查询。
 
+````cs
     var query = from c in db.Customers
                 orderby c.City
                 where c.Country == "UK"
                 select c;
+````
 
 它和之前的查询十分相似，只不过在orderby后面多了一个where子句。在SQL里面是不能这么写的。就算能这么写，我们的提供程序又会生成什么样的SQL呢？
 
+````sql
     SELECT t2.City, t2.Country, t2.CustomerID, t2.ContactName, t2.Phone
     FROM (
       SELECT t1.City, t1.Country, t1.CustomerID, t1.ContactName, t1.Phone
@@ -244,17 +265,21 @@ LINQ允许你在任何你喜欢的地方放置排序表达式，而SQL的限制�
       ORDER BY t1.City
     ) AS t2
     WHERE (t2.Country = 'UK')
+````
 
 啊，这绝对是运行不了的。且不说这条SQL的文本长度可能会超出限制，单说order-by子句，它属于嵌套的子查询，这样子排序是不会发生的。至少，我们要做到，当用户这样子写的时候，不能抛出一个异常吧。
 
 现在甚至在查询里面加一个简单的投影操作都会引发异常。
 
+````cs
     var query = from c in db.Customers
                 orderby c.City
                 select new { c.Country, c.City, c.ContactName };
+````
 
 翻译上面的查询会出现同样的问题。
 
+````sql
     SELECT t2.Country, t2.City, t2.ContactName
     FROM (
       SELECT t1.City, t1.Country, t1.ContactName, t1.CustomerID, t1.Phone
@@ -264,6 +289,7 @@ LINQ允许你在任何你喜欢的地方放置排序表达式，而SQL的限制�
       ) AS t1
       ORDER BY t1.City
     ) AS t2
+````
 
 很明显，还有做一些额外的工作才能避免异常。问题是，什么工作？
 
@@ -281,150 +307,152 @@ LINQ允许你在任何你喜欢的地方放置排序表达式，而SQL的限制�
 
 看看代码吧。
 
+````cs
 	/// <summary>
-    /// Move order-bys to the outermost select
-    /// </summary>
-    internal class OrderByRewriter : DbExpressionVisitor {
-        IEnumerable<OrderExpression> gatheredOrderings;
-        bool isOuterMostSelect;
-
-        public OrderByRewriter() {
-        }
-
-        public Expression Rewrite(Expression expression) {
-            this.isOuterMostSelect = true;
-            return this.Visit(expression);
-        }
-
-        protected override Expression VisitSelect(SelectExpression select) {
-            bool saveIsOuterMostSelect = this.isOuterMostSelect;
-            try {
-                this.isOuterMostSelect = false;
-                select = (SelectExpression)base.VisitSelect(select);
-                bool hasOrderBy = select.OrderBy != null && select.OrderBy.Count > 0;
-                if (hasOrderBy) {
-                    this.PrependOrderings(select.OrderBy);
-                }
-                bool canHaveOrderBy = saveIsOuterMostSelect;
-                bool canPassOnOrderings = !saveIsOuterMostSelect;
-                IEnumerable<OrderExpression> orderings = (canHaveOrderBy) ? this.gatheredOrderings : null;
-                ReadOnlyCollection<ColumnDeclaration> columns = select.Columns;
-                if (this.gatheredOrderings != null) {
-                    if (canPassOnOrderings) {
-                        HashSet<string> producedAliases = new AliasesProduced().Gather(select.From);
-                        // reproject order expressions using this select's alias so the outer select will have properly formed expressions
-                        BindResult project = this.RebindOrderings(this.gatheredOrderings, select.Alias, producedAliases, select.Columns);
-                        this.gatheredOrderings = project.Orderings;
-                        columns = project.Columns;
-                    }
-                    else {
-                        this.gatheredOrderings = null;
-                    }
-                }
-                if (orderings != select.OrderBy || columns != select.Columns) {
-                    select = new SelectExpression(select.Type, select.Alias, columns, select.From, select.Where, orderings);
-                }
-                return select;
-            }
-            finally {
-                this.isOuterMostSelect = saveIsOuterMostSelect;
-            }
-        }
-
-        protected override Expression VisitJoin(JoinExpression join) {
-            // make sure order by expressions lifted up from the left side are not lost
-            // when visiting the right side
-            Expression left = this.VisitSource(join.Left);
-            IEnumerable<OrderExpression> leftOrders = this.gatheredOrderings;
-            this.gatheredOrderings = null; // start on the right with a clean slate
-            Expression right = this.VisitSource(join.Right);
-            this.PrependOrderings(leftOrders);
-            Expression condition = this.Visit(join.Condition);
-            if (left != join.Left || right != join.Right || condition != join.Condition) {
-                return new JoinExpression(join.Type, join.Join, left, right, condition);
-            }
-            return join;
-        }
-
-        /// <summary>
-        /// Add a sequence of order expressions to an accumulated list, prepending so as
-        /// to give precedence to the new expressions over any previous expressions
-        /// </summary>
-        /// <param name="newOrderings"></param>
-        protected void PrependOrderings(IEnumerable<OrderExpression> newOrderings) {
-            if (newOrderings != null) {
-                if (this.gatheredOrderings == null) {
-                    this.gatheredOrderings = newOrderings;
-                }
-                else {
-                    List<OrderExpression> list = this.gatheredOrderings as List<OrderExpression>;
-                    if (list == null) {
-                        this.gatheredOrderings = list = new List<OrderExpression>(this.gatheredOrderings);
-                    }
-                    list.InsertRange(0, newOrderings);
-                }
-            }
-        }
-
-        protected class BindResult {
-            ReadOnlyCollection<ColumnDeclaration> columns;
-            ReadOnlyCollection<OrderExpression> orderings;
-            public BindResult(IEnumerable<ColumnDeclaration> columns, IEnumerable<OrderExpression> orderings) {
-                this.columns = columns as ReadOnlyCollection<ColumnDeclaration>;
-                if (this.columns == null) {
-                    this.columns = new List<ColumnDeclaration>(columns).AsReadOnly();
-                }
-                this.orderings = orderings as ReadOnlyCollection<OrderExpression>;
-                if (this.orderings == null) {
-                    this.orderings = new List<OrderExpression>(orderings).AsReadOnly();
-                }
-            }
-            public ReadOnlyCollection<ColumnDeclaration> Columns {
-                get { return this.columns; }
-            }
-            public ReadOnlyCollection<OrderExpression> Orderings {
-                get { return this.orderings; }
-            }
-        }
-
-        /// <summary>
-        /// Rebind order expressions to reference a new alias and add to column declarations if necessary
-        /// </summary>
-        protected virtual BindResult RebindOrderings(IEnumerable<OrderExpression> orderings, string alias, HashSet<string> existingAliases, IEnumerable<ColumnDeclaration> existingColumns) {
-            List<ColumnDeclaration> newColumns = null;
-            List<OrderExpression> newOrderings = new List<OrderExpression>();
-            foreach (OrderExpression ordering in orderings) {
-                Expression expr = ordering.Expression;
-                ColumnExpression column = expr as ColumnExpression;
-                if (column == null || (existingAliases != null && existingAliases.Contains(column.Alias))) {
-                    // check to see if a declared column already contains a similar expression
-                    int iOrdinal = 0;
-                    foreach (ColumnDeclaration decl in existingColumns) {
-                        ColumnExpression declColumn = decl.Expression as ColumnExpression;
-                        if (decl.Expression == ordering.Expression || 
-                            (column != null && declColumn != null && column.Alias == declColumn.Alias && column.Name == declColumn.Name)) {
-                            // found it, so make a reference to this column
-                            expr = new ColumnExpression(column.Type, alias, decl.Name, iOrdinal);
-                            break;
-                        }
-                        iOrdinal++;
-                    }
-                    // if not already projected, add a new column declaration for it
-                    if (expr == ordering.Expression) {
-                        if (newColumns == null) {
-                            newColumns = new List<ColumnDeclaration>(existingColumns);
-                            existingColumns = newColumns;
-                        }
-                        string colName = column != null ? column.Name : "c" + iOrdinal;
-                        newColumns.Add(new ColumnDeclaration(colName, ordering.Expression));
-                        expr = new ColumnExpression(expr.Type, alias, colName, iOrdinal);
-                    }
-                    newOrderings.Add(new OrderExpression(ordering.OrderType, expr));
-                }
-            }
-            return new BindResult(existingColumns, newOrderings);
-        }
-    }
+	/// Move order-bys to the outermost select
+	/// </summary>
+	internal class OrderByRewriter : DbExpressionVisitor {
+	    IEnumerable<OrderExpression> gatheredOrderings;
+	    bool isOuterMostSelect;
+	
+	    public OrderByRewriter() {
+	    }
+	
+	    public Expression Rewrite(Expression expression) {
+	        this.isOuterMostSelect = true;
+	        return this.Visit(expression);
+	    }
+	
+	    protected override Expression VisitSelect(SelectExpression select) {
+	        bool saveIsOuterMostSelect = this.isOuterMostSelect;
+	        try {
+	            this.isOuterMostSelect = false;
+	            select = (SelectExpression)base.VisitSelect(select);
+	            bool hasOrderBy = select.OrderBy != null && select.OrderBy.Count > 0;
+	            if (hasOrderBy) {
+	                this.PrependOrderings(select.OrderBy);
+	            }
+	            bool canHaveOrderBy = saveIsOuterMostSelect;
+	            bool canPassOnOrderings = !saveIsOuterMostSelect;
+	            IEnumerable<OrderExpression> orderings = (canHaveOrderBy) ? this.gatheredOrderings : null;
+	            ReadOnlyCollection<ColumnDeclaration> columns = select.Columns;
+	            if (this.gatheredOrderings != null) {
+	                if (canPassOnOrderings) {
+	                    HashSet<string> producedAliases = new AliasesProduced().Gather(select.From);
+	                    // reproject order expressions using this select's alias so the outer select will have properly formed expressions
+	                    BindResult project = this.RebindOrderings(this.gatheredOrderings, select.Alias, producedAliases, select.Columns);
+	                    this.gatheredOrderings = project.Orderings;
+	                    columns = project.Columns;
+	                }
+	                else {
+	                    this.gatheredOrderings = null;
+	                }
+	            }
+	            if (orderings != select.OrderBy || columns != select.Columns) {
+	                select = new SelectExpression(select.Type, select.Alias, columns, select.From, select.Where, orderings);
+	            }
+	            return select;
+	        }
+	        finally {
+	            this.isOuterMostSelect = saveIsOuterMostSelect;
+	        }
+	    }
+	
+	    protected override Expression VisitJoin(JoinExpression join) {
+	        // make sure order by expressions lifted up from the left side are not lost
+	        // when visiting the right side
+	        Expression left = this.VisitSource(join.Left);
+	        IEnumerable<OrderExpression> leftOrders = this.gatheredOrderings;
+	        this.gatheredOrderings = null; // start on the right with a clean slate
+	        Expression right = this.VisitSource(join.Right);
+	        this.PrependOrderings(leftOrders);
+	        Expression condition = this.Visit(join.Condition);
+	        if (left != join.Left || right != join.Right || condition != join.Condition) {
+	            return new JoinExpression(join.Type, join.Join, left, right, condition);
+	        }
+	        return join;
+	    }
+	
+	    /// <summary>
+	    /// Add a sequence of order expressions to an accumulated list, prepending so as
+	    /// to give precedence to the new expressions over any previous expressions
+	    /// </summary>
+	    /// <param name="newOrderings"></param>
+	    protected void PrependOrderings(IEnumerable<OrderExpression> newOrderings) {
+	        if (newOrderings != null) {
+	            if (this.gatheredOrderings == null) {
+	                this.gatheredOrderings = newOrderings;
+	            }
+	            else {
+	                List<OrderExpression> list = this.gatheredOrderings as List<OrderExpression>;
+	                if (list == null) {
+	                    this.gatheredOrderings = list = new List<OrderExpression>(this.gatheredOrderings);
+	                }
+	                list.InsertRange(0, newOrderings);
+	            }
+	        }
+	    }
+	
+	    protected class BindResult {
+	        ReadOnlyCollection<ColumnDeclaration> columns;
+	        ReadOnlyCollection<OrderExpression> orderings;
+	        public BindResult(IEnumerable<ColumnDeclaration> columns, IEnumerable<OrderExpression> orderings) {
+	            this.columns = columns as ReadOnlyCollection<ColumnDeclaration>;
+	            if (this.columns == null) {
+	                this.columns = new List<ColumnDeclaration>(columns).AsReadOnly();
+	            }
+	            this.orderings = orderings as ReadOnlyCollection<OrderExpression>;
+	            if (this.orderings == null) {
+	                this.orderings = new List<OrderExpression>(orderings).AsReadOnly();
+	            }
+	        }
+	        public ReadOnlyCollection<ColumnDeclaration> Columns {
+	            get { return this.columns; }
+	        }
+	        public ReadOnlyCollection<OrderExpression> Orderings {
+	            get { return this.orderings; }
+	        }
+	    }
+	
+	    /// <summary>
+	    /// Rebind order expressions to reference a new alias and add to column declarations if necessary
+	    /// </summary>
+	    protected virtual BindResult RebindOrderings(IEnumerable<OrderExpression> orderings, string alias, HashSet<string> existingAliases, IEnumerable<ColumnDeclaration> existingColumns) {
+	        List<ColumnDeclaration> newColumns = null;
+	        List<OrderExpression> newOrderings = new List<OrderExpression>();
+	        foreach (OrderExpression ordering in orderings) {
+	            Expression expr = ordering.Expression;
+	            ColumnExpression column = expr as ColumnExpression;
+	            if (column == null || (existingAliases != null && existingAliases.Contains(column.Alias))) {
+	                // check to see if a declared column already contains a similar expression
+	                int iOrdinal = 0;
+	                foreach (ColumnDeclaration decl in existingColumns) {
+	                    ColumnExpression declColumn = decl.Expression as ColumnExpression;
+	                    if (decl.Expression == ordering.Expression || 
+	                        (column != null && declColumn != null && column.Alias == declColumn.Alias && column.Name == declColumn.Name)) {
+	                        // found it, so make a reference to this column
+	                        expr = new ColumnExpression(column.Type, alias, decl.Name, iOrdinal);
+	                        break;
+	                    }
+	                    iOrdinal++;
+	                }
+	                // if not already projected, add a new column declaration for it
+	                if (expr == ordering.Expression) {
+	                    if (newColumns == null) {
+	                        newColumns = new List<ColumnDeclaration>(existingColumns);
+	                        existingColumns = newColumns;
+	                    }
+	                    string colName = column != null ? column.Name : "c" + iOrdinal;
+	                    newColumns.Add(new ColumnDeclaration(colName, ordering.Expression));
+	                    expr = new ColumnExpression(expr.Type, alias, colName, iOrdinal);
+	                }
+	                newOrderings.Add(new OrderExpression(ordering.OrderType, expr));
+	            }
+	        }
+	        return new BindResult(existingColumns, newOrderings);
+	    }
+	}
+````
 
 代码好多:-) 
 
@@ -438,6 +466,7 @@ LINQ允许你在任何你喜欢的地方放置排序表达式，而SQL的限制�
 
 把前面提到的所有东西都加到代码里来，我们只需要修改一下`DBQueryProvider`类，让它调用新添加的访问器即可。
 
+````cs
     public class DbQueryProvider : QueryProvider {
         ...
         private TranslateResult Translate(Expression expression) {
@@ -454,16 +483,20 @@ LINQ允许你在任何你喜欢的地方放置排序表达式，而SQL的限制�
         }
         ...
     } 
+````
 
 现在，执行下面这个不算太复杂的查询。
 
+````cs
     var query = from c in db.Customers
                 orderby c.City
                 where c.Country == "UK"
                 select new { c.City, c.ContactName };
+````
 
 翻译后得到如下SQL：
 
+````sql
     SELECT t3.City, t3.ContactName
     FROM (
       SELECT t2.City, t2.Country, t2.ContactName, t2.CustomerID, t2.Phone
@@ -477,11 +510,13 @@ LINQ允许你在任何你喜欢的地方放置排序表达式，而SQL的限制�
       WHERE (t2.Country = 'UK')
     ) AS t3
     ORDER BY t3.City
+````
 
 这可比之前生成的SQL好多了。
 
 执行完成后，得到如下输出：
 
+````plain
 	{ City = Cowes, ContactName = Helen Bennett }
 	{ City = London, ContactName = Simon Crowther }
 	{ City = London, ContactName = Hari Kumar }
@@ -489,9 +524,10 @@ LINQ允许你在任何你喜欢的地方放置排序表达式，而SQL的限制�
 	{ City = London, ContactName = Victoria Ashworth }
 	{ City = London, ContactName = Elizabeth Brown }
 	{ City = London, ContactName = Ann Devon }
+````
 
 好了，这就是排序的实现，至少也算是一个好的开始。
 
 当然，如果我们能将那些不必要的子查询去掉的话就更好了。也许下次吧:-)
 
-<img src="http://blogs.msdn.com/utility/filethumbnails/zip.gif" style="display: inline !important;"/>[Query8.zip](http://blogs.msdn.com/cfs-file.ashx/__key/communityserver-components-postattachments/00-05-38-61-88/Query8.zip)
+[Query8.zip](https://msdnshared.blob.core.windows.net/media/MSDNBlogsFS/prod.evol.blogs.msdn.com/CommunityServer.Components.PostAttachments/00/05/38/61/88/Query8.zip)

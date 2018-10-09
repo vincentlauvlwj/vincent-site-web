@@ -28,6 +28,7 @@ tags:
 通过对 Java 动态代理机制的推演，我们已经获得了一个通用的方法模板。可以预期的是，通过模板来定制和引导代理类的代码生成，是比较可行的方法。我们将主要使用两个模板：类模板和方法模板。
 **清单 1. 类模板**
 
+````plain
 	package &Package;
 	final public class &Name &Extends &Implements
 	{
@@ -35,10 +36,12 @@ tags:
 	    &Constructors
 	    &Methods
 	}
+````
 
 类模板定制了代理类的代码框架。其中带“&”前缀的标签位被用来引导相应的代码替换。在此预留了包（&Package）、类名（&ClassName）、类继承（&Extends）、接口实现（&Implements）、构造函数集（&Constructors）及方法集（&Methods）的标签位。类模板还同时声明了一个私有型的调用处理器对象作为类成员。
 **清单 2. 方法模板**
 
+````plain
 	&Modifiers &ReturnType &MethodName(&Parameters) &Throwables
 	{
 	    java.lang.reflect.Method method = null;
@@ -53,6 +56,7 @@ tags:
 	    }&Exceptions
 	    &Return
 	}
+````
 
 方法模板定制了代理类方法集合中各个方法的代码框架，同样的带“&”前缀的标签位被用来引导相应的代码替换。在此预留了修饰符（&Modifiers）、返回类型（&ReturnType）、方法名（&MethodName）、参数列表（Parameters）、异常列表（&Throwables）、方法的声明类（&Class）、参数类型列表（&ParameterTypes）、调用处理器的参数值列表（&ParameterValues），异常处理（&Exceptions）及返回值（&Return）的标签位。
 
@@ -66,6 +70,7 @@ tags:
 第二步，遍历 Method 对象列表，对每个 Method 对象，进行相应的代码生成工作。
 **清单 3. 对标签位进行代码替换生成方法代码**
 
+````java
 	String declTemplate = "&Modifiers &ReturnType &MethodName(&Parameters) &Throwables";
 	String bodyTemplate = "&Declaration &Body";
 	// 方法声明
@@ -78,10 +83,12 @@ tags:
 	// 方法声明以及实现
 	String body = bodyTemplate.replaceAll("&Declaration", declare )
 	    .replaceAll("&Body", getMethodEntity( method ));
+````
 
 这里涉及了一些 ProxyEx 类的私有的辅助函数如 getMethodModifiers 和 getMethodReturnType 等等，它们都是通过反射获取所需的信息，然后动态地生成各部分代码。函数 getMethodEntity 是比较重要的辅助函数，它又调用了其他的辅助函数来生成代码并替换标签位。
 **清单 4. ProxyEx 的静态方法 getMethodEntity()**
 
+````java
 	private static String getMethodEntity( Method method )
 	{
 	    String template =  "\n{"
@@ -107,10 +114,12 @@ tags:
 	    
 	    return result;
 	}
+````
 
 当为 Class 类型对象生成该类型对应的字符代码时，可能涉及数组类型，反推过程会需要按递归方法生成代码，这部分工作由 getTypeHelper 方法提供
 **清单 5. ProxyEx 的静态方法 getTypeHelper()**
 
+````java
 	private static String getTypeHelper(Class type)
 	{
 	    if( type.isArray() )
@@ -123,6 +132,7 @@ tags:
 	        return type.getName();
 	    }
 	}
+````
 
 第三步，将所生成的方法保存进一个 map 表，该表记录的是键值对（方法声明，方法实现）。由于类的多态性，父类的方法可能被子类所覆盖，这时以上通过遍历所得的方法列表中就会出现重复的方法对象，维护该表可以很自然地达到避免方法重复生成的目的，这就维护该表的原因所在。
 
@@ -131,11 +141,13 @@ tags:
 相信读者依然清晰记得代理类是通过其构造函数反射生成的，而构造时传入的唯一参数就是调用处理器对象。为了保持与原代理机制的一致性，新的代理类的构造函数也同样只有一个调用处理器对象作为参数。模板简单如下
 **清单 6. 构造函数模板**
 
+````plain
 	public &Constructor(java.lang.reflect.InvocationHandler handler) 
 	{ 
 	    super(&Parameters); 
 	    this.handler = handler; 
 	}
+````
 
 需要特别提一下的是 super 方法的参数值列表 &Parameters 的生成，我们借鉴了 Mock 思想，侧重于追求对象构造的成功，而并未过多地努力分析并寻求最准确最有意义的赋值。对此，相信读者会多少产生一些疑虑，但稍后我们会提及改进的方法，请先继续阅读。
 
@@ -152,15 +164,18 @@ tags:
 但是，如何获得被代理类的实例呢？从当前的的设计中已经没有办法做到。既然如此，那就继续我们的扩展之旅。只不过这次扩展的对象是调用处理器接口，我们将在扩展后的接口里加入获取被代理类对象的方法，且扩展调用处理器接口将以 static 和 public 的形式被定义在 ProxyEx 类中。
 **清单 7. ProxyEx 类内的静态接口 InvocationHandlerEx**
 
+````java
 	public static interface InvocationHandlerEx extends InvocationHandler 
 	{ 
 	    // 返回指定 stubClass 参数所对应的被代理类实体对象
 	    Object getStub(Class stubClass); 
 	}
+````
 
 新的调用处理器接口具备了获取被代理类对象的能力，从而为实现类变量的同步打开了通道。接下来还需要的就是执行类变量同步的 sync 方法，每个动态生成的代理类中都会被悄悄地加入这个私有方法以供调用。每次方法被分派转发到调用处理器执行之前和之后，sync 方法都会被调用，从而保证类变量的双向实时更新。相应的，方法模板也需要更新以支持该新特性。
 **清单 8. 更新后的方法模板（部分）**
 
+````plain
 	Object r = null;
 	try{
 	    // 代理类到被代理类方向的变量同步
@@ -171,10 +186,12 @@ tags:
 	}&Exceptions
 	
 	&Return
+````
 
 sync 方法还会在构造函数尾部被调用，从而将被代理类对象的变量信息同步到代理类对象，实现类似于拷贝构造的等价效果。相应的，构造函数模板也需要更新以支持该新特性。
 **清单 9. 更新后的构造函数模板**
 
+````plain
 	public &Name(java.lang.reflect.InvocationHandler handler)
 	{
 	    super(&Parameters);
@@ -182,10 +199,12 @@ sync 方法还会在构造函数尾部被调用，从而将被代理类对象的
 	    // 被代理类到代理类方向的变量同步
 	    sync(null, false);
 	}
+````
 
 接下来介绍 sync 方法的实现，其思想就是首先获取被代理类的所有 Field 对象的列表，并通过扩展的调用处理器获得方法的声明类说对应的 stub 对象，然后遍历 Field 对象列表并对各个变量进行拷贝同步。
 **清单 10. 声明在动态生成的代理类内部的 snyc 函数**
 
+````java
 	private synchronized void sync(java.lang.Class clazz, boolean toStub)
 	{
 	    // 判断是否为扩展调用处理器
@@ -222,10 +241,12 @@ sync 方法还会在构造函数尾部被调用，从而将被代理类对象的
 	        }
 	    }
 	}
+````
 
 这里涉及到一个用于获取类的所有 Field 对象列表的静态辅助方法 getFields。为了提高频繁查询时的性能，配合该静态方法的是一个静态的 fieldsMap 对象，用于记录已查询过的类其所包含的 Field 对象列表，使得再次查询时能迅速返回其对应列表。相应的，类模板也需进行更新。
 **清单 11. 增加了静态 fieldsMap 变量后的类模板**
 
+````plain
 	package &Package;
 	final public class &Name &Extends &Implements
 	{
@@ -234,9 +255,11 @@ sync 方法还会在构造函数尾部被调用，从而将被代理类对象的
 	    &Constructors
 	    &Methods
 	}
+````
 
 **清单 12. 声明在动态生成的代理类内部的静态方法 getFields**
 
+````java
 	private static java.lang.reflect.Field[] getFields(java.lang.Class c)
 	{
 	    if( fieldsMap.containsKey(c) )
@@ -260,6 +283,7 @@ sync 方法还会在构造函数尾部被调用，从而将被代理类对象的
 	    fieldsMap.put(c, fields);
 	    return fields;
 	}
+````
 
 ## 动态编译及装载
 
@@ -268,6 +292,7 @@ sync 方法还会在构造函数尾部被调用，从而将被代理类对象的
 首先是动态编译。这部分由 ProxyEx 类的 getProxyClassCodeSource 函数完成。该函数分三步进行：第一步保存源代码到 .java 文件；第二步编译该 .java 文件；第三步从输出的 .class 文件读取字节码。
 **清单 13. ProxyEx 的静态方法 getProxyClassCodeSource**
 
+````java
 	private static byte[] getProxyClassCodeSource( String pkg, String className, 
 	    String declare ) throws Exception
 	{
@@ -314,10 +339,12 @@ sync 方法还会在构造函数尾部被调用，从而将被代理类对象的
 	    
 	    return codeSource;
 	}
+````
 
 得到代理类的字节码，接下来就可以动态装载该类了。这部分由 ProxyEx 类的 defineClassHelper 函数完成。该函数分两步进行：第一步通过反射获取父类 Proxy 的静态私有方法 defineClass0；第二步传入字节码数组及其他相关信息并反射调用该方法以完成类的动态装载。
 **清单 14. ProxyEx 的静态方法 defineClassHelper**
 
+````java
 	private static Class defineClassHelper( String pkg, String cName, byte[] codeSource ) 
 	    throws Exception
 	{
@@ -336,6 +363,7 @@ sync 方法还会在构造函数尾部被调用，从而将被代理类对象的
 	        new Integer(0),
 	        new Integer(codeSource.length) } );
 	}
+````
 
 ## 性能改进
 
@@ -346,12 +374,15 @@ sync 方法还会在构造函数尾部被调用，从而将被代理类对象的
 接下来需要考虑的是与原代理机制的兼容性问题。曾记否，Proxy 中还有两个静态方法：isProxyClass 和 getInvocationHandler，分别被用于判断 Class 对象是否是动态代理类和从 Object 对象获取对应的调用处理器（如果可能的话）。
 **清单 15. Proxy 的静态方法 isProxyClass 和 getInvocationHandler**
 
+````java
 	static boolean isProxyClass(Class cl) 
 	static InvocationHandler getInvocationHandler(Object proxy)
+````
 
 现在的兼容性问题，主要涉及到 ProxyEx 类与父类 Proxy 在关于动态生成的代理类的信息方面所面临的如何保持同步的问题。曾介绍过，在 Proxy 类中有个私有的 Map 对象 proxyClasses 专门负责保存所有动态生成的代理类类型。Proxy 类的静态函数 isProxyClass 就是通过查询该表以确定某 Class 对象是否为动态代理类，我们需要做的就是把由 ProxyEx 生成的代理类类型也保存入该表。这部分工作由 ProxyEx 类的静态方法 addProxyClass 辅助完成。
 **清单 16. ProxyEx 的静态方法 addProxyClass**
 
+````java
 	private static void addProxyClass( Class proxy ) throws IllegalArgumentException 
 	{ 
 	    try 
@@ -366,16 +397,18 @@ sync 方法还会在构造函数尾部被调用，从而将被代理类对象的
 	        throw new IllegalArgumentException(e.toString()); 
 	    } 
 	}
+````
 
 相对而言，原来 Proxy 类的静态方法 getInvocationHandler 实现相当简单，先判断是否为代理类，若是则直接类型转换到 Proxy 并返回其调用处理器成员，而扩展后的代理类并不非从 Proxy 类继承，所以在获取调用处理器对象的方法上需要一些调整。这部分由 ProxyEx 类的同名静态方法 getInvocationHandler 完成。
 **清单 17. ProxyEx 的静态方法 getInvocationHandler**
 
+````java
 	public static InvocationHandler getInvocationHandler(Object proxy) 
 	    throws IllegalArgumentException
 	{
 	    // 如果Proxy实例，直接调父类的方法
 	    if( proxy instanceof Proxy )
-	{
+	    {
 	        return Proxy.getInvocationHandler( proxy );
 	    }
 	    
@@ -386,7 +419,7 @@ sync 方法还会在构造函数尾部被调用，从而将被代理类对象的
 	    }
 	        
 	    try
-	{
+	    {
 	        // 通过反射获取扩展代理类的调用处理器对象
 	        Field invoker = proxy.getClass().getDeclaredField("handler");
 	        invoker.setAccessible(true);
@@ -397,6 +430,7 @@ sync 方法还会在构造函数尾部被调用，从而将被代理类对象的
 	        throw new IllegalArgumentException("Suspect not a proxy instance");
 	    }
 	}
+````
 
 ## 坦言：也有局限
 
@@ -411,6 +445,7 @@ sync 方法还会在构造函数尾部被调用，从而将被代理类对象的
 首先，我们定义了一个售票员抽象类 TicketSeller。
 **清单 18. TicketSeller**
 
+````java
 	public abstract class TicketSeller 
 	{
 	    protected String theme;
@@ -429,10 +464,12 @@ sync 方法还会在构造函数尾部被调用，从而将被代理类对象的
 	    public abstract int getTicketPrice();
 	    public abstract int buy(int ticketNumber, int money) throws Exception;
 	}
+````
 
 其次，我们会实现一个 2010 世博门票售票代理类 Expo2010TicketSeller。
 **清单 19. Expo2010TicketSeller**
 
+````java
 	public class Expo2010TicketSeller extends TicketSeller 
 	{
 	    protected int price;
@@ -464,10 +501,12 @@ sync 方法还会在构造函数尾部被调用，从而将被代理类对象的
 	        return charge;
 	    }
 	}
+````
 
 接着，我们将通过购票者类 TicketBuyer 来模拟购票以演示扩展动态代理机制。
 **清单 20. TicketBuyer**
 
+````java
 	public class TicketBuyer 
 	{
 	    public static void main(String[] args) 
@@ -551,10 +590,12 @@ sync 方法还会在构造函数尾部被调用，从而将被代理类对象的
 	        }    
 	    }
 	}
+````
 
 最后，见演示程序的执行结果。
 **清单 21. 执行输出**
 
+````plain
 	Ticket Seller Class: class com.demo.proxy.test.TicketSellerProxy0
 	
 	Ticket Theme: World Expo 2010
@@ -585,3 +626,4 @@ sync 方法还会在构造函数尾部被调用，从而将被代理类对象的
 	   >>> Enter method: getTicketTheme
 	   <<< Exit method: getTicketTheme
 	Updated Ticket Theme: World Expo 2010 in Shanghai
+````

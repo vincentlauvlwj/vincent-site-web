@@ -28,26 +28,28 @@ tags:
 
 当然说话也不能这么绝对，作为一个程序员，我们在自认为不可能的地方找到的 bug 还少吗？Test first，我们先来看一段测试代码。
 
-	interface SneakyThrows {
-	
-	    /**
-	     * Throws an IOException sneakily.
-	     */
-	    void sneakyThrow() /* throws IOException */;
-	}
-	
-	static void testSneakyThrows(SneakyThrows sneaky) {
-	    try {
-	        sneaky.sneakyThrow();
-	    } catch (Throwable e) {
-	        if (e instanceof IOException) {
-	            System.out.println(sneaky.getClass().getSimpleName() + " success!");
-	        } else {
-	            throw new AssertionError(
-					sneaky.getClass().getSimpleName() + " failed!", e);
-	        }
-	    }
-	}
+````java
+    interface SneakyThrows {
+
+        /**
+         * Throws an IOException sneakily.
+         */
+        void sneakyThrow() /* throws IOException */;
+    }
+
+    static void testSneakyThrows(SneakyThrows sneaky) {
+        try {
+            sneaky.sneakyThrow();
+        } catch (Throwable e) {
+            if (e instanceof IOException) {
+                System.out.println(sneaky.getClass().getSimpleName() + " success!");
+            } else {
+                throw new AssertionError(
+                    sneaky.getClass().getSimpleName() + " failed!", e);
+            }
+        }
+    }
+````
 
 这是一个接口和一个测试方法。这个 SneakyThrows 接口自称它会抛出一个 IOException，然而它的方法上却没有 throws 声明。测试方法接受一个实现了 SneakyThrows 接口的对象，调用接口上的 sneakyThrow 方法，如果接口方法真的抛出了 IOException，则输出 success 字样，否则会抛出异常，测试失败。那么，聪明的你，有没有办法实现这样一个接口，使测试能够成功呢？
 
@@ -59,6 +61,7 @@ tags:
 
 但是我们还有反射，只要 Unsafe 对象是保存在一个 Java 的字段中，反射就可以直接拿到这个对象，无视访问权限以及安全检查。下面这段代码，首先通过反射得到了 Unsafe 对象，然后调用它的 throwException 方法，成功抛出了一个受检异常。
 
+````java
 	class UnsafeSneakyThrows implements SneakyThrows {
 	
 	    @Override
@@ -76,6 +79,7 @@ tags:
 	        }
 	    }
 	}
+````
 
 小伙伴们可以运行一下，这段代码完全做到我们之前认为不可能的事情，在一个没有 throws 声明的方法里抛出受检异常！这时，有心的小伙伴应该就能明白过来，所谓的受检不受检，其实只是一个编译器的魔法，JVM 是完全不关心的。这也是为什么基于 JVM 的其他语言，比如 Scala、Groovy 之类，完全抛弃了受检异常的设计，却能运行在 JVM 上，并且能和 Java 很好地兼容。另外，学过 C++ 的同学应该也知道，在 C++ 里面，异常并不像 Java 一样有一个共同的基类，C++ 的 throw 语句可以抛出任何东西，甚至直接抛出一个 int 之类的值类型，当然这是题外话。
 
@@ -89,6 +93,7 @@ tags:
 
 然而，采用类型擦除除了大家都说烂了的那些坏处之外，还有一些不为人知的坑，比如下面这段代码就是。
 
+````java
 	class GenericSneakyThrows implements SneakyThrows {
 	
 	    @Override
@@ -100,6 +105,7 @@ tags:
 	        throw (X) e;
 	    }
 	}
+````
 
 这里定义了一个泛型声明为 `<X extends Throwable>` 方法，在内部将传入的 Throwable 强转为 X 之后再抛出，X 的具体类型取决于调用这个方法时指定的类型参数。在这里，只要将类型参数指定为 RuntimeException，然后不管传入一个什么异常，都可以直接抛出去，而不用 throws 声明。什么，你说为什么 IOException 可以强转成 RuntimeException？当然是因为类型擦除啊，由于类型擦除的存在，sneakyThrow0 在被调用的时候，X 在运行时实际上是擦除为 Throwable 类型，从 IOException 转成 Throwable 一点问题都不会有。
 
@@ -111,6 +117,7 @@ tags:
 
 在很多文章里面，都推荐大家在使用反射的时候，用 Constructor.newInstance() 代替 Class.newInstance() 创建对象，这是为什么呢？我们先看看下面这段代码。
 
+````java
 	class ConstructorSneakyThrows implements SneakyThrows {
 	
 	    @Override
@@ -129,6 +136,7 @@ tags:
 	        throw new IOException();
 	    }
 	}
+````
 
 和上面两个例子一样，上面这段代码也可以抛出一个受检异常。我们首先写了一个 ConstructorThrowable 类，这个类有一个无参构造方法，在构造方法里面我们抛出了一个 IOException，因此在调用 Class.newInstance() 的时候就把这个异常传播了出去，从而绕过了编译器的检查。
 
@@ -144,7 +152,7 @@ tags:
 
 在 JDK5 里面，Thread 类一口气废弃了好几个方法，它们就是 suspend/resume/stop 系列。当然，废弃归废弃，只要我们有充分的理由，也不是不能用它们。
 
-
+````java
 	class ThreadStopSneakyThrows implements SneakyThrows {
 	
 	    @Override
@@ -152,6 +160,7 @@ tags:
 	        Thread.currentThread().stop(new IOException());
 	    }
 	}
+````
 
 如你所见，接收一个 Throwable 参数的 Thread.stop() 方法也可以用来实现 SneakyThrows，抛出一个受检异常。stop() 方法的作用是使指定线程产生一个异常，从而强行终止该线程的执行。在这里，我们使当前线程产生一个 IOException，以达到我们的目的。那么它为什么被废弃了呢？JDK 文档里面有详细的解释。
 

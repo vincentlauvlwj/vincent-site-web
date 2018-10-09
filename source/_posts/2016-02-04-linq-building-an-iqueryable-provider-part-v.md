@@ -17,39 +17,50 @@ tags:
 
 我确实可以写出一个简单的带有where和select的运行良好的查询，就算这个查询再复杂也没关系。
 
+````cs
 	var query = db.Customers.Where(c => c.City == city)
 	                        .Select(c => new {
 	                            Name = c.ContactName,
-	                            Location = c.City });
+	                            Location = c.City 
+	                        });
+````
 
 然而，只要将Where和Select的顺序换一下就坑爹了。
 
+````cs
 	var query = db.Customers.Select(c => new {
 	                            Name = c.ContactName,
-	                            Location = c.City })
+	                            Location = c.City 
+	                        })
 	                        .Where(x => x.Location == city);
+````
 
 这个风骚的小查询生成了一条错误的SQL。
 
+````sql
 	SELECT * FROM (SELECT ContactName, City FROM (SELECT * FROM Customers) AS T) AS T WHERE (Location = 'London')
+````
 
 在执行的时候也会抛出异常，“Invalid column name 'Location'”。似乎我之前直接将成员访问当成数据库列引用的太过简单的做法不太行得通。我天真地假设子树里面唯一的成员访问会与Select子句中的列的名字相匹配，然而实际上并不是。所以，现在要么改一改Select子句中的列名，使之与成员的名字一致，要么想个其它的方法来解决这个问题。
 
 我认为两种方法都是可以的，但是，考虑一个复杂一点的情况，不仅仅是将列重命名，如果选择表达式还生成了嵌套的对象，这样的话对成员的引用很可能就是一个“多点”的嵌套操作。
 
+````cs
 	var query = db.Customers.Select(c => new {
 	                            Name = c.ContactName,
 	                            Location = new {
 	                                City = c.City,
 	                                Country = c.Country
-	                                } 
-	                            })
+	                            } 
+	                        })
 	                        .Where(x => x.Location.City == city);
+````
 
 现在我要怎么翻译这个查询呢？已有的代码甚至根本就不能理解这个中间对象`Location`是个什么东西。幸运的是我早就知道应该怎么做了，只不过要对代码做出比较大的改动。我们需要重新审视一下提供程序仅仅只是将查询表达式翻译为文本的思路了。我们应该将查询表达式翻译为SQL，而文本只是SQL的一种表现形式，而且它还不方便我们对其施加编程逻辑。当然我们最终需要的还是文本，但如果我们能先把SQL表示为一个抽象，那么就能进行更复杂的翻译。
 
 当然，最方便我们操作的数据结构是SQL语义树。所以，理论上我应该定义一个完整的独立的SQL语义树，将LINQ查询表达式翻译为一颗SQL语义树而不是文本，但是这样做的工作量太大了。幸运的是这个假想的SQL树的定义与LINQ表达式树的定义有很大的交集，所以我们可以偷下懒，简单地将LINQ表达式树当成SQL树来使用。为了这么做，我要添加一些新的表达式节点类型，其他的LINQ API不识别这些类型也没关系，因为这只是给我们自己使用的。
 
+````cs
 	internal enum DbExpressionType {
 	    Table = 1000, // make sure these don't overlap with ExpressionType
 	    Column,
@@ -153,6 +164,7 @@ tags:
 	        get { return this.projector; }
 	    }
 	}
+````
 
 我只需要在LINQ表达式树中加上SQL Select查询的概念，Select查询产生一列或多列、一个对列的引用、一个对表的引用、和一个将列引用重新组装为对象的投影器。
 
@@ -164,6 +176,7 @@ tags:
 
 有了新的节点类型之后，当然就要有新的访问器。`DbExpressionVisitor`继承了`ExpressionVisitor`，添加了对新的节点类型的基本的访问模式。
 
+````cs
 	internal class DbExpressionVisitor : ExpressionVisitor {
 	    protected override Expression Visit(Expression exp) {
 	        if (exp == null) {
@@ -226,6 +239,7 @@ tags:
 	        return columns;
 	    }
 	}
+````
 
 我现在真的觉得自己越来越屌了！
 
@@ -233,6 +247,7 @@ tags:
 
 下面是`QueryBinder`类的代码。
 
+````cs
 	internal class QueryBinder : ExpressionVisitor {
 	    ColumnProjector columnProjector;
 	    Dictionary<ParameterExpression, Expression> map;
@@ -301,7 +316,7 @@ tags:
 	        return new ProjectionExpression(
 	            new SelectExpression(resultType, alias, pc.Columns, projection.Source, null),
 	            pc.Projector
-	            );
+	        );
 	    }
 	 
 	    private static string GetExistingAlias(Expression source) {
@@ -365,9 +380,9 @@ tags:
 	                columns,
 	                new TableExpression(resultType, tableAlias, this.GetTableName(table)),
 	                null
-	                ),
+	            ),
 	            projector
-	            );
+	        );
 	    }
 	 
 	    protected override Expression VisitConstant(ConstantExpression c) {
@@ -436,6 +451,7 @@ tags:
 	        return Expression.Property(source, pi);
 	    }
 	}
+````
 
 要注意这里的代码可比以前的`QueryTranslator`复杂多了。对`Where`和`Select`方法的翻译被分发到了两个独立的方法里面。它们不再产生文本，取而代之的是`ProjectionExpression`和`SelectExpression`的实例。`ColumnProjector`似乎做了一些更复杂的事情，我还没有放出它的代码，但是它也有很大的变化。这里还有些获得表和列的信息的帮助方法，其具体的实现要依靠一个完整的映射系统，留待以后解决，现在简单地使用类名和成员名。
 
@@ -447,129 +463,131 @@ tags:
 
 呼，有好多东西要消化，我自己都还没完全理解。下面是与之前完全不同的`ColumnProjector`类，看代码。
 
+````cs
 	internal sealed class ProjectedColumns {
-        Expression projector;
-        ReadOnlyCollection<ColumnDeclaration> columns;
-        internal ProjectedColumns(Expression projector, ReadOnlyCollection<ColumnDeclaration> columns) {
-            this.projector = projector;
-            this.columns = columns;
-        }
-        internal Expression Projector {
-            get { return this.projector; }
-        }
-        internal ReadOnlyCollection<ColumnDeclaration> Columns {
-            get { return this.columns; }
-        }
-    }
- 
-    internal class ColumnProjector : DbExpressionVisitor {
-        Nominator nominator;
-        Dictionary<ColumnExpression, ColumnExpression> map;
-        List<ColumnDeclaration> columns;
-        HashSet<string> columnNames;
-        HashSet<Expression> candidates;
-        string existingAlias;
-        string newAlias;
-        int iColumn;
- 
-        internal ColumnProjector(Func<Expression, bool> fnCanBeColumn) {
-            this.nominator = new Nominator(fnCanBeColumn);
-        }
- 
-        internal ProjectedColumns ProjectColumns(Expression expression, string newAlias, string existingAlias) {
-            this.map = new Dictionary<ColumnExpression, ColumnExpression>();
-            this.columns = new List<ColumnDeclaration>();
-            this.columnNames = new HashSet<string>();
-            this.newAlias = newAlias;
-            this.existingAlias = existingAlias;
-            this.candidates = this.nominator.Nominate(expression);
-            return new ProjectedColumns(this.Visit(expression), this.columns.AsReadOnly());
-        }
- 
-        protected override Expression Visit(Expression expression) {
-            if (this.candidates.Contains(expression)) {
-                if (expression.NodeType == (ExpressionType)DbExpressionType.Column) {
-                    ColumnExpression column = (ColumnExpression)expression;
-                    ColumnExpression mapped;
-                    if (this.map.TryGetValue(column, out mapped)) {
-                        return mapped;
-                    }
-                    if (this.existingAlias == column.Alias) {
-                        int ordinal = this.columns.Count;
-                        string columnName = this.GetUniqueColumnName(column.Name);
-                        this.columns.Add(new ColumnDeclaration(columnName, column));
-                        mapped = new ColumnExpression(column.Type, this.newAlias, columnName, ordinal);
-                        this.map[column] = mapped;
-                        this.columnNames.Add(columnName);
-                        return mapped;
-                    }
-                    // must be referring to outer scope
-                    return column;
-                }
-                else {
-                    string columnName = this.GetNextColumnName();
-                    int ordinal = this.columns.Count;
-                    this.columns.Add(new ColumnDeclaration(columnName, expression));
-                    return new ColumnExpression(expression.Type, this.newAlias, columnName, ordinal);
-                }
-            }
-            else {
-                return base.Visit(expression);
-            }
-        }
- 
-        private bool IsColumnNameInUse(string name) {
-            return this.columnNames.Contains(name);
-        }
- 
-        private string GetUniqueColumnName(string name) {
-            string baseName = name;
-            int suffix = 1;
-            while (this.IsColumnNameInUse(name)) {
-                name = baseName + (suffix++);
-            }
-            return name;
-        }
- 
-        private string GetNextColumnName() {
-            return this.GetUniqueColumnName("c" + (iColumn++));
-        }
- 
-        class Nominator : DbExpressionVisitor {
-            Func<Expression, bool> fnCanBeColumn;
-            bool isBlocked;
-            HashSet<Expression> candidates;
- 
-            internal Nominator(Func<Expression, bool> fnCanBeColumn) {
-                this.fnCanBeColumn = fnCanBeColumn;
-            }
- 
-            internal HashSet<Expression> Nominate(Expression expression) {
-                this.candidates = new HashSet<Expression>();
-                this.isBlocked = false;
-                this.Visit(expression);
-                return this.candidates;
-            }
- 
-            protected override Expression Visit(Expression expression) {
-                if (expression != null) {
-                    bool saveIsBlocked = this.isBlocked;
-                    this.isBlocked = false;
-                    base.Visit(expression);
-                    if (!this.isBlocked) {
-                        if (this.fnCanBeColumn(expression)) {
-                            this.candidates.Add(expression);
-                        }
-                        else {
-                            this.isBlocked = true;
-                        }
-                    }
-                    this.isBlocked |= saveIsBlocked;
-                }
-                return expression;
-            }
-        }
-    }
+	    Expression projector;
+	    ReadOnlyCollection<ColumnDeclaration> columns;
+	    internal ProjectedColumns(Expression projector, ReadOnlyCollection<ColumnDeclaration> columns) {
+	        this.projector = projector;
+	        this.columns = columns;
+	    }
+	    internal Expression Projector {
+	        get { return this.projector; }
+	    }
+	    internal ReadOnlyCollection<ColumnDeclaration> Columns {
+	        get { return this.columns; }
+	    }
+	}
+	 
+	internal class ColumnProjector : DbExpressionVisitor {
+	    Nominator nominator;
+	    Dictionary<ColumnExpression, ColumnExpression> map;
+	    List<ColumnDeclaration> columns;
+	    HashSet<string> columnNames;
+	    HashSet<Expression> candidates;
+	    string existingAlias;
+	    string newAlias;
+	    int iColumn;
+	 
+	    internal ColumnProjector(Func<Expression, bool> fnCanBeColumn) {
+	        this.nominator = new Nominator(fnCanBeColumn);
+	    }
+	 
+	    internal ProjectedColumns ProjectColumns(Expression expression, string newAlias, string existingAlias) {
+	        this.map = new Dictionary<ColumnExpression, ColumnExpression>();
+	        this.columns = new List<ColumnDeclaration>();
+	        this.columnNames = new HashSet<string>();
+	        this.newAlias = newAlias;
+	        this.existingAlias = existingAlias;
+	        this.candidates = this.nominator.Nominate(expression);
+	        return new ProjectedColumns(this.Visit(expression), this.columns.AsReadOnly());
+	    }
+	 
+	    protected override Expression Visit(Expression expression) {
+	        if (this.candidates.Contains(expression)) {
+	            if (expression.NodeType == (ExpressionType)DbExpressionType.Column) {
+	                ColumnExpression column = (ColumnExpression)expression;
+	                ColumnExpression mapped;
+	                if (this.map.TryGetValue(column, out mapped)) {
+	                    return mapped;
+	                }
+	                if (this.existingAlias == column.Alias) {
+	                    int ordinal = this.columns.Count;
+	                    string columnName = this.GetUniqueColumnName(column.Name);
+	                    this.columns.Add(new ColumnDeclaration(columnName, column));
+	                    mapped = new ColumnExpression(column.Type, this.newAlias, columnName, ordinal);
+	                    this.map[column] = mapped;
+	                    this.columnNames.Add(columnName);
+	                    return mapped;
+	                }
+	                // must be referring to outer scope
+	                return column;
+	            }
+	            else {
+	                string columnName = this.GetNextColumnName();
+	                int ordinal = this.columns.Count;
+	                this.columns.Add(new ColumnDeclaration(columnName, expression));
+	                return new ColumnExpression(expression.Type, this.newAlias, columnName, ordinal);
+	            }
+	        }
+	        else {
+	            return base.Visit(expression);
+	        }
+	    }
+	 
+	    private bool IsColumnNameInUse(string name) {
+	        return this.columnNames.Contains(name);
+	    }
+	 
+	    private string GetUniqueColumnName(string name) {
+	        string baseName = name;
+	        int suffix = 1;
+	        while (this.IsColumnNameInUse(name)) {
+	            name = baseName + (suffix++);
+	        }
+	        return name;
+	    }
+	 
+	    private string GetNextColumnName() {
+	        return this.GetUniqueColumnName("c" + (iColumn++));
+	    }
+	 
+	    class Nominator : DbExpressionVisitor {
+	        Func<Expression, bool> fnCanBeColumn;
+	        bool isBlocked;
+	        HashSet<Expression> candidates;
+	 
+	        internal Nominator(Func<Expression, bool> fnCanBeColumn) {
+	            this.fnCanBeColumn = fnCanBeColumn;
+	        }
+	 
+	        internal HashSet<Expression> Nominate(Expression expression) {
+	            this.candidates = new HashSet<Expression>();
+	            this.isBlocked = false;
+	            this.Visit(expression);
+	            return this.candidates;
+	        }
+	 
+	        protected override Expression Visit(Expression expression) {
+	            if (expression != null) {
+	                bool saveIsBlocked = this.isBlocked;
+	                this.isBlocked = false;
+	                base.Visit(expression);
+	                if (!this.isBlocked) {
+	                    if (this.fnCanBeColumn(expression)) {
+	                        this.candidates.Add(expression);
+	                    }
+	                    else {
+	                        this.isBlocked = true;
+	                    }
+	                }
+	                this.isBlocked |= saveIsBlocked;
+	            }
+	            return expression;
+	        }
+	    }
+	}
+````
 
 `ColumnProjector`类不再拼接Select命令的文本，也不再将选择器表达式转换为从`DataReader`构建对象的函数。但是其实做的事情和以前也差不多。它产生用来创建`SelectExpression`节点的`ColumnDeclaration`的list对象，将选择器表达式转换为引用了list中的这些列的投影器表达式。
 
@@ -583,6 +601,7 @@ tags:
 
 好了，现在我已经创建了混合表达式树，并且已经很好地生成了投影器表达式，但我还是要生成SQL文本，否则前面的东西都白做了。所以我将`QueryTranslator`中生成文本的代码提了出来，创建了一个新的类`QueryFormatter`，它全权负责将一颗表达式树转换为文本。
 
+````cs
 	internal class QueryFormatter : DbExpressionVisitor {
 	    StringBuilder sb;
 	    int indent = 2;
@@ -757,11 +776,13 @@ tags:
 	        return source;
 	    }
 	}
+````
 
 除了添加了输出新的`SelectExpression`节点的逻辑之外，我还添加了格式化的逻辑，以支持换行和缩进。现在是不是比较特别了？
 
 当然，最后还是要以一个构造结果对象的`LambdaExpression`结束。我们之前是通过`ColumnProjector`类来获得这个lambda表达式的，但现在它的工作是生成SQL语义投影器，而不是生成创建结果对象的投影器。所以我们需要进一步的转换，我建了一个新的类`ProjectionBuilder`来做这件事。
 
+````cs
 	internal class ProjectionBuilder : DbExpressionVisitor {
 	    ParameterExpression row;
 	    private static MethodInfo miGetValue;
@@ -782,6 +803,7 @@ tags:
 	        return Expression.Convert(Expression.Call(this.row, miGetValue, Expression.Constant(column.Ordinal)), column.Type);
 	    }
 	}
+````
 
 这个类简单地做了`ColumnProjector`之前的工作，不过得益于`QueryBinder`中的更好的绑定逻辑，它现在直接就知道应该将哪些节点替换为数据读取表达式。
 
@@ -789,6 +811,7 @@ tags:
 
 现在就是将前面讲的东西都用上的最后一步了。下面是重写的`DbQueryProvider`的代码。
 
+````cs
 	public class DbQueryProvider : QueryProvider {
 	    DbConnection connection;
 	 
@@ -830,22 +853,26 @@ tags:
 	        return new TranslateResult { CommandText = commandText, Projector = projector };
 	    }
 	}
+````
 
 它和以前有很大的不同。`Translate`方法包含了很多步骤，它调用新增的各种访问器，以及`Execute`方法也不再创建`ObjectReader`对象，因为现在始终都有一个投影器。
 
 现在，给出下面的查询：
 
+````cs
 	var query = db.Customers.Select(c => new {
 	                            Name = c.ContactName,
 	                            Location = new {
 	                                City = c.City,
 	                                Country = c.Country
-	                                } 
-	                            })
+	                            } 
+	                        })
 	                        .Where(x => x.Location.City == city);
+````
 
 执行成功，产生如下输出：
 
+````plain
 	Query:
 	SELECT t2.ContactName, t2.City, t2.Country
 	FROM (
@@ -863,6 +890,7 @@ tags:
 	{ Name = Ann Devon, Location = { City = London, Country = UK } }
 	{ Name = Simon Crowther, Location = { City = London, Country = UK } }
 	{ Name = Hari Kumar, Location = { City = London, Country = UK } }
+````
 
 更好看的查询，更好看的结果，而且现在无论有多少个`Select`或者`Where`方法，无论里面的投影有多复杂它都能运行良好。
 
@@ -870,4 +898,4 @@ tags:
 
 下次见！
 
-<img src="http://blogs.msdn.com/utility/filethumbnails/zip.gif" style="display: inline !important;"/>[Query5.zip](http://blogs.msdn.com/cfs-file.ashx/__key/communityserver-components-postattachments/00-04-21-35-21/Query5.zip)
+[Query5.zip](https://msdnshared.blob.core.windows.net/media/MSDNBlogsFS/prod.evol.blogs.msdn.com/CommunityServer.Components.PostAttachments/00/04/21/35/21/Query5.zip)

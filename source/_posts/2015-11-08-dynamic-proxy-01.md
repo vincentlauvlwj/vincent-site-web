@@ -31,6 +31,7 @@ Java 动态代理机制的出现，使得 Java 开发人员不用手工编写代
  - java.lang.reflect.Proxy：这是 Java 动态代理机制的主类，它提供了一组静态方法来为一组接口动态地生成代理类及其对象。
    **清单 1. Proxy 的静态方法**
 
+	````java
 		// 方法 1: 该方法用于获取指定代理对象所关联的调用处理器
 		static InvocationHandler getInvocationHandler(Object proxy) 
 		
@@ -43,13 +44,16 @@ Java 动态代理机制的出现，使得 Java 开发人员不用手工编写代
 		// 方法 4：该方法用于为指定类装载器、一组接口及调用处理器生成动态代理类实例
 		static Object newProxyInstance(ClassLoader loader, Class[] interfaces, 
 		    InvocationHandler h)
+	````
 
  - java.lang.reflect.InvocationHandler：这是调用处理器接口，它自定义了一个 invoke 方法，用于集中处理在动态代理类对象上的方法调用，通常在该方法中实现对委托类的代理访问。
    **清单 2. InvocationHandler 的核心方法**
 
+	````java
 		// 该方法负责集中处理动态代理类上的所有方法调用。第一个参数既是代理类实例，第二个参数是被调用的方法对象
 		// 第三个方法是调用参数。调用处理器根据这三个参数进行预处理或分派到委托类实例上发射执行
 		Object invoke(Object proxy, Method method, Object[] args)
+	````
 
    每次生成动态代理类对象时都需要指定一个实现了该接口的调用处理器对象（参见 Proxy 静态方法 4 的第三个参数）。
 
@@ -66,6 +70,7 @@ Java 动态代理机制的出现，使得 Java 开发人员不用手工编写代
 
 **清单 3. 动态代理对象创建过程**
 
+````java
 	// InvocationHandlerImpl 实现了 InvocationHandler 接口，并能实现方法调用从代理类到委托类的分派转发
 	// 其内部通常包含指向委托类实例的引用，用于真正执行分派转发过来的方法调用
 	InvocationHandler handler = new InvocationHandlerImpl(..); 
@@ -78,10 +83,12 @@ Java 动态代理机制的出现，使得 Java 开发人员不用手工编写代
 	
 	// 通过构造函数对象创建动态代理类实例
 	Interface Proxy = (Interface)constructor.newInstance(new Object[] { handler });
+````
 
 实际使用过程更加简单，因为 Proxy 的静态方法 newProxyInstance 已经为我们封装了步骤 2 到步骤 4 的过程，所以简化后的过程如下
 **清单 4. 简化的动态代理对象创建过程**
 
+````java
 	// InvocationHandlerImpl 实现了 InvocationHandler 接口，并能实现方法调用从代理类到委托类的分派转发
 	InvocationHandler handler = new InvocationHandlerImpl(..); 
 	
@@ -89,6 +96,7 @@ Java 动态代理机制的出现，使得 Java 开发人员不用手工编写代
 	Interface proxy = (Interface)Proxy.newProxyInstance( classLoader, 
 		 new Class[] { Interface.class }, 
 		 handler );
+````
 
 接下来让我们来了解一下 Java 动态代理机制的一些特点。
 
@@ -113,6 +121,7 @@ Java 动态代理机制的出现，使得 Java 开发人员不用手工编写代
 机制和特点都介绍过了，接下来让我们通过源代码来了解一下 Proxy 到底是如何实现的。首先记住 Proxy 的几个重要的静态变量：
 **清单 5. Proxy 的重要静态变量**
 
+````java
 	// 映射表：用于维护类装载器对象到其对应的代理类缓存
 	private static Map loaderToCache = new WeakHashMap(); 
 	
@@ -124,19 +133,23 @@ Java 动态代理机制的出现，使得 Java 开发人员不用手工编写代
 	
 	// 关联的调用处理器引用
 	protected InvocationHandler h;
+````
 
 然后，来看一下 Proxy 的构造方法：
 **清单 6. Proxy 构造方法**
 
+````java
 	// 由于 Proxy 内部从不直接调用构造函数，所以 private 类型意味着禁止任何调用
 	private Proxy() {} 
 	
 	// 由于 Proxy 内部从不直接调用构造函数，所以 protected 意味着只有子类可以调用
 	protected Proxy(InvocationHandler h) {this.h = h;}
+````
 
 接着，可以快速浏览一下 newProxyInstance 方法，因为其相当简单：
 **清单 7. Proxy 静态方法 newProxyInstance**
 
+````java
 	public static Object newProxyInstance(ClassLoader loader, 
 	            Class<?>[] interfaces, 
 	            InvocationHandler h) 
@@ -160,22 +173,26 @@ Java 动态代理机制的出现，使得 Java 开发人员不用手工编写代
 	    } catch (InvocationTargetException e) { throw new InternalError(e.toString()); 
 	    } 
 	}
+````
 
 由此可见，动态代理真正的关键是在 getProxyClass 方法，该方法负责为一组接口动态地生成代理类类型对象。在该方法内部，您将能看到 Proxy 内的各路英雄（静态变量）悉数登场。有点迫不及待了么？那就让我们一起走进 Proxy 最最神秘的殿堂去欣赏一番吧。该方法总共可以分为四个步骤：
 
  1. 对这组接口进行一定程度的安全检查，包括检查接口类对象是否对类装载器可见并且与类装载器所能识别的接口类对象是完全相同的，还会检查确保是 interface 类型而不是 class 类型。这个步骤通过一个循环来完成，检查通过后将会得到一个包含所有接口名称的字符串数组，记为 String[] interfaceNames。总体上这部分实现比较直观，所以略去大部分代码，仅保留留如何判断某类或接口是否对特定类装载器可见的相关代码。
  **清单 8. 通过 Class.forName 方法判接口的可见性**
 
+	````java
 		try { 
 		    // 指定接口名字、类装载器对象，同时制定 initializeBoolean 为 false 表示无须初始化类
 		    // 如果方法返回正常这表示可见，否则会抛出 ClassNotFoundException 异常表示不可见
 		    interfaceClass = Class.forName(interfaceName, false, loader); 
 		} catch (ClassNotFoundException e) { 
 		}
+	````
 
  2. 从 loaderToCache 映射表中获取以类装载器对象为关键字所对应的缓存表，如果不存在就创建一个新的缓存表并更新到 loaderToCache。缓存表是一个 HashMap 实例，正常情况下它将存放键值对（接口名字列表，动态生成的代理类的类对象引用）。当代理类正在被创建时它会临时保存（接口名字列表，pendingGenerationMarker）。标记 pendingGenerationMarke 的作用是通知后续的同类请求（接口数组相同且组内接口排列顺序也相同）代理类正在被创建，请保持等待直至创建完成。
  **清单 9. 缓存表的使用**
 
+	````java
 		do { 
 		    // 以接口名字列表作为关键字获得对应 cache 值
 		    Object value = cache.get(key); 
@@ -199,10 +216,12 @@ Java 动态代理机制的出现，使得 Java 开发人员不用手工编写代
 		        // break 跳出循环已进入创建过程
 		        break; 
 		} while (true);
+	````
 
  3. 动态创建代理类的类对象。首先是确定代理类所在的包，其原则如前所述，如果都为 public 接口，则包名为空字符串表示顶层包；如果所有非 public 接口都在同一个包，则包名与这些接口的包名相同；如果有多个非 public 接口且不同包，则抛异常终止代理类的生成。确定了包后，就开始生成代理类的类名，同样如前所述按格式“$ProxyN”生成。类名也确定了，接下来就是见证奇迹的发生 —— 动态生成代理类：
  **清单 10. 动态生成代理类**
 
+	````java
 		// 动态地生成代理类的字节码数组
 		byte[] proxyClassFile = ProxyGenerator.generateProxyClass( proxyName, interfaces); 
 		try { 
@@ -215,6 +234,7 @@ Java 动态代理机制的出现，使得 Java 开发人员不用手工编写代
 		
 		// 把生成的代理类的类对象记录进 proxyClasses 表
 		proxyClasses.put(proxyClass, null);
+	````
 
 	由此可见，所有的代码生成的工作都由神秘的 ProxyGenerator 所完成了，当你尝试去探索这个类时，你所能获得的信息仅仅是它位于并未公开的 sun.misc 包，有若干常量、变量和方法以完成这个神奇的代码生成的过程，但是 sun 并没有提供源代码以供研读。至于动态类的定义，则由 Proxy 的 native 静态方法 defineClass0 执行。
 
@@ -229,6 +249,7 @@ Java 动态代理机制的出现，使得 Java 开发人员不用手工编写代
 事物往往不像其看起来的复杂，需要的是我们能够化繁为简，这样也许就能有更多拨云见日的机会。抛开所有想象中的未知而复杂的神秘因素，如果让我们用最简单的方法去实现一个代理类，唯一的要求是同样结合调用处理器实施方法的分派转发，您的第一反应将是什么呢？“听起来似乎并不是很复杂”。的确，掐指算算所涉及的工作无非包括几个反射调用，以及对原始类型数据的装箱或拆箱过程，其他的似乎都已经水到渠成。非常地好，让我们整理一下思绪，一起来完成一次完整的推演过程吧。
 **清单 11. 代理类中方法调用的分派转发推演实现**
 
+````java
 	// 假设需代理接口 Simulator 
 	public interface Simulator { 
 	    short simulate(int arg1, long arg2, String arg3) throws ExceptionA, ExceptionB;
@@ -273,12 +294,14 @@ Java 动态代理机制的出现，使得 Java 开发人员不用手工编写代
 	        return ((Short)r).shortValue();
 	    } 
 	}
+````
 
 模拟推演为了突出通用逻辑所以更多地关注正常流程，而淡化了错误处理，但在实际中错误处理同样非常重要。从以上的推演中我们可以得出一个非常通用的结构化流程：第一步从代理接口获取被调用的方法对象，第二步分派方法到调用处理器执行，第三步返回结果。在这之中，所有的信息都是可以已知的，比如接口名、方法名、参数类型、返回类型以及所需的装箱和拆箱操作，那么既然我们手工编写是如此，那又有什么理由不相信 ProxyGenerator 不会做类似的实现呢？至少这是一种比较可能的实现。
 
 接下来让我们把注意力重新回到先前被淡化的错误处理上来。在异常处理 1 处，由于我们有理由确保所有的信息如接口名、方法名和参数类型都准确无误，所以这部分异常发生的概率基本为零，所以基本可以忽略。而异常处理 2 处，我们需要思考得更多一些。回想一下，接口方法可能声明支持一个异常列表，而调用处理器 invoke 方法又可能抛出与接口方法不支持的异常，再回想一下先前提及的 Java 动态代理的关于异常处理的特点，对于不支持的异常，必须抛 UndeclaredThrowableException 运行时异常。所以通过再次推演，我们可以得出一个更加清晰的异常处理 2 的情况：
 **清单 12. 细化的异常处理 2**
 
+````java
 	Object r = null; 
 	
 	try { 
@@ -299,6 +322,7 @@ Java 动态代理机制的出现，使得 Java 开发人员不用手工编写代
 	    // 其他不支持的异常，一律抛 UndeclaredThrowableException 
 	    throw new UndeclaredThrowableException(e); 
 	}
+````
 
 这样我们就完成了对动态代理类的推演实现。推演实现遵循了一个相对固定的模式，可以适用于任意定义的任何接口，而且代码生成所需的信息都是可知的，那么有理由相信即使是机器自动编写的代码也有可能延续这样的风格，至少可以保证这是可行的。
 
