@@ -20,6 +20,8 @@ tags:
 1. 将查询翻译为SQL命令
 2. 将执行命令得到的结果转换为对象
 
+<!-- more -->
+
 ## The Query Translator
 
 `QueryTranslator`简单地访问查询表达式树中的每个节点，然后用`StringBuilder`将支持的操作转换成文本。为了代码的清晰，我们假设有一个叫`ExpressionVisitor`的类，它定义了访问表达式节点的基本模式（我会在文章的结尾附上这个类的代码的，现在暂且将就一下）。
@@ -684,4 +686,4 @@ Excellent，正是我们想要的，计划实现了，心里有点小激动呢�
 	        return iv;
 	    }
 	}
-	````
+````

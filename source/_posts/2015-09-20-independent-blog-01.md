@@ -13,7 +13,10 @@ tags:
 
 ## 前言
 GitHub Pages是托管在GitHub服务器上的公共页面，我们可以在上面托管自己的静态页面（`只能是静态页面，不支持JSP，ASP等`），这些静态页面是由我们自己任意设计的，也就是说，我们可以把它做成一个信息发布网站，个人网站，OR博客。这个系列的文章简单介绍了如何使用GitHub Pages和Jekyll搭建自己的独立博客，其中有很多内容可以从GitHub官网获得，也可以从搜索引擎搜到，我写这个也只是总结一下自己的经验而已，如若有误，欢迎在评论区指正。
+
 这些文章假设读者已经会使用Git，GitHub和Markdown，故不赘述。欲学习Git，可访问[Git教程 - 廖雪峰的官方网站](http://www.liaoxuefeng.com/wiki/0013739516305929606dd18361248578c67b8067c8c017b000)；了解GitHub中Markdown的使用，可访问[Writing on GitHub - User Documentation](https://help.github.com/categories/writing-on-github/)。
+
+<!-- more -->
 
 ## 注意
 使用GitHub Pages前，应注意以下两点：

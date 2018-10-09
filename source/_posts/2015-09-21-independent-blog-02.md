@@ -14,6 +14,8 @@ tags:
 ## 开始使用Jekyll
 Jekyll是一个简单而又强大的静态博客生成器，它可以使用你设定的模板生成一个完整的HTML站点，而你只需要专注于博文的写作，不需要因为新增一篇博文而到处修改你的HTML文件。另外，GitHub Pages也支持Jekyll，每一个GitHub Page站点都是运行在Jekyll之上的，你只需要向GitHub推送你的Jekyll模板代码，GitHub就会帮你生成一个静态网站。
 
+<!-- more -->
+
 ### 安装Jekyll
 强烈建议你在自己的电脑上安装Jekyll，这样你就可以先在本地预览好你的博客效果，再推送到GitHub。
 下面的安装过程以Windows系统为例，使用Jekyll之前，你可能需要先安装下面这些东西：

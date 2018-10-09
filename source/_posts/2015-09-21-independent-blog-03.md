@@ -12,7 +12,10 @@ tags:
 > 更多特性，参见 [GitHub Pages Features - User Documentation](https://help.github.com/categories/github-pages-features/)
 
 ## 添加评论功能
-之前说过，GitHub Pages只能托管静态网页，是不能有数据库的。在这种限制下，我们要增加评论功能就不能自己造轮子了，只能使用别人造好的轮子。Disqus是一个比较好用的第三方评论插件，它支持使用各种社区账号登录，比如Twitter，Google+等等。然而，由于一些奇奇怪怪的原因，国人并没有几个人拥有这些社区的账号，再加上Disqus是国外的网站，访问速度也是个硬伤，于是，造就了Disqus很不愉快的使用体验。所以我用了多说，这是一个和Disqus几乎一模一样的东西，但是它不仅有访问速度，还能使用国内的主流社交账号登录，如微博，QQ等，缺点就是界面比Disqus丑<i class="emoji emoji-laughing"></i>
+之前说过，GitHub Pages 只能托管静态网页，是不能有数据库的。在这种限制下，我们要增加评论功能就不能自己造轮子了，只能使用别人造好的轮子。Disqus 是一个比较好用的第三方评论插件，它支持使用各种社区账号登录，比如 Twitter，Google+ 等等。然而，由于一些奇奇怪怪的原因，国人并没有几个人拥有这些社区的账号，再加上 Disqus 是国外的网站，访问速度也是个硬伤，于是，造就了 Disqus 很不愉快的使用体验。所以我用了多说，这是一个和 Disqus 几乎一模一样的东西，但是它不仅有访问速度，还能使用国内的主流社交账号登录，如微博，QQ 等，缺点就是界面比 Disqus 丑 <i class="emoji emoji-laughing"></i>
+
+<!-- more -->
+
 要使用多说评论，首先要在[http://duoshuo.com/](http://duoshuo.com/)注册一个多说账号，然后添加一个站点，输入你的网站的域名和其他信息，最后在要添加评论的页面添加如下代码即可，其他第三方评论插件的使用方法也大同小异。
 
 ````html

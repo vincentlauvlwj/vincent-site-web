@@ -13,6 +13,8 @@ tags:
 
 在前面四篇文章里面，我构建了一个LINQ IQueryable提供程序，它可将`Queryable.Where`和`Queryable.Select`两个标准查询操作符翻译成SQL，并通过ADO送到数据库中去执行。虽然已经做得很不错，但是这个提供程序还是有一些漏洞，而且我还没有提到其他的查询操作，比如OrderBy和Join等等。如果认为用户写出的查询都像我的demo一样这么理想化的话，你可能就会掉进大坑里去。
 
+<!-- more -->
+
 ## Fixing the Gaping Holes
 
 我确实可以写出一个简单的带有where和select的运行良好的查询，就算这个查询再复杂也没关系。

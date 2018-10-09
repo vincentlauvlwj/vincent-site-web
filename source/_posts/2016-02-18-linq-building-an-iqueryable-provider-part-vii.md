@@ -24,6 +24,8 @@ tags:
 	            select new { c.ContactName, o.OrderDate };
 ````
 
+<!-- more -->
+
 当然，也可以使用显式的join子句。
 
 ````cs

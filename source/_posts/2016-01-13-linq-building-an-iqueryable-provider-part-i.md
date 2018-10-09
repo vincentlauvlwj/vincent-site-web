@@ -16,6 +16,8 @@ tags:
 我要说的第一件事是，在Beta 2版本里面，`IQueryable`不再只是一个接口，它被分成了两个：`IQueryable`和`IQueryProvider`。在实现这两个接口之前，我们先过一遍它们的内容。
 使用Visual Studio的“go to definition”功能，你可以看到下面的代码
 
+<!-- more -->
+
 ````cs
 	public interface IQueryable : IEnumerable {       
 	    Type ElementType { get; }

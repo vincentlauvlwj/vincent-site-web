@@ -27,6 +27,8 @@ tags:
 
 但是，将上面的查询转换为方法调用的形式的话，所涉及到的就不止是一个LINQ操作符了。
 
+<!-- more -->
+
 ````cs
 	var query = db.Customers.OrderBy(c => c.Country).ThenBy(c => c.City);
 ````
