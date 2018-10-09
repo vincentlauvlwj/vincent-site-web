@@ -114,7 +114,6 @@ algolia:
     - date
     - updated
     - slug
-    - excerpt:strip
     - content:strip:truncate,0,5000
     - permalink
     - path
