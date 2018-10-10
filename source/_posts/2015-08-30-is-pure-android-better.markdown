@@ -2,7 +2,7 @@
 layout:     post
 title:      "Pure Android 是否比 MIUI 或 Flyme 体验更好？"
 author:     "黄玄"
-date:       2015-08-30
+date:       2015-08-30 3:00
 header-img: "img/post-bg-android.jpg"
 tags:
     - Android

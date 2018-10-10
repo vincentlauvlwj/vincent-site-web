@@ -56,7 +56,7 @@ tags:
 
 ## emoji
 要在文章中使用emoji表情也特别简单<i class="emoji emoji-grimacing"></i><i class="emoji emoji-grimacing"></i><i class="emoji emoji-grimacing"></i>
-首先，在配置文件`_config.yml`中添加emoji支持，如下
+首先，在配置文件`_config.yml`中添加 emoji 支持，如下
 
 ````yml
 	gems:
