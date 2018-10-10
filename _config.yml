@@ -50,6 +50,12 @@ highlight:
 default_category: uncategorized
 category_map:
 tag_map:
+  C♯: c-sharp
+  动态代理: dynamic-proxy
+  独立博客: independent-blog
+  翻译: translation
+  造轮子: wheels
+  随便写写: quick-notes
 
 # Date / Time format
 ## Hexo uses Moment.js to parse and display date
@@ -114,7 +120,7 @@ algolia:
     - date
     - updated
     - slug
-    - content:strip:truncate,0,5000
+    - raw:truncate,0,5000
     - permalink
     - path
     - layout
