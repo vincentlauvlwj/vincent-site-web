@@ -77,6 +77,8 @@
 
 <link rel="stylesheet" href="{{ url_for(theme.vendors) }}/emoji/emoji.css">
 
+<link rel="canonical" href="{{ theme.url + theme.root + page.canonical_path.replace('index.html', '') }}">
+
 {{
   open_graph({
     twitter_id: theme.twitter,
