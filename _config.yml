@@ -50,12 +50,12 @@ highlight:
 default_category: uncategorized
 category_map:
 tag_map:
-  C♯: c-sharp
-  动态代理: dynamic-proxy
-  独立博客: independent-blog
-  翻译: translation
-  造轮子: wheels
-  随便写写: quick-notes
+  C♯: C-Sharp
+  动态代理: Dynamic-Proxy
+  独立博客: Independent-Blog
+  翻译: Translation
+  造轮子: Wheels
+  随便写写: Quick-Notes
 
 # Date / Time format
 ## Hexo uses Moment.js to parse and display date
