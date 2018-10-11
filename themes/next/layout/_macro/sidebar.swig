@@ -8,6 +8,9 @@
   </div>
 
   <aside id="sidebar" class="sidebar">
+    {% if theme.sidebar.onmobile %}
+      <div id="sidebar-dimmer"></div>
+    {% endif %}
     <div class="sidebar-inner">
 
       {% if page.toc_number === undefine %}

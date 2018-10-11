@@ -59,8 +59,8 @@ menu_icons:
 
 # Schemes
 # scheme: Muse
-# scheme: Mist
-scheme: Pisces
+scheme: Mist
+# scheme: Pisces
 
 
 
@@ -131,6 +131,12 @@ sidebar:
   # display: always
   display: hide
   # display: remove
+
+  # Scroll percent label in b2t button.
+  scrollpercent: false
+
+  # Enable sidebar on narrow view (only for Muse | Mist).
+  onmobile: true
 
 
 

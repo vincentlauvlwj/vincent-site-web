@@ -3,6 +3,8 @@ title: 关于
 comments: false
 ---
 
+<blockquote class="blockquote-center" style="font-family: Georgia, serif; font-size: 18px; font-style: italic;">Any fool can write code that a computer can understand. Good programmers write code that humans can understand.<cite style="font-size: 12px; margin-top: 5px; display: block;">Martin Fowler</cite></blockquote>
+
 ## 关于我
 
 一个有点梦想却能力有限的程序员，欢迎交流与探讨。
