@@ -29,7 +29,7 @@ menu:
   # categories: /categories
   archives: /archives
   tags: /tags
-  # messages: /messages
+  messages: /messages
   about: /about
   # commonweal: /404.html
 
@@ -136,7 +136,7 @@ sidebar:
   scrollpercent: false
 
   # Enable sidebar on narrow view (only for Muse | Mist).
-  onmobile: true
+  onmobile: false
 
 
 
