@@ -88,8 +88,8 @@ $(document).ready(function () {
     init: function () {
       this.toggleEl.on('click', this.clickHandler.bind(this));
       this.dimmerEl.on('click', this.clickHandler.bind(this));
-      this.toggleEl.on('mouseenter', this.mouseEnterHandler.bind(this));
-      this.toggleEl.on('mouseleave', this.mouseLeaveHandler.bind(this));
+      // this.toggleEl.on('mouseenter', this.mouseEnterHandler.bind(this));
+      // this.toggleEl.on('mouseleave', this.mouseLeaveHandler.bind(this));
 
       $(document)
         .on('sidebar.isShowing', function () {
