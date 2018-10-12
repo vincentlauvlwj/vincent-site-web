@@ -18,5 +18,5 @@ GitHub: [https://github.com/vincentlauvlwj](https://github.com/vincentlauvlwj)
 
 ## 关于版权
 
-<img alt="知识共享许可协议" class="no-fancy-box" style="border-width:0; display: inline;" src="/images/cc-by-nc-sa-88x31.png" />
+<img alt="知识共享许可协议" class="no-fancy-box" style="border-radius: 4px; display: inline;" src="/images/cc-by-nc-sa-88x31.png" />
 如无特别说明，本站所有作品均采用「<a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/">知识共享署名-非商业性使用-相同方式共享 4.0 国际许可协议 (CC BY-NC-SA 4.0)</a>」进行许可。

@@ -4,7 +4,7 @@
 <div class="cc-license">
   <a href="http://creativecommons.org/licenses/{{ theme.creative_commons.license }}/4.0" class="cc-opacity" target="_blank" 
   		title="{{ theme.creative_commons.notice_text }}">
-    <img src="{{ url_for(theme.images) }}/cc-{{ theme.creative_commons.license }}.svg" alt="Creative Commons" />
+    <img src="{{ url_for(theme.images) }}/cc-{{ theme.creative_commons.license }}.svg" alt="Creative Commons" style="border-radius: 2px;"  />
   </a>
 </div>
 {% endif %}
