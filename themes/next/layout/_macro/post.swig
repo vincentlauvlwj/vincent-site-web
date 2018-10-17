@@ -47,7 +47,7 @@
         {% endif %}
 
         <div class="post-meta">
-          <span class="post-time">
+          <span class="post-meta-time">
             <span class="post-meta-item-icon">
               <i class="fa fa-calendar"></i>
             </span>
@@ -58,7 +58,7 @@
           </span>
 
           {% if post.categories and post.categories.length %}
-            <span class="post-category" >
+            <span class="post-meta-category" >
               &nbsp; | &nbsp;
               <span class="post-meta-item-icon">
                 <i class="fa fa-folder-o"></i>
@@ -81,7 +81,7 @@
           {% endif %}
 
           {% if post.tags and post.tags.length %}
-            <span class="post-category" >
+            <span class="post-meta-tags" >
               &nbsp; | &nbsp;
               <span class="post-meta-item-icon">
                 <i class="fa fa-tags"></i>
@@ -103,7 +103,7 @@
             </span>
           {% endif %}
 
-          <span class="post-category" >
+          <span class="post-meta-author" >
               &nbsp; | &nbsp;
               <span class="post-meta-item-icon">
                 <i class="fa fa-user"></i>

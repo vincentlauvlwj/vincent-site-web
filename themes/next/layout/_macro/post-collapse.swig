@@ -22,7 +22,7 @@
 
       <div class="post-meta">
         <a href="{{ theme.menu.archives }}/{{ date(post.date, 'YYYY/MM') }}/" style="border: 0px;">
-          <time class="post-time" itemprop="dateCreated"
+          <time class="post-meta-time" itemprop="dateCreated"
                 datetime="{{ moment(post.date).format() }}"
                 content="{{ date(post.date, config.date_format) }}" >
             {{ date(post.date, 'MM-DD') }}
