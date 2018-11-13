@@ -10,7 +10,7 @@ tags:
     - Java
 ---
 
-> 本文来自我的知乎回答：[找到编译器的 bug 是种怎样的体验?](https://www.zhihu.com/question/267143879/answer/530782765)
+> 本文来自我的知乎回答：[找到编译器的bug是种怎样的体验？ - 知乎](https://www.zhihu.com/question/267143879/answer/530782765)
 
 emmm...这个问题下面真的是大佬云集，萌新感到好忐忑...
 
