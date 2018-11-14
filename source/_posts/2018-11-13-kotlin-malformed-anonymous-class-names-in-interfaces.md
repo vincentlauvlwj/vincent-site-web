@@ -96,6 +96,6 @@ private String getSimpleBinaryName() {
 
 最终，bug 的原因是找到了，那在 Kotlin 修复这个 bug 之前应该怎么办呢？我们当然只能想办法绕过了，比如避免在接口的默认实现方法中使用匿名内部类，lambda 也不行，因为 Kotlin 的 lambda 也会编译成匿名类...
 
-BTW，说到编译器的 bug，这应该是我遇到的第二个了，之前在使用 Java 8 的 lambda 的时候也遇到过一个 bug，当时也在知乎吐槽了一下，这里也贴个链接，仅作记录：[此处的lambda为什么不能用方法引用表示 - 知乎](https://www.zhihu.com/question/53173886/answer/319791449)
+BTW，说到编译器的 bug，之前在使用 Java 8 的 lambda 的时候也遇到过一个，当时还在知乎吐槽了一下，这里也贴个链接，仅作记录：[此处的lambda为什么不能用方法引用表示 - 知乎](https://www.zhihu.com/question/53173886/answer/319791449)
 
 以上
