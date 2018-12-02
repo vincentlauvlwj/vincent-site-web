@@ -43,6 +43,13 @@
         </li>
       {% endfor %}
 
+      <li class="menu-item menu-item-ktorm">
+        <a href="https://github.com/vincentlauvlwj/KtOrm" target="_blank" rel="section">
+          <i class="menu-item-icon fa fa-external-link-square fa-fw"></i> <br />
+          KtOrm
+        </a>
+      </li>
+
       {% if hasSearch %}
         <li class="menu-item menu-item-search">
           {% if theme.swiftype_key %}
