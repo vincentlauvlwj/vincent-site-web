@@ -14,7 +14,7 @@ GitHub: [https://github.com/vincentlauvlwj](https://github.com/vincentlauvlwj)
 
 ## 关于本站
 
-本站使用 [Hexo](https://hexo.io/) 构建，托管在 [Coding Pages](https://pages.coding.me/) 上，所用模版是 [NexT 主题](http://theme-next.iissnan.com/)，然后自己做了一点点改造，特此鸣谢以上机构和开发者。博主较懒，不定时更新，频率大概为半年一篇。不写初级教程，不写琐碎笔记，也不胡乱转载，只写自己的一点感悟和思考。
+本站源码托管在 [GitHub](https://github.com/vincentlauvlwj/vincent-site-web)，使用 [Hexo](https://hexo.io/) 构建，所用模版是 [NexT 主题](http://theme-next.iissnan.com/)，然后自己做了一点点改造，特此鸣谢以上机构和开发者。博主较懒，不定时更新，频率大概为半年一篇。不写初级教程，不写琐碎笔记，也不胡乱转载，只写自己的一点感悟和思考。
 
 ## 关于版权
 

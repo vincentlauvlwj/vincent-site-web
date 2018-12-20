@@ -78,7 +78,7 @@
           <script type="text/javascript">
             function loadMessageCount() {
               $.ajax({
-                url: "https://api.liuwj.me/comments/stats",
+                url: "https://www.liuwj.me/api/comments/stats",
                 type: "get",
                 dataType: "json",
                 async: true,

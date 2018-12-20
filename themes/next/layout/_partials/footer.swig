@@ -18,7 +18,7 @@
 </div>
 
 <div>
-  Hosted by <a href="https://pages.coding.me" target="_blank" style="font-weight: bold">Coding Pages</a>
+  Hosted by <a href="https://github.com/vincentlauvlwj/vincent-site-web" target="_blank">GitHub</a>
 </div>
 
 {% block footer %}{% endblock %}
