@@ -189,7 +189,7 @@ post.html
 	|--index.html
 ````
 
-执行`bundle exec jekyll serve`命令，生成网站，然后启动本地HTML服务器预览效果。Jekyll所生成的所有文件都会存放在`_site`文件夹下。若要在线查看`HelloJekyll`的效果，可前往[http://www.liuwenjun.info/HelloJekyll/](http://www.liuwenjun.info/HelloJekyll/)，要查看`HelloJekyll`的代码，可前往[我的GitHub](https://github.com/vincentlauvlwj/HelloJekyll)。
+执行`bundle exec jekyll serve`命令，生成网站，然后启动本地HTML服务器预览效果。Jekyll所生成的所有文件都会存放在`_site`文件夹下。若要在线查看`HelloJekyll`的效果，可前往[http://www.liuwj.me/HelloJekyll/](http://www.liuwj.me/HelloJekyll/)，要查看`HelloJekyll`的代码，可前往[我的GitHub](https://github.com/vincentlauvlwj/HelloJekyll)。
 
 ## 使用更好看的Jekyll模板
 真正的博客当然不可能真的像`HelloJekyll`那样简陋，网上可以下载到大神们做好的各种Jekyll模板，我们可以把它用到自己的博客里来，加以修改。在这里给大家推荐一个网站[Jekyll Themes](http://jekyllthemes.org/)。当然，网上找的模板不一定适合自己，你可以发挥自己的创造力和动手能力，做出一个独一无二的个人博客，这就需要一定的审美以及HTML和CSS的功底了。
