@@ -44,7 +44,7 @@
       {% endfor %}
 
       <li class="menu-item menu-item-ktorm">
-        <a href="https://github.com/vincentlauvlwj/Ktorm" target="_blank" rel="section">
+        <a href="https://ktorm.liuwj.me" rel="section">
           <i class="menu-item-icon fa fa-external-link-square fa-fw"></i> <br />
           Ktorm
         </a>
