@@ -33,15 +33,16 @@
   <script type="text/javascript">
     (function() {
       var progressBar = document.getElementById('loading-progress');
-      var curr = 0;
-      var speed = 20 / 20.0;
       var timer = null;
 
       timer = setInterval(function() {
-        curr += speed;
-        progressBar.style.width = curr + '%';
+        var length = progressBar.style.width.length;
+        var curr = parseInt(progressBar.style.width.substr(0, length - 1));
+
         if (curr >= 20) {
           clearInterval(timer);
+        } else {
+          progressBar.style.width = curr + '%';
         }
       }, 20);
     })();
