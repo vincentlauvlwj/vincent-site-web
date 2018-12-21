@@ -20,6 +20,17 @@
     {% set container_class = container_class + 'sidebar-position-' + theme.sidebar.position %}
   {% endif %}
 
+  <div id="loading-progress"></div>
+  <style type="text/css">
+    #loading-progress {
+      background: #222;
+      height: 2px;
+      position: fixed;
+      top: 0;
+      z-index: 99999;
+    }
+  </style>
+
   <div class="{{ container_class }} {% block page_class %}{% endblock %} ">
     <div class="headband"></div>
 

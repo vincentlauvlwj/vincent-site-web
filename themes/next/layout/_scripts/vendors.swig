@@ -23,3 +23,7 @@
 {% for vendor in js_vendors %}
   <script type="text/javascript" src="{{ url_for(theme.vendors) }}/{{ vendor }}"></script>
 {% endfor %}
+
+<script type="text/javascript">
+  $('#loading-progress').animate({width: '30%'}, 'slow', 'linear');
+</script>

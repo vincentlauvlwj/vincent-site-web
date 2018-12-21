@@ -3,6 +3,8 @@
 // $(document).ready(function () {
 (function() {
 
+  $('#loading-progress').animate({width: '60%'}, 'slow', 'linear');
+
   $(document).trigger('bootstrap:before');
   
   // Define Motion Sequence.
@@ -41,5 +43,15 @@
   NexT.utils.addActiveClassToMenuItem();
 
   $(document).trigger('bootstrap:after');
+
+  $('#loading-progress').animate({width: '90%'}, 'slow', 'linear');
+
 // });
 })();
+
+
+$(document).ready(function() {
+  $('#loading-progress').animate({width: '100%'}, 'slow', 'linear', function() {
+    $('#loading-progress').fadeOut();
+  });
+});
