@@ -4,6 +4,18 @@
 (function() {
 
   $(document).trigger('bootstrap:before');
+  
+  // Define Motion Sequence.
+  NexT.motion.integrator
+    .add(NexT.motion.middleWares.logo)
+    .add(NexT.motion.middleWares.menu)
+    .add(NexT.motion.middleWares.postList)
+    .add(NexT.motion.middleWares.sidebar);
+
+  $(document).trigger('motion:before');
+
+  // Bootstrap Motion.
+  CONFIG.motion && NexT.motion.integrator.bootstrap();
 
   NexT.utils.isMobile() && window.FastClick.attach(document.body);
 
@@ -27,19 +39,6 @@
   CONFIG.fancybox && NexT.utils.wrapImageWithFancyBox();
   NexT.utils.embeddedVideoTransformer();
   NexT.utils.addActiveClassToMenuItem();
-
-
-  // Define Motion Sequence.
-  NexT.motion.integrator
-    .add(NexT.motion.middleWares.logo)
-    .add(NexT.motion.middleWares.menu)
-    .add(NexT.motion.middleWares.postList)
-    .add(NexT.motion.middleWares.sidebar);
-
-  $(document).trigger('motion:before');
-
-  // Bootstrap Motion.
-  CONFIG.motion && NexT.motion.integrator.bootstrap();
 
   $(document).trigger('bootstrap:after');
 // });

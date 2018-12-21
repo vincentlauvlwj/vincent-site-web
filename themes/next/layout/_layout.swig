@@ -62,9 +62,9 @@
   {% set scheme_script = '_scripts/schemes/' + theme.scheme | lower + '.swig' %}
   {% include scheme_script %}
 
-  {% include '_scripts/sidebar-scroll.swig' %}
-
   {% include '_scripts/boostrap.swig' %}
+
+  {% include '_scripts/sidebar-scroll.swig' %}
 
   {% include '_scripts/third-party/comments.swig' %}
   {% include '_scripts/third-party/search/tinysou.swig' %}
