@@ -1,6 +1,7 @@
 /* global NexT: true */
 
-$(document).ready(function () {
+// $(document).ready(function () {
+(function() {
 
   $(document).trigger('bootstrap:before');
 
@@ -41,4 +42,5 @@ $(document).ready(function () {
   CONFIG.motion && NexT.motion.integrator.bootstrap();
 
   $(document).trigger('bootstrap:after');
-});
+// });
+})();
