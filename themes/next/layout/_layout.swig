@@ -30,6 +30,22 @@
       z-index: 99999;
     }
   </style>
+  <script type="text/javascript">
+    (function() {
+      var progressBar = document.getElementById('loading-progress');
+      var curr = 0;
+      var speed = 20 / 20.0;
+      var timer = null;
+
+      timer = setInterval(function() {
+        curr += speed;
+        progressBar.style.width = curr + '%';
+        if (curr >= 20) {
+          clearInterval(timer);
+        }
+      }, 20);
+    })();
+  </script>
 
   <div class="{{ container_class }} {% block page_class %}{% endblock %} ">
     <div class="headband"></div>

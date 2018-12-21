@@ -25,5 +25,5 @@
 {% endfor %}
 
 <script type="text/javascript">
-  $('#loading-progress').animate({width: '30%'}, 'slow', 'linear');
+  $('#loading-progress').animate({width: '50%'}, 'slow', 'linear');
 </script>
