@@ -120,7 +120,7 @@ algolia:
     - date
     - updated
     - slug
-    - raw:truncate,0,5000
+    - raw:truncate,0,4500
     - permalink
     - path
     - layout
