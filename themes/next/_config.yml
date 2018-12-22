@@ -217,7 +217,7 @@ enable_share: false
 
 # Google Webmaster tools verification setting
 # See: https://www.google.com/webmasters/
-#google_site_verification:
+google_site_verification: B3tGMPB1Dtucdkw6ugnjxlL6AdZNYMTBPDYfU2xk0F8
 
 
 # Google Analytics
