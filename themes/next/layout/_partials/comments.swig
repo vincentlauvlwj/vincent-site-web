@@ -68,7 +68,7 @@
               <input type="text" name="fromUser.email" placeholder="邮箱，用于接收回复">
             </span>
             <span class="ds-input-wrapper ds-input-wrapper-homepage">
-              <input type="text" name="fromUser.homepage" placeholder="您的主页">
+              <input type="text" name="fromUser.homepage" placeholder="您的主页（可不填）">
             </span>
           </div>
 
