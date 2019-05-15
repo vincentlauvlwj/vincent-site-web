@@ -14,7 +14,7 @@
   &copy; {% if theme.since and theme.since != current %} {{ theme.since }} - {% endif %}
   <span itemprop="copyrightYear">{{ current }}</span>
   <span class="author" itemprop="copyrightHolder">{{ config.author }}</span>
-  <span><a href="http://www.miitbeian.gov.cn/" target="_blank">粤ICP备17040353号</a></span>
+  <span><a href="http://www.beian.miit.gov.cn" target="_blank">粤ICP备17040353号</a></span>
 </div>
 
 <div>
