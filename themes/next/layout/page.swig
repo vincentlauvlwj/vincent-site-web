@@ -16,6 +16,7 @@
 {% block content %}
 
   <div id="posts" class="posts-expand">
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
     {# tagcloud page support #}
     {% if page.type === "tags" %}
       <div class="tag-cloud">
@@ -38,6 +39,7 @@
     {% else %}
       {{ page.content }}
     {% endif %}
+  </article>
   </div>
 
 {% endblock %}

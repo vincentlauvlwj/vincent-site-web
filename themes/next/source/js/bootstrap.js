@@ -52,6 +52,10 @@
 
 $(document).ready(function() {
   $('#loading-progress').animate({width: '100%'}, 'slow', 'linear', function() {
-    $('#loading-progress').fadeOut();
+    if (CONFIG.scheme !== 'Muse') {
+      $('#loading-progress').fadeOut();
+    } else {
+      $('#loading-progress').css({position: 'absolute'});
+    }
   });
 });
