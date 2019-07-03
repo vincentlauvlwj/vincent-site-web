@@ -3,7 +3,6 @@ layout:     post
 title:      "Java Comparable 接口的一个小「坑」"
 subtitle:   "关于 compareTo() 和 equals() 的一致性的思考"
 author:     "刘文俊"
-date:       2017-05-20
 top: true
 tags:
     - Java

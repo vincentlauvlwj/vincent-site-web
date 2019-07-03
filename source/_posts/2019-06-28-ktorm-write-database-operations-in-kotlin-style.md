@@ -3,7 +3,6 @@ layout:     post
 title:      "Ktorm - 让你的数据库操作更具 Kotlin 风味"
 subtitle:   ""
 author:     "刘文俊"
-date:       2019-06-26
 top: true
 tags:
     - Kotlin

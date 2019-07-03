@@ -2,14 +2,12 @@
 layout:     post
 title:      "逆天改命，Java 反射的黑科技"
 author:     "刘文俊"
-date:       2016-09-03
 top: true
 tags:
     - Java
 ---
 
 <blockquote class="blockquote-center">一个人的命运啊，当然要靠自我奋斗，但也要考虑到历史的进程。——长者。</blockquote>
-
 众所周知，反射是 Java 的一大利器，它可以做到许多看起来不可思议的事情，但是用得不好也会给我们的系统挖下许多坑。下面就介绍一个反射的黑科技，请充分理解并消化里面的知识<del>，并把这项技术用到实际的项目中去</del>。
 
 在开始之前，我们先来念两句诗，代码如下：

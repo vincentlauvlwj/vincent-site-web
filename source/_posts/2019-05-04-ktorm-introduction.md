@@ -3,7 +3,6 @@ layout:     post
 title:      "你还在用 MyBatis 吗，Ktorm 了解一下？"
 subtitle:   "专注于 Kotlin 的 ORM 框架"
 author:     "刘文俊"
-date:       2019-05-04
 top: true
 tags:
     - Kotlin
