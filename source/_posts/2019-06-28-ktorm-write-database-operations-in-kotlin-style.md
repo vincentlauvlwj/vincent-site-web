@@ -254,7 +254,7 @@ val employees = Employees
     .toList()
 ```
 
-可以看到，实体序列的用法几乎与 `kotlin.sequences.Sequence` 完全一样，不同的仅仅是在 lambda 表达式中的等号 `==` 被这里的 `eq` 函数代替了而已。
+可以看到，实体序列的用法几乎与 `kotlin.sequences.Sequence` 完全一样，不同的仅仅是在 lambda 表达式中的等号 `==` 和大于号 `>` 被这里的 `eq` 和 `greater` 函数代替了而已。
 
 我们还能使用 `mapColumns` 函数筛选需要的列，而不必把所有的列都查询出来，以及使用 `sortedBy` 函数把记录按指定的列进行排序。下面的代码获取部门 1 中工资超过一千的所有员工的名字，并按其工资的高低从大到小排序：
 
