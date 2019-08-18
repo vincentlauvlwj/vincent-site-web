@@ -61,7 +61,7 @@ function refreshLoginStatus() {
     } else {
         $(".ds-toolbar").show();
         $(".ds-toolbar .ds-visitor-name").attr("href", user.homepage);
-        $(".ds-toolbar .ds-visitor-name").html(user.name);
+        $(".ds-toolbar .ds-visitor-name").text(user.name);
         $(".ds-login-input").hide();
         $(".ds-replybox .ds-avatar a").attr("href", user.homepage);
         $(".ds-replybox .ds-avatar img").attr("src", user.avatar);
@@ -88,14 +88,14 @@ function logout() {
 function replyUser(userId, userName) {
     $(".ds-reply-user").show();
     $("#ds-reply-user-id").val(userId);
-    $("#ds-reply-user-name").html(userName);
+    $("#ds-reply-user-name").text(userName);
     $(".ds-replybox textarea").focus();
 }
 
 function cancelReply() {
     $(".ds-reply-user").hide();
     $("#ds-reply-user-id").val("");
-    $("#ds-reply-user-name").html("");
+    $("#ds-reply-user-name").text("");
 }
 
 function loadComments(async) {
@@ -106,11 +106,11 @@ function loadComments(async) {
         async: async,
         success: function(comments) {
             if (comments.length > 0) {
-                $("#ds-comment-count").html(comments.length);
+                $("#ds-comment-count").text(comments.length);
                 $("#ds-post-placeholder").hide();
                 $("#comment-template").tmpl(comments).appendTo("#ds-comments");
             } else {
-                $("#ds-comment-count").html(0);
+                $("#ds-comment-count").text(0);
                 $("#ds-post-placeholder").show();
             }
         }
@@ -165,7 +165,7 @@ function createComment() {
         dataType: "json",
         success: function(comment) {
             var $commentCount = $("#ds-comment-count");
-            $commentCount.html(parseInt($commentCount.html()) + 1);
+            $commentCount.text(parseInt($commentCount.text()) + 1);
             $("#ds-post-placeholder").hide();
             $("#comment-template").tmpl(comment).appendTo("#ds-comments");
             $(".ds-replybox textarea").val("");
