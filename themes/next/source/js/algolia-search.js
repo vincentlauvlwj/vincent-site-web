@@ -38,7 +38,7 @@ $(document).ready(function () {
           var link = CONFIG.root + data.path;
           var title = data._highlightResult.title
           var subtitle = data._highlightResult.subtitle
-          if (subtitle) {
+          if (subtitle && subtitle.value) {
             return (
               '<a href="' + link + '" class="algolia-hit-item-link">' +
                 title.value + ' - ' + subtitle.value +
