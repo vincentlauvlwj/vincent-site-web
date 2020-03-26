@@ -45,7 +45,7 @@ Ktorm 已经发布到 maven 中央仓库和 jcenter，因此，如果你使用 m
 compile "me.liuwj.ktorm:ktorm-core:${ktorm.version}"
 ```
 
-在使用 Ktorm 之前，我们需要要让它能够了解我们的表结构。假设我们有两个表，他们分别是部门表 `t_department` 和员工表 `t_employee`， 它们的建表 SQL 如下，我们要如何描述这两个表呢？
+在使用 Ktorm 之前，我们需要让它能够了解我们的表结构。假设我们有两个表，他们分别是部门表 `t_department` 和员工表 `t_employee`， 它们的建表 SQL 如下，我们要如何描述这两个表呢？
 
 ```sql
 create table t_department(
@@ -91,9 +91,9 @@ object Employees : Table<Nothing>("t_employee") {
 
 ```kotlin
 fun main() {
-    Database.connect("jdbc:mysql://localhost:3306/ktorm", driver = "com.mysql.jdbc.Driver")
+    val database = Database.connect("jdbc:mysql://localhost:3306/ktorm?user=root&password=***")
 
-    for (row in Employees.select()) {
+    for (row in database.from(Employees).select()) {
         println(row[Employees.name])
     }
 }
@@ -106,11 +106,13 @@ fun main() {
 让我们在上面的查询里再增加一点筛选条件：
 
 ```kotlin
-val names = Employees
+database
+    .from(Employees)
     .select(Employees.name)
     .where { (Employees.departmentId eq 1) and (Employees.name like "%vince%") }
-    .map { row -> row[Employees.name] }
-println(names)
+    .forEach { row -> 
+        println(row[Employees.name])
+    }
 ```
 
 生成的 SQL 如下:
@@ -126,7 +128,8 @@ where (t_employee.department_id = ?) and (t_employee.name like ?)
 实现基于条件的动态查询也十分简单，因为都是纯 Kotlin 代码，直接使用 if 语句就好，比 MyBatis 在 XML 里面写 `<if>` 标签好太多。
 
 ```kotlin
-val names = Employees
+val query = database
+    .from(Employees)
     .select(Employees.name)
     .whereWithConditions {
         if (someCondition) {
@@ -136,30 +139,33 @@ val names = Employees
             it += Employees.departmentId eq 1
         }
     }
-    .map { it.getString(1) }
 ```
 
 聚合查询：
 
 ```kotlin
-val t = Employees
-val salaries = t
+val t = Employees.aliased("t")
+database
+    .from(t)
     .select(t.departmentId, avg(t.salary))
     .groupBy(t.departmentId)
     .having { avg(t.salary) greater 100.0 }
-    .associate { it.getInt(1) to it.getDouble(2) }
+    .forEach { row -> 
+        println("${row.getInt(1)}:${row.getDouble(2)}")
+    }
 ```
 
 Union：
 
 ```kotlin
-Employees
+val query = database
+    .from(Employees)
     .select(Employees.id)
     .unionAll(
-        Departments.select(Departments.id)
+        database.from(Departments).select(Departments.id)
     )
     .unionAll(
-        Departments.select(Departments.id)
+        database.from(Departments).select(Departments.id)
     )
     .orderBy(Employees.id.desc())
 ```
@@ -167,22 +173,23 @@ Employees
 多表连接查询：
 
 ```kotlin
-data class Names(val name: String, val managerName: String?, val departmentName: String)
+data class Names(val name: String?, val managerName: String?, val departmentName: String?)
 
 val emp = Employees.aliased("emp")
 val mgr = Employees.aliased("mgr")
 val dept = Departments.aliased("dept")
 
-val results = emp
+val results = database
+    .from(emp)
     .leftJoin(dept, on = emp.departmentId eq dept.id)
     .leftJoin(mgr, on = emp.managerId eq mgr.id)
     .select(emp.name, mgr.name, dept.name)
     .orderBy(emp.id.asc())
-    .map {
+    .map { row -> 
         Names(
-            name = it.getString(1),
-            managerName = it.getString(2),
-            departmentName = it.getString(3)
+            name = row[emp.name],
+            managerName = row[mgr.name],
+            departmentName = row[dept.name]
         )
     }
 ```
@@ -190,7 +197,7 @@ val results = emp
 插入：
 
 ```kotlin
-Employees.insert {
+database.insert(Employees) {
     it.name to "jerry"
     it.job to "trainee"
     it.managerId to 1
@@ -203,11 +210,10 @@ Employees.insert {
 更新：
 
 ```kotlin
-Employees.update {
+database.update(Employees) {
     it.job to "engineer"
     it.managerId to null
     it.salary to 100
-
     where {
         it.id eq 2
     }
@@ -217,7 +223,7 @@ Employees.update {
 删除：
 
 ```kotlin
-Employees.delete { it.id eq 4 }
+database.delete(Employees) { it.id eq 4 }
 ```
 
 这就是 Ktorm 提供的 SQL DSL，使用这套 DSL，我们可以使用纯 Kotlin 代码来编写查询，不再需要在 XML 中写 SQL，也不需要在代码中拼接 SQL 字符串。而且，强类型的 DSL 还能让我们获得一些额外的好处，比如将一些低级的错误暴露在编译期，以及 IDE 的智能提示和自动补全。最重要的是，它生成的 SQL 几乎与我们的 Kotlin 代码一一对应，因此虽然我们的 SQL 是自动生成的，我们仍然对它拥有绝对的控制。
@@ -294,16 +300,22 @@ object Employees : Table<Employee>("t_employee") {
 1. `Table` 类的泛型参数，我们需要指定为实体类的类型，以便 Ktorm 将表对象与实体类进行绑定；在之前，我们设置为 `Nothing` 表示不绑定到任何实体类。
 2. 在每个列声明函数的调用后，都链式调用了 `bindTo` 或 `references` 函数将该列与实体类的某个属性进行绑定；如果没有这个调用，则不会绑定到任何属性。
 
-列绑定的意义在于，通过查询从数据库中获取实体对象的时候（如 `findList` 函数），Ktorm 会根据我们的绑定配置，将某个列的数据填充到它所绑定的属性中去；在将实体对象中的修改更新到数据库中的时候（如 `flushChanges` 函数），Ktorm 也会根据我们的绑定配置，将某个属性的变更，同步更新到绑定它的那个列。
+列绑定的意义在于，通过查询从数据库中获取实体对象的时候，Ktorm 会根据我们的绑定配置，将某个列的数据填充到它所绑定的属性中去；在将实体对象中的修改更新到数据库中的时候（使用 `flushChanges` 函数），Ktorm 也会根据我们的绑定配置，将某个属性的变更，同步更新到绑定它的那个列。
 
-完成列绑定后，我们就可以使用针对实体类的各种方便的扩展函数。比如根据名字获取员工：
+完成列绑定后，我们就可以使用[序列 API](#实体序列-API) 对实体进行各种灵活的操作。比如下面的代码，我们先使用 `sequenceOf` 获得一个序列，然后调用 `find` 函数从序列中根据名字获取一个 Employee 对象：
 
 ```kotlin
-val vince = Employees.findOne { it.name eq "vince" }
-println(vince)
+val sequence = database.sequenceOf(Employees)
+val employee = sequence.find { it.name eq "vince" }
 ```
 
-`findOne` 函数接受一个 lambda 表达式作为参数，使用该 lambda 的返回值作为条件，生成一条查询 SQL，自动 left jion 了关联表 `t_department`。生成的 SQL 如下：
+我们还能使用 `filter` 函数对序列进行筛选，比如获取所有名字为 vince 的员工：
+
+```kotlin
+val employees = sequence.filter { it.name eq "vince" }.toList()
+```
+
+`find` 和 `filter` 函数都接受一个 lambda 表达式作为参数，使用该 lambda 的返回值作为条件，生成一条查询 SQL。可以看到，生成的 SQL 自动 left jion 了关联表 `t_department`：
 
 ```sql
 select * 
@@ -312,36 +324,24 @@ left join t_department _ref0 on t_employee.department_id = _ref0.id
 where t_employee.name = ?
 ```
 
-其他 `find*` 系列函数：
-
-```kotlin
-Employees.findAll()
-Employees.findById(1)
-Employees.findListByIds(listOf(1))
-Employees.findMapByIds(listOf(1))
-Employees.findList { it.departmentId eq 1 }
-Employees.findOne { it.name eq "vince" }
-```
-
 将实体对象保存到数据库：
 
 ```kotlin
 val employee = Employee {
     name = "jerry"
     job = "trainee"
-    manager = Employees.findOne { it.name eq "vince" }
     hireDate = LocalDate.now()
     salary = 50
-    department = Departments.findOne { it.name eq "tech" }
+    department = database.sequenceOf(Departments).find { it.name eq "tech" }
 }
 
-Employees.add(employee)
+sequence.add(employee)
 ```
 
 将内存中实体对象的变化更新到数据库：
 
 ```kotlin
-val employee = Employees.findById(2) ?: return
+val employee = sequence.find { it.id eq 2 } ?: return
 employee.job = "engineer"
 employee.salary = 100
 employee.flushChanges()
@@ -350,7 +350,7 @@ employee.flushChanges()
 从数据库中删除实体对象：
 
 ```kotlin
-val employee = Employees.findById(2) ?: return
+val employee = sequence.find { it.id eq 2 } ?: return
 employee.delete()
 ```
 
@@ -360,13 +360,7 @@ employee.delete()
 
 ## 实体序列 API
 
-除了 `find*` 函数以外，Ktorm 还提供了一套名为”实体序列”的 API，用来从数据库中获取实体对象。正如其名字所示，它的风格和使用方式与 Kotlin 标准库中的序列 API 极其类似，它提供了许多同名的扩展函数，比如 `filter`、`map`、`reduce` 等。
-
-要获取一个实体序列，我们可以在表对象上调用 `asSequence` 扩展函数：
-
-```kotlin
-val sequence = Employees.asSequence()
-```
+Ktorm 提供了一套名为”实体序列”的 API，用来从数据库中获取实体对象。正如其名字所示，它的风格和使用方式与 Kotlin 标准库中的序列 API 极其类似，它提供了许多同名的扩展函数，比如 `filter`、`map`、`reduce` 等。
 
 Ktorm 的实体序列 API，大部分都是以扩展函数的方式提供的，这些扩展函数大致可以分为两类，它们分别是中间操作和终止操作。
 
@@ -375,14 +369,14 @@ Ktorm 的实体序列 API，大部分都是以扩展函数的方式提供的，�
 这类操作并不会执行序列中的查询，而是修改并创建一个新的序列对象，比如 `filter` 函数会使用指定的筛选条件创建一个新的序列对象。下面使用 `filter` 获取部门 1 中的所有员工：
 
 ```kotlin
-val employees = Employees.asSequence().filter { it.departmentId eq 1 }.toList()
+val employees = database.sequenceOf(Employees).filter { it.departmentId eq 1 }.toList()
 ```
 
-可以看到，用法几乎与 `kotlin.Sequence` 完全一样，不同的仅仅是在 lambda 表达式中的等号 `==` 被这里的 `eq` 函数代替了而已。`filter` 函数还可以连续使用，此时所有的筛选条件将使用 `and` 操作符进行连接，比如：
+可以看到，用法几乎与 `kotlin.sequences` 完全一样，不同的仅仅是在 lambda 表达式中的等号 `==` 被这里的 `eq` 函数代替了而已。`filter` 函数还可以连续使用，此时所有的筛选条件将使用 `and` 运算符进行连接，比如：
 
 ```kotlin
-val employees = Employees
-    .asSequence()
+val employees = database
+    .sequenceOf(Employees)
     .filter { it.departmentId eq 1 }
     .filter { it.managerId.isNotNull() }
     .toList()
@@ -400,13 +394,13 @@ where (t_employee.department_id = ?) and (t_employee.manager_id is not null)
 使用 `sortedBy` 或 `sortedByDescending` 对序列中的元素进行排序：
 
 ```kotlin
-val employees = Employees.asSequence().sortedBy { it.salary }.toList()
+val employees = database.sequenceOf(Employees).sortedBy { it.salary }.toList()
 ```
 
 使用 `drop` 和 `take` 函数进行分页：
 
 ```kotlin
-val employees = Employees.asSequence().drop(1).take(1).toList()
+val employees = database.sequenceOf(Employees).drop(1).take(1).toList()
 ```
 
 ### 终止操作
@@ -414,7 +408,7 @@ val employees = Employees.asSequence().drop(1).take(1).toList()
 实体序列的终止操作会马上执行一个查询，获取查询的执行结果，然后执行一定的计算。for-each 循环就是一个典型的终止操作，下面我们使用 for-each 循环打印出序列中所有的员工：
 
 ```kotlin
-for (employee in Employees.asSequence()) {
+for (employee in database.sequenceOf(Employees)) {
     println(employee)
 }
 ```
@@ -430,20 +424,20 @@ left join t_department _ref0 on t_employee.department_id = _ref0.id
 `toCollection`、`toList` 等方法用于将序列中的元素保存为一个集合：
 
 ```kotlin
-val employees = Employees.asSequence().toCollection(ArrayList())
+val employees = database.sequenceOf(Employees).toCollection(ArrayList())
 ```
 
 `mapColumns` 函数用于获取指定列的结果：
 
 ```kotlin
-val names = Employees.asSequenceWithoutReferences().mapColumns { it.name }
+val names = database.sequenceOf(Employees).mapColumns { it.name }
 ```
 
 除此之外，还有 `mapColumns2`、`mapColumns3` 等更多函数，它们用来同时获取多个列的结果，这时我们需要在闭包中使用 `Pair` 或 `Triple` 包装我们的这些字段，函数的返回值也相应变成了 `List<Pair<C1?, C2?>>` 或 `List<Triple<C1?, C2?, C3?>>`：
 
 ```kotlin
-Employees
-    .asSequenceWithoutReferences()
+database
+    .sequenceOf(Employees)
     .filter { it.departmentId eq 1 }
     .mapColumns2 { Pair(it.id, it.name) }
     .forEach { (id, name) ->
@@ -462,8 +456,8 @@ where t_employee.department_id = ?
 其他我们熟悉的序列函数也都支持，比如 `fold`、`reduce`、`forEach` 等，下面使用 `fold` 计算所有员工的工资总和：
 
 ```kotlin
-val totalSalary = Employees
-    .asSequenceWithoutReferences()
+val totalSalary = database
+    .sequenceOf(Employees)
     .fold(0L) { acc, employee -> 
         acc + employee.salary 
     }
@@ -471,13 +465,13 @@ val totalSalary = Employees
 
 ### 序列聚合
 
-实体序列 API 不仅可以让我们使用类似 `kotlin.Sequence` 的方式获取数据库中的实体对象，它还支持丰富的聚合功能，让我们可以方便地对指定字段进行计数、求和、求平均值等操作。
+实体序列 API 不仅可以让我们使用类似 `kotlin.sequences` 的方式获取数据库中的实体对象，它还支持丰富的聚合功能，让我们可以方便地对指定字段进行计数、求和、求平均值等操作。
 
 下面使用 `aggregateColumns` 函数获取部门 1 中工资的最大值：
 
 ```kotlin
-val max = Employees
-    .asSequenceWithoutReferences()
+val max = database
+    .sequenceOf(Employees)
     .filter { it.departmentId eq 1 }
     .aggregateColumns { max(it.salary) }
 ```
@@ -485,8 +479,8 @@ val max = Employees
 如果你希望同时获取多个聚合结果，可以改用 `aggregateColumns2` 或 `aggregateColumns3` 函数，这时我们需要在闭包中使用 `Pair` 或 `Triple` 包装我们的这些聚合表达式，函数的返回值也相应变成了 `Pair<C1?, C2?>` 或 `Triple<C1?, C2?, C3?>`。下面的例子获取部门 1 中工资的平均值和极差：
 
 ```kotlin
-val (avg, diff) = Employees
-    .asSequenceWithoutReferences()
+val (avg, diff) = database
+    .sequenceOf(Employees)
     .filter { it.departmentId eq 1 }
     .aggregateColumns2 { Pair(avg(it.salary), max(it.salary) - min(it.salary)) }
 ```
@@ -504,8 +498,8 @@ where t_employee.department_id = ?
 下面改用 `maxBy` 函数获取部门 1 中工资的最大值：
 
 ```kotlin
-val max = Employees
-    .asSequenceWithoutReferences()
+val max = database
+    .sequenceOf(Employees)
     .filter { it.departmentId eq 1 }
     .maxBy { it.salary }
 ```
@@ -513,8 +507,8 @@ val max = Employees
 除此之外，Ktorm 还支持分组聚合，只需要先调用 `groupingBy`，再调用 `aggregateColumns`。下面的代码可以获取所有部门的平均工资，它的返回值类型是 `Map<Int?, Double?>`，其中键为部门 ID，值是各个部门工资的平均值：
 
 ```kotlin
-val averageSalaries = Employees
-    .asSequenceWithoutReferences()
+val averageSalaries = database
+    .sequenceOf(Employees)
     .groupingBy { it.departmentId }
     .aggregateColumns { avg(it.salary) }
 ```
@@ -530,8 +524,8 @@ group by t_employee.department_id
 在分组聚合时，Ktorm 也提供了许多方便的辅助函数，它们是 `eachCount(To)`、`eachSumBy(To)`、`eachMaxBy(To)`、`eachMinBy(To)`、`eachAverageBy(To)`。有了这些辅助函数，上面获取所有部门平均工资的代码就可以改写成：
 
 ```kotlin
-val averageSalaries = Employees
-    .asSequenceWithoutReferences()
+val averageSalaries = database
+    .sequenceOf(Employees)
     .groupingBy { it.departmentId }
     .eachAverageBy { it.salary }
 ```
@@ -539,8 +533,8 @@ val averageSalaries = Employees
 除此之外，Ktorm 还提供了 `aggregate`、`fold`、`reduce` 等函数，它们与 `kotlin.collections.Grouping` 的相应函数同名，功能也完全一样。下面的代码使用 `fold` 函数计算每个部门工资的总和：
 
 ```kotlin
-val totalSalaries = Employees
-    .asSequenceWithoutReferences()
+val totalSalaries = database
+    .sequenceOf(Employees)
     .groupingBy { it.departmentId }
     .fold(0L) { acc, employee -> 
         acc + employee.salary 
