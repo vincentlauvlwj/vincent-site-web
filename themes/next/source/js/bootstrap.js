@@ -59,3 +59,13 @@ $(document).ready(function() {
     }
   });
 });
+
+// fix code highlight
+(function() {
+  $(".kotlin .code .keyword").each(function() {
+    var node = $(this);
+    if (node.text() === "where") {
+      node.removeClass("keyword");
+    }
+  });
+})();
