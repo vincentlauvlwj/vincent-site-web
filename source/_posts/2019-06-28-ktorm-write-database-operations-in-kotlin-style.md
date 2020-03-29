@@ -98,7 +98,8 @@ DSL（Domain Specific Language，领域特定语言）是专为解决某一特�
 在代码中拼接 SQL 字符串一直是各位程序员心中的痛，Ktorm 提供了强类型的 DSL，让我们可以使用更安全和简便的方式编写 SQL。下面是一个使用 DSL 的例子，它查询每个部门的员工数量，并把部门按人数从高到低排序：
 
 ```kotlin
-Departments
+database
+    .from(Departments)
     .innerJoin(Employees, on = Departments.id eq Employees.departmentId)
     .select(Departments.name, count(Employees.id))
     .groupBy(Departments.name)
@@ -123,7 +124,7 @@ order by count(t_employee.id) desc
 除了查询以外，Ktorm 的 DSL 还支持插入和修改数据，比如向表中插入一名新员工：
 
 ```kotlin
-Employees.insert {
+database.insert(Employees) {
     it.name to "marry"
     it.job to "trainee"
     it.managerId to 1
@@ -140,10 +141,10 @@ insert into t_employee (name, job, manager_id, hire_date, salary, department_id)
 values (?, ?, ?, ?, ?, ?) 
 ```
 
-给名为 vince 的员工加薪一个亿<i class="emoji emoji-yum"></i>：
+给名为 vince 的员工加一个小目标的薪水<i class="emoji emoji-yum"></i>：
 
 ```kotlin
-Employees.update {
+database.update(Employees) {
     it.salary to it.salary + 100000000
     where {
         it.name eq "vince"
@@ -177,7 +178,7 @@ operator fun <T : Number> Column<T>.plus(argument: T): BinaryExpression<T> {
 除了加号以外，Ktorm 还重载了许多常用的运算符，它们包括加号、减号、一元加号、一元减号、乘号、除号、取余、取反等。下面的例子使用取余符号 % 查询数据库中 ID 为奇数的员工：
 
 ```kotlin
-val query = Employees.select().where { Employees.id % 2 eq 1 }
+val query = database.from(Employees).select().where { Employees.id % 2 eq 1 }
 ```
 
 生成 SQL：
@@ -247,8 +248,8 @@ object Employees : Table<Employee>("t_employee") {
 完成 ORM 绑定后，我们就可以使用实体序列的各种方便的扩展函数。比如获取部门 1 中工资超过一千的所有员工对象：
 
 ```kotlin
-val employees = Employees
-    .asSequence()
+val employees = database
+    .sequenceOf(Employees)
     .filter { it.departmentId eq 1 }
     .filter { it.salary greater 1000 }
     .toList()
@@ -259,8 +260,8 @@ val employees = Employees
 我们还能使用 `mapColumns` 函数筛选需要的列，而不必把所有的列都查询出来，以及使用 `sortedBy` 函数把记录按指定的列进行排序。下面的代码获取部门 1 中工资超过一千的所有员工的名字，并按其工资的高低从大到小排序：
 
 ```kotlin
-val names = Employees
-    .asSequence()
+val names = database
+    .sequenceOf(Employees)
     .filter { it.departmentId eq 1 }
     .filter { it.salary greater 1000L }
     .sortedBy { it.salary }
@@ -280,8 +281,8 @@ order by t_employee.salary
 不仅如此，我们还能使用聚合功能，获取每个部门的平均工资：
 
 ```kotlin
-val averageSalaries = Employees
-    .asSequenceWithoutReferences()
+val averageSalaries = database
+    .sequenceOf(Employees)
     .groupingBy { it.departmentId }
     .eachAverageBy { it.salary }
 ```
