@@ -69,23 +69,23 @@ create table t_employee(
 
 ```kotlin
 object Departments : Table<Nothing>("t_department") {
-    val id by int("id").primaryKey()    // Column<Int>
-    val name by varchar("name")         // Column<String>
-    val location by varchar("location") // Column<String>
+    val id = int("id").primaryKey()    // Column<Int>
+    val name = varchar("name")         // Column<String>
+    val location = varchar("location") // Column<String>
 }
 
 object Employees : Table<Nothing>("t_employee") {
-    val id by int("id").primaryKey()
-    val name by varchar("name")
-    val job by varchar("job")
-    val managerId by int("manager_id")
-    val hireDate by date("hire_date")
-    val salary by long("salary")
-    val departmentId by int("department_id")
+    val id = int("id").primaryKey()
+    val name = varchar("name")
+    val job = varchar("job")
+    val managerId = int("manager_id")
+    val hireDate = date("hire_date")
+    val salary = long("salary")
+    val departmentId = int("department_id")
 }
 ```
 
-可以看到，`Departments` 和 `Employees` 都继承了 `Table`，并且在构造函数中指定了表名，`Table` 类还有一个泛型参数，它是此表绑定到的实体类的类型，在这里我们不需要绑定到任何实体类，因此指定为 `Nothing` 即可。表中的列则使用 val 和 by 关键字定义为表对象中的成员属性，列的类型使用 int、long、varchar、date 等函数定义，它们分别对应了 SQL 中的相应类型。
+可以看到，`Departments` 和 `Employees` 都继承了 `Table`，并且在构造函数中指定了表名，`Table` 类还有一个泛型参数，它是此表绑定到的实体类的类型，在这里我们不需要绑定到任何实体类，因此指定为 `Nothing` 即可。表中的列则使用 val 关键字定义为表对象中的成员属性，列的类型使用 int、long、varchar、date 等函数定义，它们分别对应了 SQL 中的相应类型。
 
 定义好表结构后，我们就可以使用 `Database.connect` 函数连接到数据库，然后执行一个简单的查询：
 
@@ -99,7 +99,7 @@ fun main() {
 }
 ```
 
-这就是一个最简单的 Ktorm 项目，这个 `main` 函数中只有短短三四行代码，但是你运行它时，它却可以连接到数据库，自动生成一条 SQL `select * from t_employee`，查询表中所有的员工记录，然后打印出他们的名字。因为 `select` 函数返回的查询对象实现了 `Iterable<QueryRowSet>` 接口，所以你可以在这里使用 for-each 循环语法。当然，任何针对 `Iteralble` 的扩展函数也都可用，比如 Kotlin 标准库提供的 map/filter/reduce 系列函数。
+这就是一个最简单的 Ktorm 项目，这个 `main` 函数中只有短短三四行代码，但是你运行它时，它却可以连接到数据库，自动生成一条 SQL `select * from t_employee`，查询表中所有的员工记录，然后打印出他们的名字。因为 `select` 函数返回的查询对象重载了迭代运算符，所以你可以在这里使用 for-each 循环的语法。
 
 ## SQL DSL
 
@@ -277,19 +277,19 @@ val department = Department()
 
 ```kotlin
 object Departments : Table<Department>("t_department") {
-    val id by int("id").primaryKey().bindTo { it.id }
-    val name by varchar("name").bindTo { it.name }
-    val location by varchar("location").bindTo { it.location }
+    val id = int("id").primaryKey().bindTo { it.id }
+    val name = varchar("name").bindTo { it.name }
+    val location = varchar("location").bindTo { it.location }
 }
 
 object Employees : Table<Employee>("t_employee") {
-    val id by int("id").primaryKey().bindTo { it.id }
-    val name by varchar("name").bindTo { it.name }
-    val job by varchar("job").bindTo { it.job }
-    val managerId by int("manager_id").bindTo { it.manager.id }
-    val hireDate by date("hire_date").bindTo { it.hireDate }
-    val salary by long("salary").bindTo { it.salary }
-    val departmentId by int("department_id").references(Departments) { it.department }
+    val id = int("id").primaryKey().bindTo { it.id }
+    val name = varchar("name").bindTo { it.name }
+    val job = varchar("job").bindTo { it.job }
+    val managerId = int("manager_id").bindTo { it.manager.id }
+    val hireDate = date("hire_date").bindTo { it.hireDate }
+    val salary = long("salary").bindTo { it.salary }
+    val departmentId = int("department_id").references(Departments) { it.department }
 }
 ```
 

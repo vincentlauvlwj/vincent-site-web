@@ -19,25 +19,25 @@ tags:
 
 ```kotlin
 object Departments : Table<Nothing>("t_department") {
-    val id by int("id").primaryKey()    // Column<Int>
-    val name by varchar("name")         // Column<String>
-    val location by varchar("location") // Column<String>
+    val id = int("id").primaryKey()    // Column<Int>
+    val name = varchar("name")         // Column<String>
+    val location = varchar("location") // Column<String>
 }
 
 object Employees : Table<Nothing>("t_employee") {
-    val id by int("id").primaryKey()
-    val name by varchar("name")
-    val job by varchar("job")
-    val managerId by int("manager_id")
-    val hireDate by date("hire_date")
-    val salary by long("salary")
-    val departmentId by int("department_id")
+    val id = int("id").primaryKey()
+    val name = varchar("name")
+    val job = varchar("job")
+    val managerId = int("manager_id")
+    val hireDate = date("hire_date")
+    val salary = long("salary")
+    val departmentId = int("department_id")
 }
 ```
 
 <!-- more -->
 
-在上面的表定义中，我们可以看到，Ktorm 一般使用 Kotlin 中的 object 关键字定义一个继承 `Table` 类的对象来描述表结构。这里的 `Departments` 和 `Employees` 都继承了 `Table`，并且在构造函数中指定了表名。表中的列使用 val 和 by 关键字定义为表对象中的成员属性，列的类型通过 `int`、`long`、`varchar`、`date` 等函数定义，它们分别对应了 SQL 中的相应类型。
+在上面的表定义中，我们可以看到，Ktorm 一般使用 Kotlin 中的 object 关键字定义一个继承 `Table` 类的对象来描述表结构。这里的 `Departments` 和 `Employees` 都继承了 `Table`，并且在构造函数中指定了表名。表中的列使用 val 关键字定义为表对象中的成员属性，列的类型通过 `int`、`long`、`varchar`、`date` 等函数定义，它们分别对应了 SQL 中的相应类型。
 
 在 Ktorm 中，`int`、`long`、`varchar`、`date` 这类函数称为列定义函数，它们的功能是在当前表中增加一条指定名称和类型的列。Ktorm 内置了许多列定义函数，它们基本涵盖了关系数据库所支持的大部分数据类型。但是，在某些情况下，我们需要在数据库中保存一些原生 JDBC 所不支持的特殊类型的数据（比如 json），这就要求框架能给我们提供扩展数据类型的方式。
 
@@ -71,11 +71,11 @@ class JsonSqlType<T : Any>(
 如果我们用的是 Java，这时恐怕只能遗憾地放弃了，但是 Kotlin 不一样，它支持扩展函数！Kotlin 的扩展函数可以让我们方便地扩展一个已经存在的类，为它添加额外的函数。
 
 ```kotlin
-fun <E : Entity<E>, C : Any> Table<E>.json(
+fun <C : Any> Table<*>.json(
     name: String,
     typeRef: TypeReference<C>,
     mapper: ObjectMapper = sharedObjectMapper
-): Table<E>.ColumnRegistration<C> {
+): Column<C> {
     val sqlType = JsonSqlType(mapper, mapper.constructType(typeRef.referencedType))
     return this.registerColumn(name, sqlType)
 }
@@ -85,7 +85,7 @@ fun <E : Entity<E>, C : Any> Table<E>.json(
 
 ```kotlin
 object Employees : Table<Nothing>("t_employee") {
-    val hobbies by json("hobbies", typeRef<List<String>>())
+    val hobbies = json("hobbies", typeRef<List<String>>())
 }
 ```
 
@@ -235,13 +235,13 @@ interface Employee : Entity<Employee> {
 }
 
 object Employees : Table<Employee>("t_employee") {
-    val id by int("id").primaryKey().bindTo { it.id }
-    val name by varchar("name").bindTo { it.name }
-    val job by varchar("job").bindTo { it.job }
-    val managerId by int("manager_id").bindTo { it.manager.id }
-    val hireDate by date("hire_date").bindTo { it.hireDate }
-    val salary by long("salary").bindTo { it.salary }
-    val departmentId by int("department_id").references(Departments) { it.department }
+    val id = int("id").primaryKey().bindTo { it.id }
+    val name = varchar("name").bindTo { it.name }
+    val job = varchar("job").bindTo { it.job }
+    val managerId = int("manager_id").bindTo { it.manager.id }
+    val hireDate = date("hire_date").bindTo { it.hireDate }
+    val salary = long("salary").bindTo { it.salary }
+    val departmentId = int("department_id").references(Departments) { it.department }
 }
 ```
 
