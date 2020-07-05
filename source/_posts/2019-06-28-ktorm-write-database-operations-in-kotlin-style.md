@@ -243,13 +243,14 @@ object Employees : Table<Employee>("t_employee") {
     val salary = long("salary").bindTo { it.salary }
     val departmentId = int("department_id").references(Departments) { it.department }
 }
+
+val Database.employees get() = this.sequenceOf(Employees)
 ```
 
 完成 ORM 绑定后，我们就可以使用实体序列的各种方便的扩展函数。比如获取部门 1 中工资超过一千的所有员工对象：
 
 ```kotlin
-val employees = database
-    .sequenceOf(Employees)
+val employees = database.employees
     .filter { it.departmentId eq 1 }
     .filter { it.salary greater 1000 }
     .toList()
@@ -260,8 +261,7 @@ val employees = database
 我们还能使用 `mapColumns` 函数筛选需要的列，而不必把所有的列都查询出来，以及使用 `sortedBy` 函数把记录按指定的列进行排序。下面的代码获取部门 1 中工资超过一千的所有员工的名字，并按其工资的高低从大到小排序：
 
 ```kotlin
-val names = database
-    .sequenceOf(Employees)
+val names = database.employees
     .filter { it.departmentId eq 1 }
     .filter { it.salary greater 1000L }
     .sortedBy { it.salary }
@@ -281,8 +281,7 @@ order by t_employee.salary
 不仅如此，我们还能使用聚合功能，获取每个部门的平均工资：
 
 ```kotlin
-val averageSalaries = database
-    .sequenceOf(Employees)
+val averageSalaries = database.employees
     .groupingBy { it.departmentId }
     .eachAverageBy { it.salary }
 ```
