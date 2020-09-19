@@ -64,7 +64,7 @@ $(document).ready(function() {
 (function() {
   $(".kotlin .code .keyword").each(function() {
     var node = $(this);
-    if (node.text() === "where") {
+    if (node.text() === "where" || node.text() === "set") {
       node.removeClass("keyword");
     }
   });

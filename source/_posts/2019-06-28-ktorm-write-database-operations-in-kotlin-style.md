@@ -51,8 +51,8 @@ class JsonSqlType<T : Any>(
     val javaType: JavaType
 ) : SqlType<T>(Types.VARCHAR, "json") {
 
-    override fun doSetParameter(ps: PreparedStatement, index: Int, param: T) {
-        ps.setString(index, objectMapper.writeValueAsString(param))
+    override fun doSetParameter(ps: PreparedStatement, index: Int, parameter: T) {
+        ps.setString(index, objectMapper.writeValueAsString(parameter))
     }
 
     override fun doGetResult(rs: ResultSet, index: Int): T? {
@@ -71,13 +71,11 @@ class JsonSqlType<T : Any>(
 如果我们用的是 Java，这时恐怕只能遗憾地放弃了，但是 Kotlin 不一样，它支持扩展函数！Kotlin 的扩展函数可以让我们方便地扩展一个已经存在的类，为它添加额外的函数。
 
 ```kotlin
-fun <C : Any> Table<*>.json(
+inline fun <reified C : Any> BaseTable<*>.json(
     name: String,
-    typeRef: TypeReference<C>,
     mapper: ObjectMapper = sharedObjectMapper
 ): Column<C> {
-    val sqlType = JsonSqlType(mapper, mapper.constructType(typeRef.referencedType))
-    return this.registerColumn(name, sqlType)
+    return registerColumn(name, JsonSqlType(mapper, mapper.constructType(typeOf<C>())))
 }
 ```
 
@@ -85,7 +83,7 @@ fun <C : Any> Table<*>.json(
 
 ```kotlin
 object Employees : Table<Nothing>("t_employee") {
-    val hobbies = json("hobbies", typeRef<List<String>>())
+    val hobbies = json<List<String>>("hobbies")
 }
 ```
 
@@ -125,12 +123,12 @@ order by count(t_employee.id) desc
 
 ```kotlin
 database.insert(Employees) {
-    it.name to "marry"
-    it.job to "trainee"
-    it.managerId to 1
-    it.hireDate to LocalDate.now()
-    it.salary to 50
-    it.departmentId to 1
+    set(it.name, "marry")
+    set(it.job, "trainee")
+    set(it.managerId, 1)
+    set(it.hireDate, LocalDate.now())
+    set(it.salary, 50)
+    set(it.departmentId, 1)
 }
 ```
 
@@ -145,7 +143,7 @@ values (?, ?, ?, ?, ?, ?)
 
 ```kotlin
 database.update(Employees) {
-    it.salary to it.salary + 100000000
+    set(it.salary, it.salary + 100000000)
     where {
         it.name eq "vince"
     }
