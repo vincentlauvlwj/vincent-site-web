@@ -11,7 +11,7 @@ comments: false
 Email: [me@liuwj.me](mailto:me@liuwj.me)
 独立博客：[https://www.liuwj.me](https://www.liuwj.me)
 GitHub: [https://github.com/vincentlauvlwj](https://github.com/vincentlauvlwj)
-Ktorm 框架：[https://ktorm.liuwj.me](https://ktorm.liuwj.me)
+Ktorm 框架：[https://www.ktorm.org](https://www.ktorm.org/zh-cn/)
 
 ## 关于本站
 

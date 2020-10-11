@@ -22,8 +22,8 @@ tags:
 
 > 你可以在 Ktorm 的官网上获取更详细的使用文档，如果使用遇到问题，还可以在 GitHub 提出 issue。如果 Ktorm 对你有帮助的话，请在 GitHub 留下你的 star，也欢迎加入我们，共同打造 Kotlin 优雅的 ORM 解决方案。
 >
-> Ktorm 官网：[https://ktorm.liuwj.me/](https://ktorm.liuwj.me/zh-cn/)
-> GitHub 地址：[https://github.com/vincentlauvlwj/Ktorm](https://github.com/vincentlauvlwj/Ktorm)
+> Ktorm 官网：[https://www.ktorm.org](https://www.ktorm.org/zh-cn/)
+> GitHub 地址：[https://github.com/kotlin-orm/ktorm](https://github.com/kotlin-orm/ktorm)
 
 ## Hello, Ktorm!
 
@@ -33,7 +33,7 @@ Ktorm 已经发布到 maven 中央仓库和 jcenter，因此，如果你使用 m
 
 ```xml
 <dependency>
-    <groupId>me.liuwj.ktorm</groupId>
+    <groupId>org.ktorm</groupId>
     <artifactId>ktorm-core</artifactId>
     <version>${ktorm.version}</version>
 </dependency>
@@ -42,7 +42,7 @@ Ktorm 已经发布到 maven 中央仓库和 jcenter，因此，如果你使用 m
 或者 gradle：
 
 ```groovy
-compile "me.liuwj.ktorm:ktorm-core:${ktorm.version}"
+compile "org.ktorm:ktorm-core:${ktorm.version}"
 ```
 
 在使用 Ktorm 之前，我们需要让它能够了解我们的表结构。假设我们有两个表，他们分别是部门表 `t_department` 和员工表 `t_employee`， 它们的建表 SQL 如下，我们要如何描述这两个表呢？
@@ -233,7 +233,7 @@ database.delete(Employees) { it.id eq 4 }
 - Ktorm 可以方便的对 SQL DSL 进行扩展，以支持某些数据库中的特殊语法，这些扩展主要以独立的 jar 包提供，比如 `ktorm-support-mysql`。当然，我们也能自己编写扩展。
 - 对于确实无法支持的情况，Ktorm 也可以直接使用原生 SQL 进行查询，并额外提供了一些方便的扩展函数支持。
 
-更多 SQL DSL 的用法，请参考 Ktorm 的[具体文档](https://ktorm.liuwj.me/zh-cn/query.html)。
+更多 SQL DSL 的用法，请参考 Ktorm 的[具体文档](https://www.ktorm.org/zh-cn/query.html)。
 
 ## 实体类与列绑定
 
@@ -360,7 +360,7 @@ val employee = database.employees.find { it.id eq 2 } ?: return
 employee.delete()
 ```
 
-更多实体 API 的用法，可参考[列绑定](https://ktorm.liuwj.me/zh-cn/entities-and-column-binding.html)和[实体查询](https://ktorm.liuwj.me/zh-cn/entity-finding.html)相关的文档。
+更多实体 API 的用法，可参考[列绑定](https://www.ktorm.org/zh-cn/entities-and-column-binding.html)和[实体查询](https://www.ktorm.org/zh-cn/entity-finding.html)相关的文档。
 
 可以看到，只需要将表对象与实体类进行绑定，我们就可以使用这些方便的函数，大部分对实体对象的增删改查操作，都只需要一个函数调用即可完成，但 Ktorm 能做到的，还远不止于此。
 
@@ -538,7 +538,7 @@ val totalSalaries = database.employees
     }
 ```
 
-更多实体序列 API 的用法，可参考[实体序列](https://ktorm.liuwj.me/zh-cn/entity-sequence.html)和[序列聚合](https://ktorm.liuwj.me/zh-cn/sequence-aggregation.html)相关的文档。
+更多实体序列 API 的用法，可参考[实体序列](https://www.ktorm.org/zh-cn/entity-sequence.html)和[序列聚合](https://www.ktorm.org/zh-cn/sequence-aggregation.html)相关的文档。
 
 ## 小结
 

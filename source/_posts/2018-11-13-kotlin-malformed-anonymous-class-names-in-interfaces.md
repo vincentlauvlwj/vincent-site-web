@@ -13,7 +13,7 @@ tags:
 
 emmm...这个问题下面真的是大佬云集，萌新感到好忐忑...
 
-前段时间在使用 Kotlin 开发一个 [ORM 框架（广告慎入，Ktorm：专注于 Kotlin 的 ORM 框架）](https://github.com/vincentlauvlwj/Ktorm)，当时我的代码大概是这样的，定义了一个 Foo 接口，在这个接口里面写了个默认实现的 bar() 方法：
+前段时间在使用 Kotlin 开发一个 [ORM 框架（广告慎入，Ktorm：专注于 Kotlin 的 ORM 框架）](https://www.ktorm.org/zh-cn/)，当时我的代码大概是这样的，定义了一个 Foo 接口，在这个接口里面写了个默认实现的 bar() 方法：
 
 ````kotlin
 interface Foo {

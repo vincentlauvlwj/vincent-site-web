@@ -13,7 +13,7 @@ tags:
 在上篇文章中，我们介绍了 Ktorm 的基本使用方法。Ktorm 是一个专注于 Kotlin 的 ORM 框架，它提供的 SQL DSL 和序列 API 可以让我们方便地进行数据库操作。在这篇文章中，我们将学习到更多细节，了解 Ktorm 如何让我们的数据库操作更具 Kotlin 风味。
 
 > 前文地址：[你还在用 MyBatis 吗，Ktorm 了解一下？](https://www.liuwj.me/posts/ktorm-introduction/)
-> Ktorm 官网：[https://ktorm.liuwj.me/](https://ktorm.liuwj.me/zh-cn/)
+> Ktorm 官网：[https://www.ktorm.org](https://www.ktorm.org/zh-cn/)
 
 在开始之前，我们先回顾一下上篇文章中的员工-部门表的例子，这次我们的示例也是基于这两个表。下面是使用 Ktorm 定义的这两个表的结构：
 
@@ -213,7 +213,7 @@ infix fun Column<*>.ilike(argument: String): ILikeExpression {
 }
 ```
 
-有了这个 `ilike` 函数，接下来就只需要在 `SqlFormatter` 中把这个 `ILikeExpression` 翻译为合适的 SQL 就可以了，Ktorm 给我们提供了足够的灵活性，具体可以参考[自定义运算符](https://ktorm.liuwj.me/zh-cn/operators.html#%E8%87%AA%E5%AE%9A%E4%B9%89%E8%BF%90%E7%AE%97%E7%AC%A6)相关的文档。
+有了这个 `ilike` 函数，接下来就只需要在 `SqlFormatter` 中把这个 `ILikeExpression` 翻译为合适的 SQL 就可以了，Ktorm 给我们提供了足够的灵活性，具体可以参考[自定义运算符](https://www.ktorm.org/zh-cn/operators.html#%E8%87%AA%E5%AE%9A%E4%B9%89%E8%BF%90%E7%AE%97%E7%AC%A6)相关的文档。
 
 ## Sequence API 像集合一样操作数据库
 
