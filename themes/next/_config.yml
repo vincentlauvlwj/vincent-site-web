@@ -218,11 +218,11 @@ enable_share: false
 
 # Google Webmaster tools verification setting
 # See: https://www.google.com/webmasters/
-google_site_verification: B3tGMPB1Dtucdkw6ugnjxlL6AdZNYMTBPDYfU2xk0F8
+# google_site_verification: B3tGMPB1Dtucdkw6ugnjxlL6AdZNYMTBPDYfU2xk0F8
 
 
 # Google Analytics
-# google_analytics:
+google_analytics: UA-180345721-1
 
 # CNZZ count
 # cnzz_siteid:
@@ -257,7 +257,7 @@ leancloud_visitors:
 
 
 # Tencent analytics ID
-tencent_analytics: 66145344
+# tencent_analytics: 66145344
 
 # Enable baidu push so that the blog will push the url to baidu automatically which is very helpful for SEO
 baidu_push: true
