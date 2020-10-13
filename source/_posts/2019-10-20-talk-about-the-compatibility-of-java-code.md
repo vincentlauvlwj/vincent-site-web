@@ -16,9 +16,9 @@ tags:
 
 但是万万没有想到，问题竟然出现在与这个功能看起来毫不相关的另一个模块。这个模块启动后抛出了一个 `NoSuchMethodError`：
 
-![img](https://www.liuwj.me/files/in-post/java-code-compatibility-01.png)
-
 <!-- more -->
+
+![img](https://www.liuwj.me/files/in-post/java-code-compatibility-01.png)
 
 抛异常的地方确实是我改过的 `Banner` 类，但是 lombok 应该会为我们生成相应的 getter/setter 方法，所以这里不应该找不到才对，难道是 lombok 抽风了？
 

@@ -10,7 +10,7 @@ tags:
 ---
 
 > [点击查看原文](http://www.ibm.com/developerworks/cn/java/j-lo-proxy2/index.html)
-> 相信通过阅读“[Java 动态代理机制分析和扩展，第 1 部分](http://www.liuwenjun.info/2015/11/08/dynamic-proxy-01/)”，读者已经对 Java 动态代理机制有了一定的了解。本文将在上一篇的基础上，针对 Java 动态代理仅支持接口代理这一局限进行扩展，实现对类的代理。
+> 相信通过阅读“[Java 动态代理机制分析和扩展，第 1 部分](http://www.liuwj.me/posts/dynamic-proxy-01/)”，读者已经对 Java 动态代理机制有了一定的了解。本文将在上一篇的基础上，针对 Java 动态代理仅支持接口代理这一局限进行扩展，实现对类的代理。
 
 本文希望将 Java 动态代理机制从接口扩展到类，使得类能够享有与接口类似的动态代理支持。
 

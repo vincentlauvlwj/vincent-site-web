@@ -373,7 +373,7 @@ Excellent，正是我们想要的，计划实现了，心里有点小激动呢�
 
 就是你了皮卡丘，这就是一个LINQ`IQueryable`提供程序，起码算是一个粗糙的原型。当然你还可以在里面做更多的事情，处理各种各样的情况。
 
-别急，还有更精彩的。[查看Part III](http://www.liuwenjun.info/2016/02/01/linq-building-an-iqueryable-provider-part-iii/)。
+别急，还有更精彩的。[查看Part III](http://www.liuwj.me/posts/linq-building-an-iqueryable-provider-part-iii/)。
 
 ## APPENDIX – The Expression Visitor
 
