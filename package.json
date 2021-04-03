@@ -17,6 +17,7 @@
     "hexo-neat": "^1.0.4",
     "hexo-renderer-ejs": "^0.2.0",
     "hexo-renderer-marked": "^2.0.0",
+    "hexo-renderer-scss": "^1.2.0",
     "hexo-renderer-stylus": "^0.3.1",
     "hexo-server": "^0.2.0"
   }
