@@ -18,6 +18,10 @@
     overflow: hidden;
     a {
         color: $dark-gray;
+        border-bottom: 1px solid $dark-gray;
+    }
+    a:hover {
+        color: #999;
     }
 
     .footer-author{

@@ -4,6 +4,7 @@
 
 # Site creation time
 since: 2015
+use_https: true
 
 # Custom your favicon.ico in `site/source`
 favicon: /files/favicon.ico

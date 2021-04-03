@@ -1,12 +1,15 @@
 <span class="copyright-year">
-    {% set current = date(Date.now(), "YYYY") %}
+    <span>
         &copy;
-    {% if theme.since and theme.since != current %}
-        {{ theme.since }} -
-    {% endif %}
-    {{ current }}
-    <span class="footer-author">{{ config.author }}.</span>
-    <span class="power-by">
-        {{ __('footer.powered', '<a class="hexo-link" href="https://hexo.io/">Hexo</a> and <a class="theme-link" href="https://github.com/frostfan/hexo-theme-polarbear">Polar Bear</a>') }}
+        {% set current = date(Date.now(), "YYYY") %}
+        {% if theme.since and theme.since != current %}
+            {{ theme.since }} -
+        {% endif %}
+        {{ current }}
+        {{ config.author }}
+    </span>
+    <span><a rel="nofollow" href="https://beian.miit.gov.cn" target="_blank">粤ICP备17040353号</a></span>
+    <span>
+        本站托管于 <a href="https://github.com/vincentlauvlwj/vincent-site-web" target="_blank">GitHub</a>
     </span>
 </span>
