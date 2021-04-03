@@ -1,7 +1,6 @@
 ---
 layout:     post
-title:      "使用GitHub Pages搭建独立博客（一）"
-subtitle:   "开始使用GitHub Pages"
+title:      "使用GitHub Pages搭建独立博客（一） - 开始使用GitHub Pages"
 author:     "刘文俊"
 date:       2015-09-20
 tags:

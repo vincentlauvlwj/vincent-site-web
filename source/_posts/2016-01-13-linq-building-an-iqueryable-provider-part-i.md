@@ -1,7 +1,6 @@
 ---
 layout:     post
-title:      "「译」LINQ: Building an IQueryable Provider - Part I"
-subtitle:   "Reusable IQueryable base classes"
+title:      "「译」LINQ: Building an IQueryable Provider - Part I: Reusable IQueryable base classes"
 author:     "刘文俊"
 tags:
     - 翻译

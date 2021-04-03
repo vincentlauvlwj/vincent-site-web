@@ -1,7 +1,6 @@
 ---
 layout:     post
 title:      "Hello, World!"
-subtitle:   " \"Hello World, Hello My First Personal Site.\""
 author:     "刘文俊"
 date:       2015-08-30 2:00
 header-img: "img/post-bg-2015.jpg"

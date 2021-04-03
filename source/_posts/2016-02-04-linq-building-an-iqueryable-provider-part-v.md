@@ -1,7 +1,6 @@
 ---
 layout:     post
-title:      "「译」LINQ: Building an IQueryable Provider - Part V"
-subtitle:   "Improved Column binding"
+title:      "「译」LINQ: Building an IQueryable Provider - Part V: Improved Column binding"
 author:     "刘文俊"
 tags:
     - 翻译

@@ -1,7 +1,6 @@
 ---
 layout:     post
 title:      "谈谈 Java 代码的兼容性"
-subtitle:   ""
 author:     "刘文俊"
 top: true
 tags:

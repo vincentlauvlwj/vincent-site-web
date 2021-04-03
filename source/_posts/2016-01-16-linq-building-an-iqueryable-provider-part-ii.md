@@ -1,7 +1,6 @@
 ---
 layout:     post
-title:      "「译」LINQ: Building an IQueryable Provider - Part II"
-subtitle:   "Where and reusable Expression tree visitor"
+title:      "「译」LINQ: Building an IQueryable Provider - Part II: Where and reusable Expression tree visitor"
 author:     "刘文俊"
 tags:
     - 翻译

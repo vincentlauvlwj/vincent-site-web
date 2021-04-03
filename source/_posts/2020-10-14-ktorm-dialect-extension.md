@@ -1,7 +1,6 @@
 ---
 layout:     post
-title:      "【代码札记】为 Ktorm 框架拓展 PostgreSQL 方言进行 Json 访问"
-subtitle:   ""
+title:      "为 Ktorm 框架拓展 PostgreSQL 方言进行 Json 访问"
 author:     "天空Blond"
 top: true
 tags:

@@ -1,7 +1,6 @@
 ---
 layout:     post
-title:      "使用GitHub Pages搭建独立博客（三）"
-subtitle:   "添加一些扩展功能"
+title:      "使用GitHub Pages搭建独立博客（三） - 添加一些扩展功能"
 author:     "刘文俊"
 date:       2015-09-27
 tags:

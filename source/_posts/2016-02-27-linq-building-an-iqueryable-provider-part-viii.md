@@ -1,7 +1,6 @@
 ---
 layout:     post
-title:      "「译」LINQ: Building an IQueryable Provider - Part VIII"
-subtitle:   "OrderBy"
+title:      "「译」LINQ: Building an IQueryable Provider - Part VIII: OrderBy"
 author:     "刘文俊"
 tags:
     - 翻译

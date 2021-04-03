@@ -1,7 +1,6 @@
 ---
 layout:     post
-title:      "Kotlin Malformed Anonymous Class Names in Interfaces"
-subtitle:   "找到编译器的 bug 是种怎样的体验？"
+title:      "找到编译器的 bug 是种怎样的体验？"
 author:     "刘文俊"
 top: true
 tags:

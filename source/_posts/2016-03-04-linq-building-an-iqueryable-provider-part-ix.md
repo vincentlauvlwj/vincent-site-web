@@ -1,7 +1,6 @@
 ---
 layout:     post
-title:      "「译」LINQ: Building an IQueryable Provider - Part IX"
-subtitle:   "Removing redundant subqueries"
+title:      "「译」LINQ: Building an IQueryable Provider - Part IX: Removing redundant subqueries"
 author:     "刘文俊"
 tags:
     - 翻译

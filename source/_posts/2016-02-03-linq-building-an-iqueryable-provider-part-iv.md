@@ -1,7 +1,6 @@
 ---
 layout:     post
-title:      "「译」LINQ: Building an IQueryable Provider - Part IV"
-subtitle:   "Select"
+title:      "「译」LINQ: Building an IQueryable Provider - Part IV: Select"
 author:     "刘文俊"
 tags:
     - 翻译

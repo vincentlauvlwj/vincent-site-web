@@ -1,7 +1,6 @@
 ---
 layout:     post
-title:      "使用GitHub Pages搭建独立博客（二）"
-subtitle:   "使用Jekyll生成静态网站"
+title:      "使用GitHub Pages搭建独立博客（二） - 使用Jekyll生成静态网站"
 author:     "刘文俊"
 date:       2015-09-21
 tags:

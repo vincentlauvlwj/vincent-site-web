@@ -1,7 +1,6 @@
 ---
 layout:     post
-title:      "「译」LINQ: Building an IQueryable Provider - Part VII"
-subtitle:   "Join and SelectMany"
+title:      "「译」LINQ: Building an IQueryable Provider - Part VII: Join and SelectMany"
 author:     "刘文俊"
 tags:
     - 翻译
