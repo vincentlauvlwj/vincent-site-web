@@ -18,10 +18,11 @@ rss: /atom.xml
 # Menu Settings
 # ===========================================
 menu:
-  Home: /
-  Archives: /archives
-  Messages: /messages
-  About: /about
+  首页: /
+  归档: /archives
+  留言: /messages
+  关于: /about
+  KTORM: https://www.ktorm.org
 
 # ===========================================
 # Widget Settings
