@@ -16,6 +16,7 @@
 
 .widget-area {
     font-size: 14px;
+    text-align: right;
 
     ul {
     	padding-left: 0;
@@ -69,7 +70,6 @@
     .tag-list-item {
         padding: 0 10px 7px 0;
         font-size: 14px;
-        text-transform: uppercase;
         border: 1px solid #ff;
         display: block;
         background: #fefefe;
@@ -86,8 +86,30 @@
 
     .tag-list-count {
         vertical-align: super;
-        font-size: .6em;
-        opacity: .6;
+        font-size: .9em;
+        opacity: .9;
         top: -0.5em;
+    }
+}
+
+.widget_feed a {
+    display: inline-block;
+    padding: 3px 15px;
+    color: #fc6423;
+    border: 1px solid #fc6423;
+    border-radius: 4px;
+
+    i {
+        color: #fc6423;
+        font-size: 14px;
+    }
+
+    &:hover {
+        color: #fff;
+        background: #fc6423;
+
+        i { 
+            color: #fff;
+        }
     }
 }
