@@ -7,16 +7,16 @@
         <h3 class="widget-title">链接</h3>
         <ul class="tag-list">
         	<li class="tag-list-item">
-        		<a class="tag-list-link" href="mailto:me@liuwj.me" title="me@liuwj.me"><i class="fa fa-envelope"></i> Email</a>
+        		<a class="tag-list-link" href="mailto:me@liuwj.me" title="me@liuwj.me"><i class="iconfont icon-email"></i> Email</a>
         	</li>
         	<li class="tag-list-item">
-        		<a class="tag-list-link" href="https://github.com/vincentlauvlwj"><i class="fa fa-github"></i> GitHub</a>
+        		<a class="tag-list-link" href="https://github.com/vincentlauvlwj"><i class="iconfont icon-github"></i> GitHub</a>
         	</li>
         	<li class="tag-list-item">
-        		<a class="tag-list-link" href="https://www.zhihu.com/people/liu-wen-jun-57-18"><i class="fa fa-globe"></i> Zhihu</a>
+        		<a class="tag-list-link" href="https://www.zhihu.com/people/liu-wen-jun-57-18"><i class="iconfont icon-zhihu"></i> Zhihu</a>
         	</li>
         	<li class="tag-list-item">
-        		<a class="tag-list-link" href="https://www.ktorm.org"><i class="fa fa-external-link-square"></i> Ktorm</a>
+        		<a class="tag-list-link" href="https://www.ktorm.org"><i class="iconfont icon-heart"></i> Ktorm</a>
         	</li>
         </ul>
     </section>
@@ -29,7 +29,7 @@
     <section class="widget-area widget_feed">
         <h3 class="widget-title">订阅</h3>
     	<a href="/atom.xml">
-    		<i class="fa fa-rss"></i> RSS
+    		<i class="iconfont icon-rss"></i> RSS
     	</a>
     </section>
 {% endif %}

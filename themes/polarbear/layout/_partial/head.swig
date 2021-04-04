@@ -29,9 +29,6 @@
   <link rel="stylesheet" type="text/css" href="{{ url_for('lib/fancybox/jquery.fancybox.css') }}" />
 {% endif %}
 
-{# Font awesome #}
-<link href="{{ url_for('lib//font-awesome/css/font-awesome.min.css?v=4.4.0') }}" rel="stylesheet" type="text/css" />
-
 {# Theme Configuration #}
 {% include "../_script/config.swig" %}
 
