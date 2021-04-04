@@ -17,6 +17,7 @@ body {
   background: $global-background;
   scroll-behavior: smooth;
   vertical-align: baseline;
+  overflow-x: hidden;
 }
 
 img {

@@ -1,124 +1,210 @@
-code, pre {
-  padding: 7px;
+
+.code-block {
+  overflow: auto;
+  margin: 20px 0;
+  padding: 0;
   font-size: $code-font-size;
-  font-family: $code-font-family;
-  background: $code-background;
+  color: $highlight-foreground;
+  background: $highlight-background;
+  line-height: $line-height-code-block;
 }
 
+pre, code { font-family: $code-font-family; }
+
 code {
-  padding: 3px 5px;
-  color: $code-color;
+  padding: 2px 4px;
+  word-wrap: break-word;
+  color: $code-foreground;
+  background: $code-background;
+  border-radius: $code-border-radius;
+  font-size: $code-font-size;
+}
+
+a code {
+  color: $highlight-link;
+}
+
+pre {
+  @extend .code-block;
+  padding: 10px;
+
+  code {
+    padding: 0;
+    color: $highlight-foreground;
+    background: none;
+    text-shadow: none;
+  }
 }
 
 .highlight {
-  margin: 1em 0;
-  overflow-x: auto;
-  box-shadow: 1px 1px 2px rgba(0,0,0,0.125);
-  table {
-    position: relative;
+  @extend .code-block;
+  border-radius: 1px;
 
-    &::after {
-      position: absolute;
-      top: 0;
-      right: 0;
-      left: 0;
-      padding: 2px 7px;
-      font-size: $code-font-size;
-      font-weight: bold;
-      color: $gray;
-      background: darken($code-background, 3%);
-      content: 'Code';
-    }
-  }
-
-  @each $sign, $text in $code-type-list {
-    &.#{$sign} > ::after {
-      content: $text;
-    }
-  }
-
-  .code {
-    pre {
-      margin: 0;
-      padding: 30px 10px 10px;
-    }
-  }
-
-  .gutter {
-    width: 10px;
-    color: $gray;
-
-    pre {
-      margin: 0;
-      padding: 30px 7px 10px;
-    }
-  }
-
-  .line {
-    // Fix code block null line height and
-    // Synchronous gutter and code line highly.
-    height: round($code-font-size * 1.5);
-  }
-
-  table, tr, td {
+  pre {
+    border: none;
     margin: 0;
-    padding: 0;
-    width: 100%;
-    border-collapse: collapse;
+    padding: 10px 0;
   }
 
-  .code {
-    .comment,
-    .quote {
-      color: map-get($code-highlight-color, comment);
-    }
+  table {
+    margin: 0;
+    width: auto;
+    border: none;
+  }
 
-    .keyword,
-    .selector-tag,
-    .addition {
-      color: map-get($code-highlight-color, keyword);
-    }
+  td {
+    border: none;
+    padding: 0;
+  }
 
-    .number,
-    .string,
-    .meta .meta-string,
-    .literal,
-    .doctag,
-    .regexp {
-      color: map-get($code-highlight-color, number);
+  .clearfix {
+    &:before,
+    &:after {
+      content: " ";
+      display: table;
     }
+    &:after { clear: both; }
+  }
 
-    .title,
-    .section,
-    .name,
-    .selector-id,
-    .selector-class {
-      color: map-get($code-highlight-color, title);
-    }
+  figcaption {
+    @extend .clearfix;
+    font-size: 1em;
+    color: $highlight-foreground;
+    line-height: 1em;
+    margin-bottom: 1em;
 
-    .attribute,
-    .attr,
-    .variable,
-    .template-variable,
-    .class .title,
-    .type {
-      color: map-get($code-highlight-color, attribute);
-    }
+    a {
+      float: right;
+      color: $highlight-foreground;
 
-    .symbol,
-    .bullet,
-    .subst,
-    .meta,
-    .meta .keyword,
-    .selector-attr,
-    .selector-pseudo,
-    .link {
-      color: map-get($code-highlight-color, symbol);
+      &:hover { border-bottom-color: $highlight-foreground; }
     }
+  }
 
-    .built_in,
-    .deletion {
-      color: map-get($code-highlight-color, built_in);
-    }
+  .gutter pre {
+    padding-left: 10px;
+    padding-right: 10px;
+    color: $highlight-gutter-color;
+    text-align: right;
+    background-color: $highlight-gutter-bg-color;
+  }
+
+  .code pre {
+    width: 100%;
+    padding-left: 10px;
+    padding-right: 10px;
+    background-color: $highlight-background;
+  }
+
+  .line { height: 20px; }
+}
+
+
+.gutter {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.gist table {
+  width: auto;
+
+  td { border: none; }
+}
+
+// For diff highlight
+pre .deletion { background: $highlight-deletion; }
+pre .addition { background: $highlight-addition; }
+pre .meta     { color: $highlight-purple; }
+
+pre, code {
+
+  .comment { color: $highlight-comment; }
+
+  .variable,
+  .attribute,
+  .tag,
+  .regexp,
+  .ruby, 
+  .constant,
+  .xml, 
+  .tag, 
+  .title,
+  .xml, 
+  .pi,
+  .xml, 
+  .doctype,
+  .html, 
+  .doctype,
+  .css, 
+  .id,
+  .css, 
+  .class,
+  .css, 
+  .pseudo {
+    color: $highlight-red;
+  }
+
+  .number,
+  .preprocessor,
+  .built_in,
+  .literal,
+  .params,
+  .constant,
+  .command {
+    color: $highlight-orange;
+  }
+
+  .ruby, 
+  .class, 
+  .title,
+  .css, 
+  .rules, 
+  .attribute,
+  .string,
+  .value,
+  .inheritance,
+  .header,
+  .ruby, 
+  .symbol,
+  .xml, 
+  .cdata,
+  .special,
+  .number,
+  .formula {
+    color: $highlight-green;
+  }
+
+  .title,
+  .css, 
+  .hexcolor {
+    color: $highlight-aqua;
+  }
+
+  .function,
+  .python, 
+  .decorator,
+  .python, 
+  .title,
+  .ruby, 
+  .function, 
+  .title,
+  .ruby, 
+  .title, 
+  .keyword,
+  .perl, 
+  .sub,
+  .javascript, 
+  .title,
+  .coffeescript, 
+  .title {
+    color: $highlight-blue;
+  }
+
+  .keyword,
+  .javascript, 
+  .function {
+    color: $highlight-purple;
   }
 }
