@@ -27,8 +27,13 @@
 
             {% if excerpt %}
               {{ excerpt }}
-        </div>
+              <div class="post-more-link text-center">
+                <a class="btn" href="{{ url_for(post.path) }}" rel="contents">
+                  阅读全文 &raquo;
+                </a>
+              </div>
             {% endif %}
+        </div>
           {% else %}
             <div class="post-content">
             {{ post.content }}
