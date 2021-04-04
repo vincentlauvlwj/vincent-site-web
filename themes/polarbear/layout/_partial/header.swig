@@ -2,9 +2,7 @@
     <div class="colored-header">
         <div class="wrap clearfix">
             <div id="clogo">
-                <a href="{{ url_for('/') }}">
-                    <img src="https://cdn.v2ex.com/gravatar/4fcd1218a0d478db1d5573249c376b95?d=retro&s=100">
-                </a>
+                <img src="https://cdn.v2ex.com/gravatar/4fcd1218a0d478db1d5573249c376b95?d=retro&s=100" onclick="window.location.href='/'" style="cursor: pointer;">
             </div>
             <div id="blog-name">
                 <h1 class="site-title">

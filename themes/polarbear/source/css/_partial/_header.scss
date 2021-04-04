@@ -95,13 +95,17 @@
         border-radius: 50%;
     }
 
-    a {
-        position: relative;
-        z-index: 2;
-    }
-
     img {
         border-radius: 50%;
+        -webkit-transition: -webkit-transform 0.4s ease-out;
+        -moz-transition: -moz-transform 0.4s ease-out;
+        transition: transform 0.4s ease-out;
+
+        &:hover {
+            -webkit-transform: rotateZ(360deg) !important;
+            -moz-transform: rotateZ(360deg) !important;
+            transform: rotateZ(360deg) !important;
+        }
     }
 }
 
