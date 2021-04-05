@@ -29,6 +29,9 @@
   <link rel="stylesheet" type="text/css" href="{{ url_for('lib/fancybox/jquery.fancybox.css') }}" />
 {% endif %}
 
+{# Theme styling #}
+<link rel="stylesheet" href="{{ url_for('lib/emoji/emoji.css') }}">
+
 {# Theme Configuration #}
 {% include "../_script/config.swig" %}
 
