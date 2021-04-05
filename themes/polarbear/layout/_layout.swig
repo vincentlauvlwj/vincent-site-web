@@ -19,7 +19,7 @@
       </footer>
 
       <div class="back-to-top" id="back-to-top">
-        <i class="iconfont icon-up"></i>
+        <i class="iconfont icon-top"></i>
       </div>
     </div>
     {% include '_script/libs.swig' %}
