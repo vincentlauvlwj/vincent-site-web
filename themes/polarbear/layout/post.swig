@@ -6,5 +6,6 @@
 {% block content %}
     <div id="primary">
         {{ post_template.render(page) }}
+        {% include "./_partial/comments.swig" %}
     </div>
 {% endblock %}

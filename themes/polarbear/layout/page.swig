@@ -14,5 +14,6 @@
                 {{ page.content }}
             </div>
         </article>
+        {% include "./_partial/comments.swig" %}
     </div>
 {% endblock %}

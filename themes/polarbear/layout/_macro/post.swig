@@ -52,7 +52,6 @@
 
         {# Post Pagination #}
         {% include "../_partial/pagination.swig" %}
-        {% include "../_partial/comments.swig" %}
       </footer>
     {% endif %}
   </article>
