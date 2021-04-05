@@ -29,7 +29,7 @@
   <link rel="stylesheet" type="text/css" href="{{ url_for('lib/fancybox/jquery.fancybox.css') }}" />
 {% endif %}
 
-{# Theme styling #}
+{# Support emoji #}
 <link rel="stylesheet" href="{{ url_for('lib/emoji/emoji.css') }}">
 
 {# Theme Configuration #}

@@ -642,7 +642,8 @@
       height: 30px;
       border: 1px solid #c5ced7;
       border-radius: 3px;
-      background-image: linear-gradient(#fbfbfc, #f5f7f9);
+      background-image: linear-gradient(#fcfcfc, #fcfcfc 25%, #e6e6e6);
+      background-repeat: no-repeat;
       color: #60676d;
       font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
       position: absolute;
@@ -738,7 +739,6 @@
         position: absolute;
         padding-left: 10px;
         display: inline-block;
-        font: normal normal normal 14px/1 FontAwesome;
         font-size: inherit;
         text-rendering: auto;
         height: 38px;
@@ -765,10 +765,6 @@
       @media screen and (max-width: 767px) {
         padding-right: 0px !important;
       }
-
-      &:before {
-        content: "\f007";
-      }
     }
 
     .ds-input-wrapper-email {
@@ -778,10 +774,6 @@
       @media screen and (max-width: 767px) {
         padding-right: 0px !important;
       }
-
-      &:before {
-        content: "\f0e0";
-      }
     }
 
     .ds-input-wrapper-homepage {
@@ -789,10 +781,6 @@
 
       @media screen and (max-width: 767px) {
         float: left !important;
-      }
-
-      &:before {
-        content: "\f0ac";
       }
     }
   }

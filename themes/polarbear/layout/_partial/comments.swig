@@ -61,13 +61,13 @@
 
         <form action="javascript:void(0);" method="post">
           <div class="ds-login-input">
-            <span class="ds-input-wrapper ds-input-wrapper-name">
+            <span class="ds-input-wrapper ds-input-wrapper-name iconfont icon-user">
               <input type="text" name="fromUser.name" placeholder="请输入您的名字">
             </span>
-            <span class="ds-input-wrapper ds-input-wrapper-email">
+            <span class="ds-input-wrapper ds-input-wrapper-email iconfont icon-email">
               <input type="text" name="fromUser.email" placeholder="邮箱，用于接收回复">
             </span>
-            <span class="ds-input-wrapper ds-input-wrapper-homepage">
+            <span class="ds-input-wrapper ds-input-wrapper-homepage iconfont icon-globe">
               <input type="text" name="fromUser.homepage" placeholder="您的主页（可不填）">
             </span>
           </div>
