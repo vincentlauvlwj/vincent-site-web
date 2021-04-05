@@ -170,12 +170,6 @@
       padding: 5px;
     }
 
-    li.ds-post-placeholder {
-      text-align: center;
-      color: #999;
-      padding: 1em 0;
-    }
-
     li.ds-post {
       width: 100%;
       overflow: hidden;
@@ -184,6 +178,12 @@
       margin: 0;
       padding: 0;
       list-style: none;
+    }
+
+    li.ds-post-placeholder {
+      text-align: center;
+      color: #999;
+      padding: 1em 0;
     }
 
     .ds-post-self {

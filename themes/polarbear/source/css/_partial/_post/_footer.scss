@@ -18,6 +18,10 @@
       &::before {
         content: '#';
       }
+
+      &:hover {
+        border-bottom: 1px solid $theme-color;
+      }
     }
   }
 
@@ -27,29 +31,52 @@
 
     .prev,
     .next {
+      position: relative;
+      display: block;
+      font-family: $global-font-family;
       font-weight: 400;
       font-size: 16px;
       color: $global-font-color;
-      font-family: $global-font-family;
       transition-property: transform;
       transition-timing-function: ease-out;
       transition-duration: 0.3s;
+      width: 50%;
+      box-sizing: border-box;
+
+      &:hover {
+        color: $theme-color;
+      }
+
+      .iconfont {
+        position: absolute;
+        top: 0;
+      }
     }
 
     .prev {
       float: left;
+      text-align: left;
+      padding-left: 16px;
+
+      .iconfont {
+        left: 0;
+      }
 
       &:hover {
-        color: $theme-color;
         transform: translateX(-4px);
       }
     }
 
     .next {
       float: right;
+      text-align: right;
+      padding-right: 16px;
+
+      .iconfont {
+        right: 0;
+      }
 
       &:hover {
-        color: $theme-color;
         transform: translateX(4px);
       }
     }

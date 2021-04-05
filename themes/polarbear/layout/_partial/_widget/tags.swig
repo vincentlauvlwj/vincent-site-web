@@ -20,7 +20,7 @@
         	</li>
         </ul>
     </section>
-    <section class="widget-area">
+    <section class="widget-area widget_copyright">
         <h3 class="widget-title">版权</h3>
     	<a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" title="本站作品采用「知识共享署名-非商业性使用-相同方式共享 4.0 国际许可协议 (CC BY-NC-SA 4.0)」进行许可">
     		<img src="/files/cc-by-nc-sa-88x31.png" alt="Creative Commons">
