@@ -228,7 +228,6 @@
         -webkit-transition: -webkit-transform 0.4s ease-out;
         -moz-transition: -moz-transform 0.4s ease-out;
         transition: transform 0.4s ease-out;
-        behavior: url(/css/PIE.htc);
 
         @media screen and (max-width: 767px) {
           width: 30px;
@@ -257,7 +256,6 @@
       -webkit-border-radius: 3px;
       border-radius: 3px;
       position: relative;
-      behavior: url(/css/PIE.htc);
     }
 
     .ds-rounded-top {
@@ -265,11 +263,6 @@
       -webkit-border-top-left-radius: 3px;
       border-top-right-radius: 3px;
       border-top-left-radius: 3px;
-    }
-
-    #ds-bubble {
-      position: relative;
-      behavior: url(/css/PIE.htc);
     }
 
     .ds-sort {
