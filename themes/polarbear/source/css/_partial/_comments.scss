@@ -231,9 +231,9 @@
         }
 
         &:hover{
-          -webkit-transform: rotateZ(360deg);
-          -moz-transform: rotateZ(360deg);
-          transform: rotateZ(360deg);
+          -webkit-transform: rotate(-45deg);
+          -moz-transform: rotate(-45deg);
+          transform: rotate(-45deg);
         }
       }
     }
