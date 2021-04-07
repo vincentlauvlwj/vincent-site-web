@@ -18,11 +18,21 @@ rss: /atom.xml
 # Menu Settings
 # ===========================================
 menu:
-  首页: /
-  归档: /archives
-  留言: /messages
-  关于: /about
-  KTORM: https://www.ktorm.org
+  - text: 首页
+    link: /
+    hideOnMobile: true
+  - text: 归档
+    link: /archives
+    hideOnMobile: false
+  - text: 留言
+    link: /messages
+    hideOnMobile: true
+  - text: 关于
+    link: /about
+    hideOnMobile: false
+  - text: KTORM
+    link: https://www.ktorm.org/zh-cn
+    hideOnMobile: true
 
 # ===========================================
 # Widget Settings

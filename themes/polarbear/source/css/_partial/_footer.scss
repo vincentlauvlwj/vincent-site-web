@@ -16,15 +16,22 @@
     max-width: $global-body-width;
 	display: block;
     overflow: hidden;
+    text-align: center;
+
     a {
         color: $dark-gray;
         border-bottom: 1px solid $dark-gray;
     }
+
     a:hover {
         color: #999;
     }
 
-    .footer-author {
-        margin: 0 4px;
+    .host-service {
+        display: inline-block;
+
+        @media screen and (max-width: 500px) {
+            display: none;
+        }
     }
 }

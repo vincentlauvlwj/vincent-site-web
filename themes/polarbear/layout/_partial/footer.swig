@@ -1,4 +1,4 @@
-<span class="copyright-year">
+<span>
     <span>
         &copy;
         {% set current = date(Date.now(), "YYYY") %}
@@ -9,7 +9,7 @@
         {{ config.author }}
     </span>
     <span><a rel="nofollow" href="https://beian.miit.gov.cn" target="_blank">粤ICP备17040353号</a></span>
-    <span>
+    <span class="host-service">
         本站托管于 <a href="https://github.com/vincentlauvlwj/vincent-site-web" target="_blank">GitHub</a>
     </span>
 </span>

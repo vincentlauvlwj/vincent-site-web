@@ -51,9 +51,22 @@
         .menu-item {
         	font-size: $global-font-size;
         	margin-left: 30px;
-        	display: inline-block;
+            display: inline-block;
+
+            @media screen and (max-width: 767px) {
+                margin-left: 15px;
+            }
+
             a {
                 color: rgba(0, 0, 0, 0.6);
+            }
+        }
+
+        .menu-item-hide-on-mobile {
+            display: inline-block;
+
+            @media screen and (max-width: 500px) {
+                display: none;
             }
         }
     }
