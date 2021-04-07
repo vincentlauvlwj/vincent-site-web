@@ -1,9 +1,5 @@
 #comments {
   overflow: hidden;
-
-  @media screen and (max-width: 767px) {
-    margin: 0 20px;
-  }
 }
 
 #ds-thread {
@@ -723,7 +719,7 @@
       box-sizing: border-box !important;
       margin-bottom: 4px !important;
 
-      @media screen and (max-width: 767px) {
+      @media screen and (max-width: 500px) {
         width: 100% !important;
       }
 
@@ -754,7 +750,7 @@
       float: left !important;
       padding-right: 10px !important;
 
-      @media screen and (max-width: 767px) {
+      @media screen and (max-width: 500px) {
         padding-right: 0px !important;
       }
     }
@@ -763,7 +759,7 @@
       float: left !important;
       padding-right: 10px !important;
 
-      @media screen and (max-width: 767px) {
+      @media screen and (max-width: 500px) {
         padding-right: 0px !important;
       }
     }
@@ -771,7 +767,7 @@
     .ds-input-wrapper-homepage {
       float: right !important;
 
-      @media screen and (max-width: 767px) {
+      @media screen and (max-width: 500px) {
         float: left !important;
       }
     }
