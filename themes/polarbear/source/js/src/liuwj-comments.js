@@ -24,7 +24,8 @@ function toggleSmileyPanel() {
         var $toolbar = $(".ds-post-toolbar");
         var offset = $toolbar.offset();
         $panel.css({
-            top: offset.top + $toolbar.outerHeight() + 4 + "px",
+            // top: offset.top + $toolbar.outerHeight() + 4 + "px",
+            top: (offset.top - 162) + "px",
             left: offset.left + "px",
             width: Math.min(400, $toolbar.width()) + "px"
         });
