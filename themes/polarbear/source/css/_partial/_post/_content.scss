@@ -5,6 +5,10 @@
 .post-content {
   margin-bottom: $content-margin-bottom;
 
+  @media screen and (max-width: 767px) {
+    word-break: break-all;
+  }
+
   @for $i from 1 through 6 {
     h#{$i} {
       font-size: 1.3em;
