@@ -60,8 +60,10 @@
       }
     }
   }
+}
 
-  &.home {
+@media screen and (min-width: 767px) {
+  #masthead.home {
     width: 200%;
     height: 120px;
     border-radius: 0 0 50% 50%;

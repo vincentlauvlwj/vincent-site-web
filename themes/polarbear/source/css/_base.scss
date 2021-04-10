@@ -17,7 +17,6 @@ body {
   background: $global-background;
   scroll-behavior: smooth;
   vertical-align: baseline;
-  overflow-x: hidden;
 }
 
 img {
@@ -37,6 +36,11 @@ a {
     font-size: $size;
     font-family: $global-font-family;
   }
+}
+
+#page {
+  width: 100%;
+  overflow-x: hidden;
 }
 
 .content-wrapper {
