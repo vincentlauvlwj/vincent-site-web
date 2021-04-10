@@ -1,17 +1,17 @@
 #content {
-    margin: $global-content-margin;
-    width: 90%;
+  margin: $global-content-margin;
+  width: 90%;
 	max-width: $global-body-width;
 }
 
 #primary.home {
-    width: 73%;
-    float: right;
+  width: 72%;
+  float: right;
 }
 
 #primary {
-    max-width: 850px;
-    margin: $global-content-margin;
+  max-width: 850px;
+  margin: $global-content-margin;
 }
 
 @include max-screen() {

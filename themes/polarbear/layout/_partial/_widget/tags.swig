@@ -16,7 +16,7 @@
         		<a class="tag-list-link" href="https://www.zhihu.com/people/liu-wen-jun-57-18"><i class="iconfont icon-zhihu"></i> Zhihu</a>
         	</li>
         	<li class="tag-list-item">
-        		<a class="tag-list-link" href="https://www.ktorm.org"><i class="iconfont icon-link"></i> Ktorm</a>
+        		<a class="tag-list-link" href="https://www.ktorm.org/zh-cn/"><i class="iconfont icon-link"></i> Ktorm</a>
         	</li>
         </ul>
     </section>

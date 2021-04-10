@@ -31,7 +31,7 @@ menu:
     link: /about
     hideOnMobile: false
   - text: KTORM
-    link: https://www.ktorm.org/zh-cn
+    link: https://www.ktorm.org/zh-cn/
     hideOnMobile: true
 
 # ===========================================
