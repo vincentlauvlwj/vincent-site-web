@@ -114,6 +114,12 @@ function loadComments(async) {
                 $("#ds-comment-count").text(0);
                 $("#ds-post-placeholder").show();
             }
+
+            var $anchor = $(window.location.hash)
+            if ($anchor.length > 0) {
+                var offset = $anchor.offset();
+                $('body,html').animate({ scrollTop: offset.top + "px" });
+            }
         }
     });
 }
@@ -212,5 +218,5 @@ $(document).ready(function() {
     	toggleGuestComment();
     });
 
-    loadComments(false);
+    loadComments(true);
 });
