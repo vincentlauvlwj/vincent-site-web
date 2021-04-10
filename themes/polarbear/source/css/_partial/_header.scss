@@ -20,7 +20,11 @@
     top: 0;
     right: 0;
     left: 0;
-    box-shadow: 0 0 1px rgba(0,0,0,.15);
+    box-shadow: 0 0 1px rgba(0,0,0,.3);
+}
+
+#masthead.home {
+    box-shadow: none;
 }
 
 .site-header-inner {
@@ -94,7 +98,11 @@
     position: relative;
     margin: 70px 0 0 100px;
 
-    :before {
+    @media screen and (max-width: 767px) {
+        margin-left: 0;
+    }
+
+    &:before {
         content: '';
         display: inline-block;
         width: 78px;
@@ -136,13 +144,27 @@
     float: right;
     margin: 65px 0 0 0;
 
-    li {
+    .menu-item {
         float: left;
         list-style: none;
-        margin-left: 20px;
+        font-size: $global-font-size;
+        margin-left: 30px;
+        display: inline-block;
+
+        @media screen and (max-width: 767px) {
+            margin-left: 15px;
+        }
 
         a {
             color: #fff;
+        }
+    }
+
+    .menu-item-hide-on-mobile {
+        display: inline-block;
+
+        @media screen and (max-width: 500px) {
+            display: none;
         }
     }
 }
