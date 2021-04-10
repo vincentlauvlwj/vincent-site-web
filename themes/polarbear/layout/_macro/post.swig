@@ -9,9 +9,11 @@
         {% endif %}
       </h1>
 
-      <time class="post-time">
-          {{ full_date(post.date, 'YYYY-MM-DD') }} | {% if post.author %}{{ post.author }}{% else %}{{ config.author }}{% endif %}
-      </time>
+      <div class="post-meta">
+        <time>{{ full_date(post.date, 'YYYY-MM-DD') }}</time>
+        <span> | </span>
+        <span>{% if post.author %}{{ post.author }}{% else %}{{ config.author }}{% endif %}</span>
+      </div>
     </header>
 
 
@@ -27,7 +29,7 @@
 
             {% if excerpt %}
               {{ excerpt }}
-              <div class="post-more-link text-center">
+              <div class="post-more-link">
                 <a class="btn" href="{{ url_for(post.path) }}" rel="contents">
                   阅读全文 &raquo;
                 </a>
