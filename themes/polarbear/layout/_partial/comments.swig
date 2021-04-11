@@ -68,7 +68,7 @@
 
       <div class="ds-replybox">
         <span class="ds-avatar">
-          <a href="javascript:void(0);" rel="nofollow" target="_blank"><img src="https://www.liuwj.me/gravatar/default?f=y&d=mm" /></a>
+          <a href="javascript:void(0);" rel="nofollow"><img src="https://www.liuwj.me/gravatar/default?f=y&d=mm" /></a>
         </span>
 
         <form action="javascript:void(0);" method="post">
