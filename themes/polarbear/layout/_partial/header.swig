@@ -1,7 +1,7 @@
 <div class="site-header-inner">
     <span class="site-logo">
         <a href="{{ url_for('/') }}">
-            <img src="https://cdn.v2ex.com/gravatar/4fcd1218a0d478db1d5573249c376b95?d=retro&s=100">
+            <img src="https://www.liuwj.me/gravatar/4fcd1218a0d478db1d5573249c376b95?d=retro&s=70">
         </a>
     </span>
     <span class="site-title">

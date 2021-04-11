@@ -52,7 +52,7 @@ function refreshLoginStatus() {
         $(".ds-toolbar").hide();
         $(".ds-login-input").show();
         $(".ds-replybox .ds-avatar a").attr("href", "javascript:void(0);");
-        $(".ds-replybox .ds-avatar img").attr("src", "https://cdn.v2ex.com/gravatar/?f=y&d=mm");
+        $(".ds-replybox .ds-avatar img").attr("src", "https://www.liuwj.me/gravatar/default?f=y&d=mm");
         $(".ds-replybox textarea").attr("placeholder", "邮箱仅用于接收回复通知，绝不外泄，若仍有顾虑，请使用游客评论");
         $(".ds-input-wrapper-name input").val("");
         $(".ds-input-wrapper-email input").val("");
