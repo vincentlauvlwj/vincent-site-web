@@ -11,16 +11,28 @@
         <li id="comment-${id}" class="ds-post">
           <div class="ds-post-self">
             <div class="ds-avatar">
-              <a href="${fromUser.homepage}" rel="nofollow" target="_blank"><img src="${fromUser.avatar}"></a>
+              {{if fromUser.homepage}}
+                <a href="${fromUser.homepage}" rel="nofollow" target="_blank"><img src="${fromUser.avatar}"></a>
+              {{else}}
+                <a href="javascript:void(0);" rel="nofollow"><img src="${fromUser.avatar}"></a>
+              {{/if}}
             </div>
             <div class="ds-comment-body">
               <div class="ds-comment-header">
-                <a class="ds-user-name" href="${fromUser.homepage}" rel="nofollow" target="_blank">${fromUser.name}</a>
+                {{if fromUser.homepage}}
+                  <a class="ds-user-name" href="${fromUser.homepage}" rel="nofollow" target="_blank">${fromUser.name}</a>
+                {{else}}
+                  <a class="ds-user-name" href="javascript:void(0);" rel="nofollow">${fromUser.name}</a>
+                {{/if}}
               </div>
               <p>
-                {{if toUser != null && toUser.id > 0}}
-                <a class="ds-comment-context" href="${toUser.homepage}" rel="nofollow" target="_blank">回复 ${toUser.name}: </a> 
-                {{/if}} 
+                {{if toUser && toUser.id > 0}}
+                  {{if toUser.homepage}}
+                    <a class="ds-comment-context" href="${toUser.homepage}" rel="nofollow" target="_blank">回复 ${toUser.name}: </a>
+                  {{else}}
+                    <a class="ds-comment-context" href="javascript:void(0);" rel="nofollow">回复 ${toUser.name}: </a>
+                  {{/if}}
+                {{/if}}
                 {{html content}}
               </p>
               <div class="ds-comment-footer ds-comment-actions">
