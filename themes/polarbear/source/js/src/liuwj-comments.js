@@ -1,5 +1,5 @@
 // var apiHost = "http://192.168.1.102";
-var apiHost = "https://www.liuwj.me/api";
+var apiHost = "https://www.liuwj.me";
 var smileyPanelHtml;
 
 function initSmileyPanelHtml() {
@@ -101,7 +101,7 @@ function cancelReply() {
 
 function loadComments(async) {
     $.ajax({
-        url: apiHost + "/comments/?pageId=" + encodeURI(window.location.pathname),
+        url: apiHost + "/api/comments?pageId=" + encodeURI(window.location.pathname),
         type: "get",
         dataType: "json",
         async: async,
@@ -165,7 +165,7 @@ function createComment() {
 	}
 
     $.ajax({
-        url: apiHost + "/comments/",
+        url: apiHost + "/api/comments",
         type: "post",
         contentType: "application/json",
         data: JSON.stringify(request),
