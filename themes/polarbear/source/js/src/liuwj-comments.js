@@ -48,7 +48,7 @@ function toggleGuestComment() {
 }
 
 function refreshLoginStatus() {
-    var user = Cookies.getJSON("user");
+    var user = getLoginUser();
     if (user == null) {
         $(".ds-toolbar").hide();
         $(".ds-login-input").show();
@@ -62,11 +62,12 @@ function refreshLoginStatus() {
         $(".ds-guest-comment").show();
     } else {
         $(".ds-toolbar").show();
-        $(".ds-toolbar .ds-visitor-name").attr("href", user.homepage);
+        $(".ds-toolbar .ds-visitor-name").attr("href", user.homepage ? user.homepage : "javascript:void(0);");
+        $(".ds-toolbar .ds-visitor-name").attr("target", user.homepage ? "_blank" : "_self");
         $(".ds-toolbar .ds-visitor-name").text(user.name);
         $(".ds-login-input").hide();
-        $(".ds-replybox .ds-avatar a").attr("href", user.homepage);
-        $(".ds-replybox .ds-avatar a").attr("target", "_blank");
+        $(".ds-replybox .ds-avatar a").attr("href", user.homepage ? user.homepage : "javascript:void(0);");
+        $(".ds-replybox .ds-avatar a").attr("target", user.homepage ? "_blank" : "_self");
         $(".ds-replybox .ds-avatar img").attr("src", user.avatar);
         $(".ds-replybox textarea").attr("placeholder", "说点什么吧...");
         $(".ds-input-wrapper-name input").val(user.name);
@@ -76,15 +77,33 @@ function refreshLoginStatus() {
     }
 }
 
+function getLoginUser() {
+    if (window.localStorage) {
+        var data = window.localStorage.getItem("login_user");
+        if (data) {
+            return JSON.parse(data);
+        }
+    }
+
+    return null;
+}
+
 function login(user) {
 	if (!user.guest) {
-	    Cookies.set("user", user, { expires: 1024, path: "/" });
-	    refreshLoginStatus();
+        if (window.localStorage) {
+            var data = JSON.stringify(user);
+            window.localStorage.setItem("login_user", data);
+        }
 	}
+
+    refreshLoginStatus();
 }
 
 function logout() {
-    Cookies.remove("user", { path: "/" });
+    if (window.localStorage) {
+        window.localStorage.removeItem("login_user");
+    }
+
     refreshLoginStatus();
 }
 
