@@ -24,9 +24,6 @@ menu:
   - text: 归档
     link: /archives
     hideOnMobile: false
-  - text: 留言
-    link: /messages
-    hideOnMobile: false
   - text: 关于
     link: /about
     hideOnMobile: false
