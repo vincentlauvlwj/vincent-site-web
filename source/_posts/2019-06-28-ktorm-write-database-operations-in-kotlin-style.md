@@ -204,7 +204,7 @@ infix fun <T : Any> Column<T>.eq(expr: Column<T>): BinaryExpression<Boolean> {
 }
 ```
 
-除了 `eq` 函数外，Ktorm 还提供了许多常用的运算符函数，它们包括 `and`、`or`、`greater`、`less`、`greaterEq`、`lessEq` 等。不仅如此，我们还能通过 infix 关键字定义自己特殊的运算符，比如 PostgreSQL 中的 `ilike` 运算符就可以定义为这样的一个 infix 函数：
+除了 `eq` 函数外，Ktorm 还提供了许多常用的运算符函数，它们包括 `and`、`or`、`gt`、`lt`、`like` 等。不仅如此，我们还能通过 infix 关键字定义自己特殊的运算符，比如 PostgreSQL 中的 `ilike` 运算符就可以定义为这样的一个 infix 函数：
 
 ```kotlin
 infix fun Column<*>.ilike(argument: String): ILikeExpression {
@@ -249,18 +249,18 @@ val Database.employees get() = this.sequenceOf(Employees)
 ```kotlin
 val employees = database.employees
     .filter { it.departmentId eq 1 }
-    .filter { it.salary greater 1000 }
+    .filter { it.salary gt 1000 }
     .toList()
 ```
 
-可以看到，实体序列的用法几乎与 `kotlin.sequences.Sequence` 完全一样，不同的仅仅是在 lambda 表达式中的等号 `==` 和大于号 `>` 被这里的 `eq` 和 `greater` 函数代替了而已。
+可以看到，实体序列的用法几乎与 `kotlin.sequences.Sequence` 完全一样，不同的仅仅是在 lambda 表达式中的等号 `==` 和大于号 `>` 被这里的 `eq` 和 `gt` 函数代替了而已。
 
 我们还能使用 `mapColumns` 函数筛选需要的列，而不必把所有的列都查询出来，以及使用 `sortedBy` 函数把记录按指定的列进行排序。下面的代码获取部门 1 中工资超过一千的所有员工的名字，并按其工资的高低从大到小排序：
 
 ```kotlin
 val names = database.employees
     .filter { it.departmentId eq 1 }
-    .filter { it.salary greater 1000L }
+    .filter { it.salary gt 1000L }
     .sortedBy { it.salary }
     .mapColumns { it.name }
 ```
