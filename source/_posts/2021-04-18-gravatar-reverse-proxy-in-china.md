@@ -2,7 +2,7 @@
 layout:     post
 title:      "如何在墙内反代 Gravatar 显示博客头像"
 author:     "刘文俊"
-top: true
+top: false
 tags:
     - 独立博客
 ---
