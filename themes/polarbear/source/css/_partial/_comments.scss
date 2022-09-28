@@ -224,6 +224,7 @@
         -webkit-transition: -webkit-transform 0.4s ease-out;
         -moz-transition: -moz-transform 0.4s ease-out;
         transition: transform 0.4s ease-out;
+        overflow: hidden;
 
         @media screen and (max-width: 767px) {
           width: 30px;
