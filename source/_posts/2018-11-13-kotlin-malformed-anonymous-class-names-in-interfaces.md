@@ -12,7 +12,7 @@ tags:
 
 emmm...这个问题下面真的是大佬云集，萌新感到好忐忑...
 
-前段时间在使用 Kotlin 开发一个 [ORM 框架（广告慎入，Ktorm：专注于 Kotlin 的 ORM 框架）](https://www.ktorm.org/zh-cn/)，当时我的代码大概是这样的，定义了一个 Foo 接口，在这个接口里面写了个默认实现的 bar() 方法：
+前段时间在使用 Kotlin 开发一个 [ORM 框架（广告慎入，Ktorm：专注于 Kotlin 的 ORM 框架）](https://www.ktorm.org/zh-cn/)，当时我的代码大概是这样的，定义了一个 `Foo` 接口，在这个接口里面写了个默认实现的 `bar()` 方法：
 
 ````kotlin
 interface Foo {
@@ -43,19 +43,19 @@ Caused by: java.lang.StringIndexOutOfBoundsException: String index out of range:
 	... 4 more
 ````
 
-风中凌乱...我不就是想输出一下匿名对象的类名吗，这个 InternalError 是什么鬼...
+风中凌乱...我不就是想输出一下匿名对象的类名吗，这个 `InternalError` 是什么鬼...
 
 惊讶之余，冷静下来好好理了理 Kotlin 生成 class 的规则，终于明白过来。
 
-众所周知，在 Java 中，interface 里面是不能有方法实现的（Java 8 以前），然而，Kotlin 却可以直接在接口里面写实现方法。我们知道，Kotlin 最终也是要编译成 Java 字节码，既然 Java 本身都不支持这种操作，Kotlin 是怎么做到的呢？
+众所周知，在 Java 中，interface 里面是不能有方法实现的（Java 8 以前），然而，Kotlin 却可以直接在接口里面实现方法。我们知道，Kotlin 最终也是要编译成 Java 字节码，既然 Java 本身都不支持这种操作，Kotlin 是怎么做到的呢？
 
-反编译 Kotlin 生成的字节码就可以看到，在编译出来的 interface Foo 中，bar 方法仍然是 abstract 的，并没有实现。但是，Kotlin 另外生成了一个 Foo$DefaultImpls 类，在这个类里面有一个静态方法，这个方法的签名是：
+反编译 Kotlin 生成的字节码就可以看到，在编译出来的 `interface Foo` 中，`bar` 方法仍然是 abstract 的，并没有实现。但是，Kotlin 另外生成了一个 `Foo$DefaultImpls` 类，在这个类里面有一个静态方法，这个方法的签名是：
 
 ````java
 public static void bar(Foo $this)
 ````
 
-这个方法里面的字节码，就是我们的 bar() 方法的默认实现了。这样，当一个 Kotlin 的类实现了 Foo 接口时，编译器就会自动为我们插入一个 bar() 方法的实现，这个实现只是简单调用了 Foo$DefaultImpls 里面的静态方法：
+这个方法里面的字节码，就是我们的 `bar()` 方法的默认实现了。这样，当一个 Kotlin 的类实现了 `Foo` 接口时，编译器就会自动为我们插入一个 `bar()` 方法的实现，这个实现只是简单调用了 `Foo$DefaultImpls` 里面的静态方法：
 
 ````java
 @Override
@@ -68,7 +68,7 @@ public void bar() {
 
 然而这跟前面的 bug 又有什么关系...
 
-我们回过头来看刚刚出 bug 的代码，可以看到一个 object : Any() { }，这应该会生成一个匿名内部类，看下编译结果，可以知道这个匿名内部类的名字是 Foo$bar$obj$1，这应该没什么特别的。
+我们回过头来看刚刚出 bug 的代码，可以看到一个 `object : Any() { }`，这应该会生成一个匿名内部类，看下编译结果，可以知道这个匿名内部类的名字是 Foo$bar$obj$1，这应该没什么特别的。
 
 然后顺着异常栈去到 JDK 的 Class 类里面，看源码，可以看到报错的地方是这样的：
 
@@ -88,9 +88,9 @@ private String getSimpleBinaryName() {
 
 额，好像找到原因了...
 
-回到前面提到的匿名内部类 Foo$bar$obj$1，因为 bar() 方法是在 Foo$DefaultImpls 中实现的，所以对这个匿名类获取 enclosingClass 毫无疑问就是 Foo$DefaultImpls 了，然后在 substring 的时候就 GG 了...
+回到前面提到的匿名内部类 `Foo$bar$obj$1`，因为 `bar()` 方法是在 `Foo$DefaultImpls` 中实现的，所以对这个匿名类获取 `enclosingClass` 毫无疑问就是 `Foo$DefaultImpls` 了，然后在 substring 的时候就 GG 了...
 
-最后，根据我粗浅的理解，应该可以得出结论，这个 bug 的根源是 Kotlin 在编译这个匿名内部类的时候生成的名字有误，如果生成的名字是 Foo$DefaultImpls$bar$obj$1 的话，bug 就不会发生。带着这个疑惑，我去 Kotlin issue 上面找了找，果然已经有人提出过这个问题，然而这个 issue 至今都是 open 状态，并没有得到解决，难道是这个 bug 会牵扯到其他地方？有兴趣的同学可以去看一看：[Names for anonymous classes in interfaces are malformed : KT-16727](https://youtrack.jetbrains.com/issue/KT-16727)
+最后，根据我粗浅的理解，应该可以得出结论，这个 bug 的根源是 Kotlin 在编译这个匿名内部类的时候生成的名字有误，如果生成的名字是 `Foo$DefaultImpls$bar$obj$1` 的话，bug 就不会发生。带着这个疑惑，我去 Kotlin issue 上面找了找，果然已经有人提出过这个问题，然而这个 issue 至今都是 open 状态，并没有得到解决，难道是这个 bug 会牵扯到其他地方？有兴趣的同学可以去看一看：[Names for anonymous classes in interfaces are malformed : KT-16727](https://youtrack.jetbrains.com/issue/KT-16727)
 
 最终，bug 的原因是找到了，那在 Kotlin 修复这个 bug 之前应该怎么办呢？我们当然只能想办法绕过了，比如避免在接口的默认实现方法中使用匿名内部类，lambda 也不行，因为 Kotlin 的 lambda 也会编译成匿名类...
 
