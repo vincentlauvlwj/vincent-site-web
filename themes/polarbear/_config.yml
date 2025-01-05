@@ -29,6 +29,7 @@ menu:
     hideOnMobile: false
   - text: KTORM
     link: https://www.ktorm.org/zh-cn/
+    target: _blank
     hideOnMobile: true
 
 # ===========================================

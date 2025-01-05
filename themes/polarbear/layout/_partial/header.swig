@@ -14,7 +14,7 @@
             <ul>
                 {% for menuItem in theme.menu %}
                     <li class="menu-item{% if menuItem.hideOnMobile %} menu-item-hide-on-mobile{% endif %}">
-                        <a href="{{ url_for(menuItem.link) }}">
+                        <a href="{{ url_for(menuItem.link) }}" target="{{ menuItem.target || '_self' }}">
                             {{ menuItem.text }}
                         </a>
                     </li>
