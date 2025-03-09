@@ -5,7 +5,6 @@ author:     "天空Blond"
 top: true
 tags:
     - Kotlin
-    - ORM
     - Ktorm
 ---
 

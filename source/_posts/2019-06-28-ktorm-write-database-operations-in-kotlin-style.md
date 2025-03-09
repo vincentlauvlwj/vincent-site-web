@@ -5,7 +5,6 @@ author:     "刘文俊"
 top: true
 tags:
     - Kotlin
-    - ORM
     - Ktorm
 ---
 
