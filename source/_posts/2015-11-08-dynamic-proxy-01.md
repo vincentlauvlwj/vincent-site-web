@@ -6,7 +6,6 @@ date:       2015-11-08 2:00
 top: true
 tags:
     - Java
-    - 动态代理
 ---
 
 > [点击查看原文](http://www.ibm.com/developerworks/cn/java/j-lo-proxy1/index.html)

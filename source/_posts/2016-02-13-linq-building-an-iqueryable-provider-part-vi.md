@@ -3,8 +3,6 @@ layout:     post
 title:      "「译」LINQ: Building an IQueryable Provider - Part VI: Nested queries"
 author:     "刘文俊"
 tags:
-    - 翻译
-    - LINQ
     - C♯
 ---
 

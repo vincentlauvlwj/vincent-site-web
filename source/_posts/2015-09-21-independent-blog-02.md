@@ -5,7 +5,7 @@ author:     "刘文俊"
 date:       2015-09-21
 tags:
     - GitHub Pages
-    - 独立博客
+    - 教程
 ---
 
 > Jekyll的详细文档，参见 [Jekyll • Simple, blog-aware, static sites](http://jekyllrb.com/)

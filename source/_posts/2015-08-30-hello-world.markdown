@@ -5,7 +5,7 @@ author:     "刘文俊"
 date:       2015-08-30 2:00
 header-img: "img/post-bg-2015.jpg"
 tags:
-    - 随便写写
+    - 随写
 ---
 
 > **“Yeah It's on. ”**

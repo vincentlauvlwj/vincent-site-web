@@ -5,7 +5,7 @@ author:     "黄玄"
 date:       2015-08-30 3:00
 header-img: "img/post-bg-android.jpg"
 tags:
-    - Android
+    - 随写
 ---
 
 > 这篇文章转载自[知乎](http://www.zhihu.com/question/25104721/answer/30108886)

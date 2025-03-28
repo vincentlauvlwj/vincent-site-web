@@ -4,7 +4,7 @@ title:      "如何在墙内反代 Gravatar 显示博客头像"
 author:     "刘文俊"
 top: false
 tags:
-    - 独立博客
+    - 教程
 ---
 
 <blockquote class="blockquote-center">生命不息，折腾不止</blockquote>

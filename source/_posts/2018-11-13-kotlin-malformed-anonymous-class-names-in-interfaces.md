@@ -5,7 +5,6 @@ author:     "刘文俊"
 top: true
 tags:
     - Kotlin
-    - Java
 ---
 
 > 本文来自我的知乎回答：[找到编译器的bug是种怎样的体验？ - 知乎](https://www.zhihu.com/question/267143879/answer/530782765)

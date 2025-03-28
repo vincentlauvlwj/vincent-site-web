@@ -5,7 +5,7 @@ author:     "刘文俊"
 date:       2015-09-20
 tags:
     - GitHub Pages
-    - 独立博客
+    - 教程
 ---
 
 > 这篇文章很多内容都是从GitHub官网翻译而来，详情可访问 [GitHub Pages Basics - User Documentation](https://help.github.com/categories/github-pages-basics/)
